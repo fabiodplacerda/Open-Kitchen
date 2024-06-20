@@ -6,7 +6,7 @@ const userSchema = new Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
   savedRecipes: [{ type: Schema.Types.ObjectId, ref: 'Recipe' }],
-  Recipes: [{ type: Schema.Types.ObjectId, ref: 'Recipe' }],
+  recipes: [{ type: Schema.Types.ObjectId, ref: 'Recipe' }],
 });
 
 const User = model('User', userSchema);

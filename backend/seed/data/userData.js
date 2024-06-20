@@ -6,7 +6,7 @@ const usersData = [
     password: 'Password1',
     role: 'user',
     savedRecipes: [],
-    Recipes: ['667441c68299324f52841990', '667441c68299324f52841991'],
+    recipes: ['667441c68299324f52841990', '667441c68299324f52841991'],
     __v: 0,
   },
   {
@@ -16,7 +16,7 @@ const usersData = [
     password: 'Password2',
     role: 'admin',
     savedRecipes: [],
-    Recipes: ['667441c68299324f52841992', '667441c68299324f52841993'],
+    recipes: ['667441c68299324f52841992', '667441c68299324f52841993'],
     __v: 0,
   },
   {
@@ -26,7 +26,7 @@ const usersData = [
     password: 'Password3',
     role: 'user',
     savedRecipes: [],
-    Recipes: [],
+    recipes: [],
     __v: 0,
   },
   {
@@ -36,7 +36,7 @@ const usersData = [
     password: 'Password4',
     role: 'user',
     savedRecipes: [],
-    Recipes: [],
+    recipes: [],
     __v: 0,
   },
   {
@@ -46,7 +46,7 @@ const usersData = [
     password: 'Password5',
     role: 'user',
     savedRecipes: [],
-    Recipes: [],
+    recipes: [],
     __v: 0,
   },
 ];
