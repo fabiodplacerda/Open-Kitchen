@@ -6,7 +6,9 @@
   "scripts": {
     "start": "NODE_ENV=dev nodemon src/index.js",
     "seed": "NODE_ENV=dev node seed/seed.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=test mocha --timeout 10000 --exit --recursive",
+    "test-watch": "NODE_ENV=test nodemon --exec 'mocha --timeout 10000 --exit --recursive'",
+    "coverage": "NODE_ENV=test c8 -r html npm test"
   },
   "keywords": [],
   "author": "",
