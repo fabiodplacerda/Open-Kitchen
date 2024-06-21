@@ -179,6 +179,14 @@ describe('Integration Tests', () => {
         username: 'updatedUser1',
         password: 'myNewPassWord1',
       };
+      const updatedUser = {
+        ...testUser,
+        email: updates.email,
+        username: updates.username,
+      };
+
+      delete updatedUser.password;
+
       const token = jwt.sign(
         { id: testUser._id, username: testUser.username },
         'openkitchen-secret-key-test',
@@ -195,39 +203,53 @@ describe('Integration Tests', () => {
         expect(response.status).to.equal(200);
       });
 
-      it.skip('should send the new user back in the body response', async () => {
-        const response = await request.post('/user/login').send(testUser);
+      it('should send the updated user back in the body response', async () => {
+        const response = await await request
+          .put(`/user/${testUser._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(updates);
 
-        expect(response.body).to.deep.equal({
-          message: 'Authentication successful',
-          user: testUserWithoutPassword,
-          token: testToken,
-        });
+        expect(response.body.user).to.deep.equal(updatedUser);
       });
 
-      it.skip('should respond with a 400 status code if no payload was sent in the body', async () => {
-        const response = await request.post('/user/login').send(null);
+      it('should respond with a 404 status code if user was not found', async () => {
+        const response = await await request
+          .put(`/user/667441c68289324f52241985`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(updates);
 
-        expect(response.status).to.equal(400);
+        expect(response.status).to.equal(404);
+        expect(response.body).to.deep.equal({ message: 'User not found' });
       });
 
-      it.skip("should respond with a 401 if password doesn't match", async () => {
-        const userWithWrongPassword = {
-          ...testUserWithoutPassword,
-          password: 'WrongPassword',
-        };
-        const response = await request
-          .post('/user/login')
-          .send(userWithWrongPassword);
+      it('should respond with a 403 if token was not provided', async () => {
+        const response = await await request
+          .put(`/user/${testUser._id}`)
+          .send(updates);
+
+        expect(response.status).to.equal(403);
+        expect(response.body).to.deep.equal({ message: 'No token provided' });
+      });
+      it('should respond with a 401 if auth fails', async () => {
+        const response = await await request
+          .put(`/user/667441c68289324f52241985`)
+          .set('Authorization', `Bearer invalidToken`)
+          .send(updates);
 
         expect(response.status).to.equal(401);
+        expect(response.body).to.deep.equal({
+          message: 'Failed to authenticate token',
+        });
       });
-      it.skip('should respond with a 500 status if a error occurs when creating an account', async () => {
+      it('should respond with a 500 status if a error occurs when creating an account', async () => {
         const error = new Error('test error');
-        const stub = sinon.stub(userService, 'accountLogin');
+        const stub = sinon.stub(userService, 'updateAccount');
         stub.throws(error);
 
-        const response = await request.post('/user/login').send(testUser);
+        const response = await request
+          .put(`/user/${testUser._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(updates);
 
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });

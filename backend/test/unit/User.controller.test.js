@@ -158,22 +158,6 @@ describe('UserController', () => {
       expect(res.status.calledWith(200)).to.be.true;
       expect(res.json.calledWith(expectedResponse)).to.be.true;
     });
-    it('should respond with a 400 if no id was provided', async () => {
-      req.params.id = null;
-      req.body = updates;
-
-      await userController.updateAccount(req, res);
-
-      expect(res.status.calledWith(400)).to.be.true;
-      expect(res.json.calledWith({ message: 'Invalid Id' })).to.be.true;
-    });
-    it('should respond with a 400 if body was not provided', async () => {
-      req.body = null;
-
-      await userController.updateAccount(req, res);
-
-      expect(res.status.calledWith(400)).to.be.true;
-    });
     it('should respond with a 404 if user id was not found', async () => {
       req.params.id = '1';
       req.body = updates;

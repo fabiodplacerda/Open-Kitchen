@@ -65,9 +65,9 @@ export default class UserController {
   };
   updateAccount = async (req, res) => {
     const { id } = req.params;
-    const updates = req.body;
 
-    if (!id) return res.status(400).json({ message: 'Invalid Id' });
+    const updates = req.body;
+    let formattedUser;
 
     try {
       const updatedUser = await this.#service.updateAccount(id, updates);
@@ -76,9 +76,16 @@ export default class UserController {
         return res.status(404).json({ message: 'User not found' });
       }
 
+      if (updatedUser._doc) {
+        formattedUser = updatedUser._doc;
+        delete formattedUser.password;
+      } else {
+        formattedUser = updatedUser;
+      }
+
       return res
         .status(200)
-        .json({ message: 'User updated successfully', user: updatedUser });
+        .json({ message: 'User updated successfully', user: formattedUser });
     } catch (e) {
       return res.status(500).json({ message: e.message });
     }

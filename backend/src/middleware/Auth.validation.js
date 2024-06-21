@@ -13,7 +13,9 @@ export default class AuthValidation {
 
     jwt.verify(token, process.env.SECRET, (err, decoded) => {
       if (err) {
-        return res.status(401).json({ message: 'Failed to authenticate toke' });
+        return res
+          .status(401)
+          .json({ message: 'Failed to authenticate token' });
       }
       req.user = decoded;
       next();
