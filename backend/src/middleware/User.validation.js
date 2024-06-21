@@ -17,7 +17,7 @@ export default class UserValidator {
           .notEmpty()
           .isString()
           .withMessage('username is required')
-          .isLength({ min: 3, max: 10 })
+          .isLength({ min: 3, max: 15 })
           .withMessage(
             'The username should be a minimum of 3 characters and a maximum of 10 characters in length.'
           ),

@@ -40,4 +40,29 @@ export default class UserServices {
       throw new Error(`Login failed: ${e.message}`);
     }
   };
+  updateAccount = async (userId, updates) => {
+    if (updates.password) {
+      updates.password = await bcrypt.hash(updates.password, 10);
+    }
+
+    try {
+      const updatedAccount = await User.findOneAndUpdate(
+        { _id: userId },
+        // $set only update the specified fields
+        { $set: updates },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      if (!updatedAccount) {
+        return null;
+      }
+      const { password, ...updatedAccountWithoutPassword } = updatedAccount;
+      return updatedAccountWithoutPassword;
+    } catch (e) {
+      throw new Error(`Failed to update the user: ${e.message}`);
+    }
+  };
 }

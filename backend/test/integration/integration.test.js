@@ -25,13 +25,14 @@ import UserController from '../../src/controller/User.controller.js';
 import UserRoutes from '../../src/routes/User.routes.js';
 
 describe('Integration Tests', () => {
-  let server, database, userService, request;
+  let server, database, userService, request, secret;
 
   const { users, newUser } = usersData;
 
   before(async () => {
     Config.loadConfig();
-    const { PORT, HOST, DB_URI } = process.env;
+    const { PORT, HOST, DB_URI, SECRET } = process.env;
+    secret = SECRET;
     userService = new UserServices();
     const userController = new UserController(userService);
     const userRoutes = new UserRoutes(userController);
@@ -161,6 +162,67 @@ describe('Integration Tests', () => {
         expect(response.status).to.equal(401);
       });
       it('should respond with a 500 status if a error occurs when creating an account', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(userService, 'accountLogin');
+        stub.throws(error);
+
+        const response = await request.post('/user/login').send(testUser);
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+      });
+    });
+    describe('PUT request to /user/:id', () => {
+      const testUser = { ...users[0], password: 'Password1' };
+      const updates = {
+        email: 'newEmail@gmail.com',
+        username: 'updatedUser1',
+        password: 'myNewPassWord1',
+      };
+      const token = jwt.sign(
+        { id: testUser._id, username: testUser.username },
+        'openkitchen-secret-key-test',
+        { expiresIn: '24h' }
+      );
+      const { password, ...testUserWithoutPassword } = testUser;
+
+      it('should respond with a 200 if was successfully updated', async () => {
+        const response = await request
+          .put(`/user/${testUser._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(updates);
+
+        expect(response.status).to.equal(200);
+      });
+
+      it.skip('should send the new user back in the body response', async () => {
+        const response = await request.post('/user/login').send(testUser);
+
+        expect(response.body).to.deep.equal({
+          message: 'Authentication successful',
+          user: testUserWithoutPassword,
+          token: testToken,
+        });
+      });
+
+      it.skip('should respond with a 400 status code if no payload was sent in the body', async () => {
+        const response = await request.post('/user/login').send(null);
+
+        expect(response.status).to.equal(400);
+      });
+
+      it.skip("should respond with a 401 if password doesn't match", async () => {
+        const userWithWrongPassword = {
+          ...testUserWithoutPassword,
+          password: 'WrongPassword',
+        };
+        const response = await request
+          .post('/user/login')
+          .send(userWithWrongPassword);
+
+        expect(response.status).to.equal(401);
+      });
+      it.skip('should respond with a 500 status if a error occurs when creating an account', async () => {
         const error = new Error('test error');
         const stub = sinon.stub(userService, 'accountLogin');
         stub.throws(error);

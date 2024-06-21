@@ -98,4 +98,53 @@ describe('UserService', () => {
       }
     });
   });
+  describe('updateAccount Tests', () => {
+    const testUser = {
+      _id: '1',
+      email: 'test@test.com',
+      username: 'testUserName',
+      password: 'testPassword',
+      savedRecipes: [],
+      recipes: [],
+    };
+    const updateUser = {
+      _id: '1',
+      email: 'updated@test.com',
+      username: 'updatedName',
+      savedRecipes: [],
+      recipes: [],
+    };
+
+    it('should call findOneAndUpdate', async () => {
+      const findOneAndUpdateStub = sinon.stub(User, 'findOneAndUpdate');
+      findOneAndUpdateStub.resolves(updateUser);
+
+      const result = await userServices.updateAccount(testUser._id, {
+        email: updateUser.email,
+        username: updateUser.username,
+      });
+
+      expect(result).to.deep.equal(updateUser);
+      findOneAndUpdateStub.restore();
+    });
+
+    it('should throw an error if a error occurs', async () => {
+      const error = new Error('test error');
+      const findOneAndUpdateStub = sinon.stub(User, 'findOneAndUpdate');
+      findOneAndUpdateStub.throws(error);
+
+      try {
+        await userServices.updateAccount(testUser._id, {
+          email: updateUser.email,
+          username: updateUser.username,
+          password: 'testPassWord',
+        });
+        assert.fail('Expect error was not thrown');
+      } catch (e) {
+        expect(e.message).to.equal(
+          `Failed to update the user: ${error.message}`
+        );
+      }
+    });
+  });
 });

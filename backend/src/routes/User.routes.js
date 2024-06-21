@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import UserController from '../controller/User.controller.js';
 import UserValidator from '../middleware/User.validation.js';
+import AuthValidation from '../middleware/Auth.validation.js';
 
 export default class UserRoutes {
   #controller;
@@ -21,6 +22,12 @@ export default class UserRoutes {
       this.#controller.createAccount
     );
     this.#router.post('/login', this.#controller.accountLogin);
+    this.#router.put(
+      '/:id',
+      AuthValidation.checkToken,
+      UserValidator.accountCreationValidate(),
+      this.#controller.updateAccount
+    );
   };
 
   getRouter = () => this.#router;
