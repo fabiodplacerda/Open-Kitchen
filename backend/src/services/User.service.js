@@ -1,4 +1,5 @@
 import User from '../models/user.model.js';
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 export default class UserServices {
@@ -12,6 +13,31 @@ export default class UserServices {
       return await user.save();
     } catch (e) {
       throw new Error(`Failed to create a new user: ${e.message}`);
+    }
+  };
+  accountLogin = async (username, password) => {
+    try {
+      // Find user in the database
+      const foundUser = await User.findOne({ username: username });
+      if (!foundUser) return null;
+
+      // Match password using bcrypt
+      const passwordMatch = await bcrypt.compare(password, foundUser.password);
+      if (!passwordMatch) return null;
+      const { password: _, ...userWithoutPassword } = foundUser;
+
+      // Token
+      const token = jwt.sign(
+        { id: foundUser._id, username: userWithoutPassword.username },
+        process.env.SECRET,
+        {
+          expiresIn: '24h',
+        }
+      );
+      // Send the user and the token to the controller
+      return { user: userWithoutPassword, token };
+    } catch (e) {
+      throw new Error(`Login failed: ${e.message}`);
     }
   };
 }

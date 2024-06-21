@@ -2,6 +2,9 @@ import supertest from 'supertest';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
 import Config from '../../src/config/Config.js';
 import Server from '../../src/server/Server.js';
 import Database from '../../src/database/Database.js';
@@ -50,7 +53,12 @@ describe('Integration Tests', () => {
   beforeEach(async () => {
     try {
       await User.deleteMany();
-      await User.insertMany(users);
+      const hashedPassword = await bcrypt.hash('Password1', 10);
+      const modifiedUsers = users.map(user => ({
+        ...user,
+        password: hashedPassword,
+      }));
+      await User.insertMany(modifiedUsers);
     } catch (e) {
       console.log(e);
       throw new Error();
@@ -101,6 +109,63 @@ describe('Integration Tests', () => {
         const response = await request
           .post('/user/createAccount')
           .send(newUser);
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+      });
+    });
+    describe('POST request to /user/login', () => {
+      beforeEach(() => {
+        sinon.stub(jwt, 'sign').returns('testToken');
+      });
+
+      afterEach(() => {
+        jwt.sign.restore();
+      });
+
+      const testUser = { ...users[0], password: 'Password1' };
+      const { password, ...testUserWithoutPassword } = testUser;
+      const testToken = 'testToken';
+
+      it('should respond with a 200 status code when request is successful', async () => {
+        const response = await request.post('/user/login').send(testUser);
+
+        expect(response.status).to.equal(200);
+      });
+
+      it('should send the new user back in the body response', async () => {
+        const response = await request.post('/user/login').send(testUser);
+
+        expect(response.body).to.deep.equal({
+          message: 'Authentication successful',
+          user: testUserWithoutPassword,
+          token: testToken,
+        });
+      });
+
+      it('should respond with a 400 status code if no payload was sent in the body', async () => {
+        const response = await request.post('/user/login').send(null);
+
+        expect(response.status).to.equal(400);
+      });
+
+      it("should respond with a 401 if password doesn't match", async () => {
+        const userWithWrongPassword = {
+          ...testUserWithoutPassword,
+          password: 'WrongPassword',
+        };
+        const response = await request
+          .post('/user/login')
+          .send(userWithWrongPassword);
+
+        expect(response.status).to.equal(401);
+      });
+      it('should respond with a 500 status if a error occurs when creating an account', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(userService, 'accountLogin');
+        stub.throws(error);
+
+        const response = await request.post('/user/login').send(testUser);
 
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });

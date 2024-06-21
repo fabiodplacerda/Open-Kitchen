@@ -2,11 +2,20 @@ import User from '../../src/models/user.model.js';
 import UserServices from '../../src/services/User.service.js';
 import sinon, { assert } from 'sinon';
 import { expect } from 'chai';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
-describe('UserService test', () => {
+describe('UserService', () => {
   let userServices;
   beforeEach(() => {
     userServices = new UserServices();
+    sinon.stub(bcrypt, 'compare').resolves(true);
+    sinon.stub(jwt, 'sign').returns('testToken');
+  });
+
+  afterEach(() => {
+    bcrypt.compare.restore();
+    jwt.sign.restore();
   });
 
   describe('createAccount Tests', () => {
@@ -46,6 +55,47 @@ describe('UserService test', () => {
       }
       // Restore
       saveStub.restore();
+    });
+  });
+  describe('accountLogin Tests', () => {
+    const testUser = {
+      _id: '1',
+      email: 'test@test.com',
+      username: 'testUserName',
+      password: 'testPassword',
+      savedRecipes: [],
+      recipes: [],
+    };
+    const testToken = 'testToken';
+
+    it('should call findOne', async () => {
+      const { password, ...testUserWithoutPassword } = testUser;
+      const findOneStub = sinon.stub(User, 'findOne');
+      findOneStub.resolves(testUser);
+
+      const result = await userServices.accountLogin(
+        testUser.username,
+        testUser.password
+      );
+
+      expect(result).to.deep.equal({
+        user: testUserWithoutPassword,
+        token: testToken,
+      });
+      findOneStub.restore();
+    });
+
+    it('should throw an error if a error occurs', async () => {
+      const error = new Error('test error');
+      const findOneStub = sinon.stub(User, 'findOne');
+      findOneStub.throws(error);
+
+      try {
+        await userServices.accountLogin(testUser.username, testUser.password);
+        assert.fail('Expect error was not thrown');
+      } catch (e) {
+        expect(e.message).to.equal(`Login failed: ${error.message}`);
+      }
     });
   });
 });

@@ -2,12 +2,13 @@ import { expect } from 'chai';
 import UserController from '../../src/controller/User.controller.js';
 import sinon from 'sinon';
 
-describe('UserController test', () => {
-  let userController, userService, req, res;
+describe('UserController', () => {
+  let userController, userService, req, res, testError;
 
   beforeEach(() => {
     userService = {
       createAccount: sinon.stub(),
+      accountLogin: sinon.stub(),
     };
     userController = new UserController(userService);
     req = {
@@ -18,9 +19,11 @@ describe('UserController test', () => {
       json: sinon.stub(),
       status: sinon.stub().returnsThis(),
     };
+
+    testError = new Error('test error');
   });
 
-  describe('createAccount tests', () => {
+  describe('createAccount Tests', () => {
     const testNewUser = {
       _id: '1',
       email: 'test@test.com',
@@ -64,6 +67,63 @@ describe('UserController test', () => {
       const testError = new Error('test error');
       userService.createAccount.throws(testError);
       await userController.createAccount(req, res);
+
+      expect(res.status.calledWith(500)).to.be.true;
+      expect(res.json.calledWith({ message: 'test error' })).to.be.true;
+    });
+  });
+  describe('accountLogin Tests', () => {
+    const testUser = {
+      _id: '1',
+      email: 'test@test.com',
+      username: 'testUserName',
+      password: 'testPassword',
+    };
+
+    const testToken = 'testToken';
+    it('should return a user and a token back if successful', async () => {
+      req.body = testUser;
+      const { password, ...testUserWithoutPassword } = testUser;
+
+      userService.accountLogin.resolves({
+        user: testUserWithoutPassword,
+        token: testToken,
+      });
+
+      const expectedResponse = {
+        message: 'Authentication successful',
+        user: testUserWithoutPassword,
+        token: testToken,
+      };
+
+      await userController.accountLogin(req, res);
+
+      expect(res.status.calledWith(200)).to.be.true;
+      expect(res.json.calledWith(expectedResponse)).to.be.true;
+    });
+    it('should respond with a 400 if no body is empty', async () => {
+      req.body = null;
+
+      await userController.accountLogin(req, res);
+
+      expect(res.status.calledWith(400)).to.be.true;
+      expect(res.json.calledWith({ message: 'Invalid req.body' }));
+    });
+    it('should respond with a 401 if authentication fails', async () => {
+      req.body = testUser;
+      userService.accountLogin.resolves(null);
+
+      await userController.accountLogin(req, res);
+
+      expect(res.status.calledWith(401)).to.be.true;
+      expect(res.json.calledWith({ message: 'Authentication failed' })).to.be
+        .true;
+    });
+    it('should respond with a 500 a error was thrown', async () => {
+      req.body = testUser;
+      userService.accountLogin.throws(testError);
+
+      await userController.accountLogin(req, res);
 
       expect(res.status.calledWith(500)).to.be.true;
       expect(res.json.calledWith({ message: 'test error' })).to.be.true;

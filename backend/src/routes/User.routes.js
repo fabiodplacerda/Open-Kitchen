@@ -20,6 +20,7 @@ export default class UserRoutes {
       UserValidator.accountCreationValidate(),
       this.#controller.createAccount
     );
+    this.#router.post('/login', this.#controller.accountLogin);
   };
 
   getRouter = () => this.#router;
