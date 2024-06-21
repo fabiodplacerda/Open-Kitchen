@@ -51,6 +51,7 @@ export default class UserValidator {
           .isArray()
           .custom(arr => arr.every(id => expressValidator.isMongoId(id)))
           .isMongoId(),
+        UserValidator.handleValidationErrors,
       ];
     } catch (e) {
       console.log(e);

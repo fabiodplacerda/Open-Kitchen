@@ -4,9 +4,11 @@ import bcrypt from 'bcrypt';
 export default class UserServices {
   createAccount = async newUser => {
     try {
-      const hashedPassword = await bcrypt.hash(newUser.password, 10);
-      newUser.password = hashedPassword;
-      const user = new User(newUser);
+      const userData = {
+        ...newUser,
+        password: await bcrypt.hash(newUser.password, 10),
+      };
+      const user = new User(userData);
       return await user.save();
     } catch (e) {
       throw new Error(`Failed to create a new user: ${e.message}`);

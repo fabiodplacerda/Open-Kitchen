@@ -29,14 +29,19 @@ describe('UserController test', () => {
     };
     it('should add a new user ', async () => {
       userService.createAccount.resolves(testNewUser);
-
+      const userData = {
+        id: testNewUser._id,
+        username: testNewUser.username,
+        email: testNewUser.email,
+        role: testNewUser.role,
+      };
       await userController.createAccount(req, res);
 
       expect(res.status.calledWith(201)).to.be.true;
       expect(
         res.json.calledWith({
           message: 'User created successfully',
-          newUser: testNewUser,
+          newUser: userData,
         })
       ).to.be.true;
     });
