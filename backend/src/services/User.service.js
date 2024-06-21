@@ -65,4 +65,12 @@ export default class UserServices {
       throw new Error(`Failed to update the user: ${e.message}`);
     }
   };
+  deleteAccount = async userId => {
+    try {
+      const deleteUser = await User.findByIdAndDelete(userId);
+      return deleteUser;
+    } catch (e) {
+      throw new Error(`Failed to delete the user: ${e.message}`);
+    }
+  };
 }

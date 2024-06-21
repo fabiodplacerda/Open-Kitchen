@@ -90,4 +90,20 @@ export default class UserController {
       return res.status(500).json({ message: e.message });
     }
   };
+
+  deleteAccount = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const deletedUser = await this.#service.deleteAccount(id);
+
+      if (!deletedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      return res.status(204).send();
+    } catch (e) {
+      return res.status(500).json({ message: e.message });
+    }
+  };
 }

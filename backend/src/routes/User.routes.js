@@ -28,6 +28,11 @@ export default class UserRoutes {
       UserValidator.accountCreationValidate(),
       this.#controller.updateAccount
     );
+    this.#router.delete(
+      '/:id',
+      AuthValidation.checkToken,
+      this.#controller.deleteAccount
+    );
   };
 
   getRouter = () => this.#router;

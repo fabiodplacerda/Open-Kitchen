@@ -35,6 +35,7 @@ describe('UserService', () => {
       const result = await userServices.createAccount(testNewUser);
       // Assert
       expect(result).to.equal(testNewUser);
+      expect(saveStub.calledOnce).to.be.true;
       // Restore
       saveStub.restore();
     });
@@ -68,7 +69,7 @@ describe('UserService', () => {
     };
     const testToken = 'testToken';
 
-    it('should call findOne', async () => {
+    it('should call findOne and return a user', async () => {
       const { password, ...testUserWithoutPassword } = testUser;
       const findOneStub = sinon.stub(User, 'findOne');
       findOneStub.resolves(testUser);
@@ -82,6 +83,7 @@ describe('UserService', () => {
         user: testUserWithoutPassword,
         token: testToken,
       });
+      expect(findOneStub.calledOnce).to.be.true;
       findOneStub.restore();
     });
 
@@ -115,7 +117,7 @@ describe('UserService', () => {
       recipes: [],
     };
 
-    it('should call findOneAndUpdate', async () => {
+    it('should call findOneAndUpdate and return the update user', async () => {
       const findOneAndUpdateStub = sinon.stub(User, 'findOneAndUpdate');
       findOneAndUpdateStub.resolves(updateUser);
 
@@ -125,6 +127,7 @@ describe('UserService', () => {
       });
 
       expect(result).to.deep.equal(updateUser);
+      expect(findOneAndUpdateStub.calledOnce).to.be.true;
       findOneAndUpdateStub.restore();
     });
 
@@ -145,6 +148,45 @@ describe('UserService', () => {
           `Failed to update the user: ${error.message}`
         );
       }
+    });
+  });
+  describe('deleteAccount Tests', () => {
+    const deletedUser = {
+      _id: '667441c68299324f52841987',
+      email: 'user3@example.com',
+      username: 'user3',
+      password: 'Password3',
+      role: 'user',
+      savedRecipes: [],
+      recipes: [],
+      __v: 0,
+    };
+    it('should call findByIdAndDelete and return the deleted user', async () => {
+      const findByIdAndDelete = sinon.stub(User, 'findByIdAndDelete');
+      findByIdAndDelete.resolves(deletedUser);
+
+      const result = await userServices.deleteAccount(deletedUser._id);
+
+      expect(result).to.deep.equal(deletedUser);
+      expect(findByIdAndDelete.calledOnce).to.be.true;
+
+      findByIdAndDelete.restore();
+    });
+    it('should throw an error if a error occurs', async () => {
+      const error = new Error('test error');
+      const findByIdAndDelete = sinon.stub(User, 'findByIdAndDelete');
+      findByIdAndDelete.throws(error);
+
+      try {
+        await userServices.deleteAccount(deletedUser._id);
+        assert.fail('Expect error was not thrown');
+      } catch (e) {
+        expect(e.message).to.equal(
+          `Failed to delete the user: ${error.message}`
+        );
+      }
+
+      findByIdAndDelete.restore();
     });
   });
 });

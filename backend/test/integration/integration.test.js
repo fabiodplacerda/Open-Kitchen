@@ -113,6 +113,7 @@ describe('Integration Tests', () => {
 
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });
+        stub.restore();
       });
     });
     describe('POST request to /user/login', () => {
@@ -161,7 +162,7 @@ describe('Integration Tests', () => {
 
         expect(response.status).to.equal(401);
       });
-      it('should respond with a 500 status if a error occurs when creating an account', async () => {
+      it('should respond with a 500 status if a error occurs when login in to an account', async () => {
         const error = new Error('test error');
         const stub = sinon.stub(userService, 'accountLogin');
         stub.throws(error);
@@ -170,6 +171,8 @@ describe('Integration Tests', () => {
 
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });
+
+        stub.restore();
       });
     });
     describe('PUT request to /user/:id', () => {
@@ -241,7 +244,7 @@ describe('Integration Tests', () => {
           message: 'Failed to authenticate token',
         });
       });
-      it('should respond with a 500 status if a error occurs when creating an account', async () => {
+      it('should respond with a 500 status if a error occurs when updating an account', async () => {
         const error = new Error('test error');
         const stub = sinon.stub(userService, 'updateAccount');
         stub.throws(error);
@@ -253,6 +256,63 @@ describe('Integration Tests', () => {
 
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });
+
+        stub.restore();
+      });
+    });
+    describe('DELETE request to /user/:id', () => {
+      const userToDelete = users[4];
+
+      const token = jwt.sign(
+        { id: userToDelete._id, username: userToDelete.username },
+        'openkitchen-secret-key-test',
+        { expiresIn: '24h' }
+      );
+
+      it('should respond with a 204 if was delete successfully', async () => {
+        const response = await request
+          .delete(`/user/${userToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).to.equal(204);
+      });
+      it('should respond with a 404 if user not found', async () => {
+        const response = await request
+          .delete(`/user/667441c68299324f52841920`)
+          .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).to.equal(404);
+        expect(response.body).to.deep.equal({ message: 'User not found' });
+      });
+      it('should respond with a 403 if token was not provided', async () => {
+        const response = await request.delete(`/user/${userToDelete._id}`);
+
+        expect(response.status).to.equal(403);
+        expect(response.body).to.deep.equal({ message: 'No token provided' });
+      });
+      it('should respond with a 401 if auth fails', async () => {
+        const response = await request
+          .delete(`/user/${userToDelete._id}`)
+          .set('Authorization', `Bearer invalidToken`);
+
+        expect(response.status).to.equal(401);
+        expect(response.body).to.deep.equal({
+          message: 'Failed to authenticate token',
+        });
+      });
+      it('should respond with a 500 status if a error occurs when deleting an account', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(userService, 'deleteAccount');
+        stub.throws(error);
+
+        const response = await request
+          .delete(`/user/${userToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+
+        stub.restore();
       });
     });
   });

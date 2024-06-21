@@ -10,6 +10,7 @@ describe('UserController', () => {
       createAccount: sinon.stub(),
       accountLogin: sinon.stub(),
       updateAccount: sinon.stub(),
+      deleteAccount: sinon.stub(),
     };
     userController = new UserController(userService);
     req = {
@@ -174,6 +175,39 @@ describe('UserController', () => {
       userService.updateAccount.throws(testError);
 
       await userController.updateAccount(req, res);
+
+      expect(res.status.calledWith(500)).to.be.true;
+      expect(res.json.calledWith({ message: 'test error' })).to.be.true;
+    });
+  });
+  describe('deleteAccount Tests', () => {
+    const accountToDelete = {
+      _id: '1',
+      email: 'test@test.com',
+      username: 'testUserName',
+      password: 'testPassword',
+    };
+    it('should delete a account', async () => {
+      userService.deleteAccount.resolves(accountToDelete);
+
+      await userController.deleteAccount(req, res);
+
+      expect(res.status.calledWith(204)).to.be.true;
+    });
+    it('should respond with a 404 if no id was provided', async () => {
+      req.params.id = '1';
+
+      userService.deleteAccount.resolves(null);
+      await userController.deleteAccount(req, res);
+
+      expect(res.status.calledWith(404)).to.be.true;
+      expect(res.json.calledWith({ message: 'User not found' })).to.be.true;
+    });
+    it('should respond with a 500 a error was thrown by the service', async () => {
+      req.params.id = '1';
+
+      userService.deleteAccount.throws(testError);
+      await userController.deleteAccount(req, res);
 
       expect(res.status.calledWith(500)).to.be.true;
       expect(res.json.calledWith({ message: 'test error' })).to.be.true;
