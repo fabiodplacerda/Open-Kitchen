@@ -106,4 +106,13 @@ export default class UserController {
       return res.status(500).json({ message: e.message });
     }
   };
+
+  getAllAccounts = async (req, res) => {
+    try {
+      const users = await this.#service.getAllAccounts();
+      res.status(200).json(users);
+    } catch (e) {
+      res.status(500).json({ message: e.message });
+    }
+  };
 }

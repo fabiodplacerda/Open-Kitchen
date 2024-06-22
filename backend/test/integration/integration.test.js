@@ -225,21 +225,21 @@ describe('Integration Tests', () => {
         expect(response.body).to.deep.equal({ message: 'User not found' });
       });
 
-      it('should respond with a 403 if token was not provided', async () => {
+      it('should respond with a 401 if token was not provided', async () => {
         const response = await await request
           .put(`/user/${testUser._id}`)
           .send(updates);
 
-        expect(response.status).to.equal(403);
+        expect(response.status).to.equal(401);
         expect(response.body).to.deep.equal({ message: 'No token provided' });
       });
-      it('should respond with a 401 if auth fails', async () => {
+      it('should respond with a 403 if auth fails', async () => {
         const response = await await request
           .put(`/user/667441c68289324f52241985`)
           .set('Authorization', `Bearer invalidToken`)
           .send(updates);
 
-        expect(response.status).to.equal(401);
+        expect(response.status).to.equal(403);
         expect(response.body).to.deep.equal({
           message: 'Failed to authenticate token',
         });
@@ -266,7 +266,7 @@ describe('Integration Tests', () => {
       const token = jwt.sign(
         { id: userToDelete._id, username: userToDelete.username },
         'openkitchen-secret-key-test',
-        { expiresIn: '24h' }
+        { expiresIn: '1h' }
       );
 
       it('should respond with a 204 if was delete successfully', async () => {
@@ -284,18 +284,18 @@ describe('Integration Tests', () => {
         expect(response.status).to.equal(404);
         expect(response.body).to.deep.equal({ message: 'User not found' });
       });
-      it('should respond with a 403 if token was not provided', async () => {
+      it('should respond with a 401 if token was not provided', async () => {
         const response = await request.delete(`/user/${userToDelete._id}`);
 
-        expect(response.status).to.equal(403);
+        expect(response.status).to.equal(401);
         expect(response.body).to.deep.equal({ message: 'No token provided' });
       });
-      it('should respond with a 401 if auth fails', async () => {
+      it('should respond with a 403 if auth fails', async () => {
         const response = await request
           .delete(`/user/${userToDelete._id}`)
           .set('Authorization', `Bearer invalidToken`);
 
-        expect(response.status).to.equal(401);
+        expect(response.status).to.equal(403);
         expect(response.body).to.deep.equal({
           message: 'Failed to authenticate token',
         });
@@ -313,6 +313,83 @@ describe('Integration Tests', () => {
         expect(response.body).to.deep.equal({ message: error.message });
 
         stub.restore();
+      });
+    });
+    describe('GET request to /user/getAllAccounts', () => {
+      const baseUser = users[0];
+      const admin = users[1];
+
+      const token = jwt.sign(
+        { id: admin._id, username: admin.username },
+        'openkitchen-secret-key-test',
+        { expiresIn: '1h' }
+      );
+      const userToken = jwt.sign(
+        { id: baseUser._id, username: baseUser.username },
+        'openkitchen-secret-key-test',
+        { expiresIn: '1h' }
+      );
+
+      it('should respond with a 200 if request was successful', async () => {
+        const response = await request
+          .get(`/user/getAllAccounts`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(admin);
+
+        expect(response.status).to.equal(200);
+      });
+      it('should respond with an array of users', async () => {
+        const usersWithoutPassword = users.map(user => {
+          const { password, ...userWithoutPassword } = user;
+          return userWithoutPassword;
+        });
+
+        const response = await request
+          .get(`/user/getAllAccounts`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(admin);
+
+        expect(response.body).to.deep.equal(usersWithoutPassword);
+      });
+      it('should respond with a 401 status code when no token was provided', async () => {
+        const response = await request
+          .get(`/user/getAllAccounts`)
+
+          .send(admin);
+
+        expect(response.status).to.equal(401);
+      });
+      it('should respond with a 403 status if authentication fails', async () => {
+        const response = await request
+          .get(`/user/getAllAccounts`)
+          .set('Authorization', `Bearer invalid`)
+          .send(admin);
+
+        expect(response.status).to.equal(403);
+      });
+      it('should respond with a 403 status if user is not admin', async () => {
+        const response = await request
+          .get(`/user/getAllAccounts`)
+          .set('Authorization', `Bearer ${userToken}`)
+          .send(baseUser);
+
+        expect(response.status).to.equal(403);
+        expect(response.body).to.deep.equal({
+          message: 'Access Denied. Must have admin permissions',
+        });
+      });
+      it('should respond with a 500 status if a error was thrown in the service', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(userService, 'getAllAccounts');
+        stub.throws(error);
+
+        const response = await request
+          .get(`/user/getAllAccounts`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(admin);
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
       });
     });
   });

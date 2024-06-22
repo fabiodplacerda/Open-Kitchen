@@ -189,4 +189,49 @@ describe('UserService', () => {
       findByIdAndDelete.restore();
     });
   });
+  describe('getAllAccounts Tests', () => {
+    it('should call find and return all users', async () => {
+      const users = [
+        {
+          _id: '1',
+          username: 'user1',
+          email: 'user1@gmail.com',
+          password: 'password1',
+        },
+        {
+          _id: '2',
+          username: 'user2',
+          email: 'user2@gmail.com',
+          password: 'password2',
+        },
+      ];
+
+      const usersWithoutPassword = users.map(user => {
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+      });
+
+      const leanStub = sinon.stub().returns(usersWithoutPassword);
+      const findStub = sinon.stub(User, 'find').returns({ lean: leanStub });
+      findStub.resolves(users);
+
+      const result = await userServices.getAllAccounts();
+
+      expect(findStub.calledOnce).to.be.true;
+      expect(result).to.deep.equal(usersWithoutPassword);
+      findStub.restore();
+    });
+    it('should throw an error if a error occurs in the service', async () => {
+      const error = new Error('test error');
+      const findStub = sinon.stub(User, 'find');
+      findStub.throws(error);
+
+      try {
+        await userServices.getAllAccounts();
+        assert.fail('Expect error was not thrown');
+      } catch (e) {
+        expect(e.message).to.equal(`Failed to get all users: ${error.message}`);
+      }
+    });
+  });
 });

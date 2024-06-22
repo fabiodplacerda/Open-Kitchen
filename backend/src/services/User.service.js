@@ -73,4 +73,20 @@ export default class UserServices {
       throw new Error(`Failed to delete the user: ${e.message}`);
     }
   };
+
+  getAllAccounts = async () => {
+    try {
+      const users = await User.find();
+
+      const usersWithoutPassword = users.map(user => {
+        const userData = user._doc ? user._doc : user;
+        const { password, ...userWithoutPassword } = userData;
+        return userWithoutPassword;
+      });
+
+      return usersWithoutPassword;
+    } catch (e) {
+      throw new Error(`Failed to get all users: ${e.message}`);
+    }
+  };
 }

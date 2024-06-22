@@ -1,6 +1,9 @@
 import { expect } from 'chai';
 import UserController from '../../src/controller/User.controller.js';
 import sinon from 'sinon';
+import usersData from '../data/userData.js';
+
+const { users } = usersData;
 
 describe('UserController', () => {
   let userController, userService, req, res, testError;
@@ -11,6 +14,7 @@ describe('UserController', () => {
       accountLogin: sinon.stub(),
       updateAccount: sinon.stub(),
       deleteAccount: sinon.stub(),
+      getAllAccounts: sinon.stub(),
     };
     userController = new UserController(userService);
     req = {
@@ -208,6 +212,33 @@ describe('UserController', () => {
 
       userService.deleteAccount.throws(testError);
       await userController.deleteAccount(req, res);
+
+      expect(res.status.calledWith(500)).to.be.true;
+      expect(res.json.calledWith({ message: 'test error' })).to.be.true;
+    });
+  });
+  describe('getAllAccounts Tests', () => {
+    const usersWithoutPassword = users.map(user => {
+      const { password, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    });
+    it('should get all the users and return them', async () => {
+      userService.getAllAccounts.resolves(usersWithoutPassword);
+      await userController.getAllAccounts(req, res);
+
+      expect(res.status.calledWith(200)).to.be.true;
+      expect(res.json.calledWith(usersWithoutPassword)).to.be.true;
+    });
+    it('should get all the users and return them if there are no users', async () => {
+      userService.getAllAccounts.resolves([]);
+      await userController.getAllAccounts(req, res);
+
+      expect(res.status.calledWith(200)).to.be.true;
+      expect(res.json.calledWith([])).to.be.true;
+    });
+    it('should respond with a 500 if a error was thrown in the service', async () => {
+      userService.getAllAccounts.throws(testError);
+      await userController.getAllAccounts(req, res);
 
       expect(res.status.calledWith(500)).to.be.true;
       expect(res.json.calledWith({ message: 'test error' })).to.be.true;

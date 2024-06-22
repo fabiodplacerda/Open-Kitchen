@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import UserController from '../controller/User.controller.js';
 import UserValidator from '../middleware/User.validation.js';
-import AuthValidation from '../middleware/Auth.validation.js';
+import AuthenticationValidation from '../middleware/Authentication.validation.js';
+import AuthorizationValidation from '../middleware/Authorization.validation.js';
 
 export default class UserRoutes {
   #controller;
@@ -24,14 +25,20 @@ export default class UserRoutes {
     this.#router.post('/login', this.#controller.accountLogin);
     this.#router.put(
       '/:id',
-      AuthValidation.checkToken,
+      AuthenticationValidation.checkToken,
       UserValidator.accountCreationValidate(),
       this.#controller.updateAccount
     );
     this.#router.delete(
       '/:id',
-      AuthValidation.checkToken,
+      AuthenticationValidation.checkToken,
       this.#controller.deleteAccount
+    );
+    this.#router.get(
+      '/getAllAccounts',
+      AuthenticationValidation.checkToken,
+      AuthorizationValidation.authorizeAdmin,
+      this.#controller.getAllAccounts
     );
   };
 
