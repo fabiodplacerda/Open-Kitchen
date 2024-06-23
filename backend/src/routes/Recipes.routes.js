@@ -25,6 +25,7 @@ export default class RecipeRoutes {
       RecipeValidator.recipeCreationValidate(),
       this.#controller.createRecipe
     );
+    this.#router.get('/getAllRecipes', this.#controller.getAllRecipes);
   };
 
   getRouter = () => this.#router;

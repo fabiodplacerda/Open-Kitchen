@@ -492,5 +492,27 @@ describe('Integration Tests', () => {
         stub.restore();
       });
     });
+    describe('Get request to /recipe/getAllRecipes', () => {
+      it('should respond with a 200 status code when request is successful', async () => {
+        const response = await request.get('/recipe/getAllRecipes');
+
+        expect(response.status).to.equal(200);
+      });
+      it('should respond with an array of recipes', async () => {
+        const response = await request.get('/recipe/getAllRecipes');
+
+        expect(response.body.recipes).to.deep.equal(recipes);
+      });
+      it('should respond with a 500 status if a error occurs when creating getting all the recipes', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(recipeService, 'getAllRecipes');
+        stub.throws(error);
+        const response = await request.get('/recipe/getAllRecipes');
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+        stub.restore();
+      });
+    });
   });
 });

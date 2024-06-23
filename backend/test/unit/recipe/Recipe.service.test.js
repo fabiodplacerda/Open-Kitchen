@@ -4,7 +4,7 @@ import Recipe from '../../../src/models/recipe.model.js';
 import RecipeService from '../../../src/services/Recipe.service.js';
 import recipesData from '../../data/recipesData.js';
 
-const { newRecipe } = recipesData;
+const { recipes, newRecipe } = recipesData;
 
 describe('RecipeService Tests', () => {
   let recipeService;
@@ -43,6 +43,40 @@ describe('RecipeService Tests', () => {
       }
       // Restore
       saveStub.restore();
+    });
+  });
+  describe('getAllRecipes Tests', () => {
+    let findStub;
+
+    beforeEach(() => {
+      findStub = sinon.stub(Recipe, 'find');
+    });
+
+    afterEach(() => {
+      findStub.restore();
+    });
+    it('should call find and return all recipes', async () => {
+      // Arrange
+      findStub.returns(recipes);
+      // Act
+      const result = await recipeService.getAllRecipes(recipes);
+      // Assert
+      expect(result).to.equal(recipes);
+      expect(findStub.calledOnce).to.be.true;
+    });
+    it('should error throw if a error occurs', async () => {
+      // Arrange
+      const error = new Error('test error');
+      findStub.throws(error);
+      // Act && Assert
+      try {
+        await recipeService.getAllRecipes(recipes);
+        assert.fail('Expect error was not thrown');
+      } catch (e) {
+        expect(e.message).to.equal(
+          `Failed to retrieve all recipes: ${error.message}`
+        );
+      }
     });
   });
 });

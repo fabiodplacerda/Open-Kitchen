@@ -9,4 +9,13 @@ export default class RecipeService {
       throw new Error(`Failed to create a new recipe: ${e.message}`);
     }
   };
+
+  getAllRecipes = async () => {
+    try {
+      const recipes = await Recipe.find();
+      return recipes;
+    } catch (e) {
+      throw new Error(`Failed to retrieve all recipes: ${e.message}`);
+    }
+  };
 }

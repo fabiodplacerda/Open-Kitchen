@@ -11,6 +11,7 @@ describe('RecipeController', () => {
   beforeEach(() => {
     recipeService = {
       createRecipe: sinon.stub(),
+      getAllRecipes: sinon.stub(),
     };
     recipeController = new RecipeController(recipeService);
     req = {
@@ -57,6 +58,29 @@ describe('RecipeController', () => {
       const testError = new Error('test error');
       recipeService.createRecipe.throws(testError);
       await recipeController.createRecipe(req, res);
+
+      expect(res.status.calledWith(500)).to.be.true;
+      expect(res.json.calledWith({ message: 'test error' })).to.be.true;
+    });
+  });
+  describe('getAllRecipes Tests', () => {
+    it('should get all recipes and return', async () => {
+      recipeService.getAllRecipes.resolves(recipes);
+      await recipeController.getAllRecipes(req, res);
+
+      expect(res.status.calledWith(200)).to.be.true;
+      expect(
+        res.json.calledWith({
+          message: 'Request was successful',
+          recipes,
+        })
+      ).to.be.true;
+    });
+
+    it('should send a 500 a error occurs', async () => {
+      const testError = new Error('test error');
+      recipeService.getAllRecipes.throws(testError);
+      await recipeController.getAllRecipes(req, res);
 
       expect(res.status.calledWith(500)).to.be.true;
       expect(res.json.calledWith({ message: 'test error' })).to.be.true;
