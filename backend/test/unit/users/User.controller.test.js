@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import UserController from '../../src/controller/User.controller.js';
+import UserController from '../../../src/controller/User.controller.js';
 import sinon from 'sinon';
-import usersData from '../data/userData.js';
+import usersData from '../../data/userData.js';
 
 const { users } = usersData;
 

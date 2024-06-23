@@ -1,10 +1,10 @@
-import User from '../../src/models/user.model.js';
-import UserServices from '../../src/services/User.service.js';
+import User from '../../../src/models/user.model.js';
+import UserServices from '../../../src/services/User.service.js';
 import sinon, { assert } from 'sinon';
 import { expect } from 'chai';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import usersData from '../data/userData.js';
+import usersData from '../../data/userData.js';
 
 const { expectedResults, users } = usersData;
 
