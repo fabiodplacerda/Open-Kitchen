@@ -11,9 +11,11 @@ import Database from '../../src/database/Database.js';
 
 // Test Data
 import usersData from '../data/userData.js';
+import recipesData from '../data/recipesData.js';
 
 // Models
 import User from '../../src/models/user.model.js';
+import Recipe from '../../src/models/recipe.model.js';
 
 // Services
 import UserServices from '../../src/services/User.service.js';
@@ -27,7 +29,8 @@ import UserRoutes from '../../src/routes/User.routes.js';
 describe('Integration Tests', () => {
   let server, database, userService, request, secret;
 
-  const { users, newUser } = usersData;
+  const { users, newUser, expectedResults } = usersData;
+  const { recipes } = recipesData;
 
   before(async () => {
     Config.loadConfig();
@@ -53,6 +56,7 @@ describe('Integration Tests', () => {
 
   beforeEach(async () => {
     try {
+      await Recipe.deleteMany();
       await User.deleteMany();
       const hashedPassword = await bcrypt.hash('Password1', 10);
       const modifiedUsers = users.map(user => ({
@@ -60,6 +64,7 @@ describe('Integration Tests', () => {
         password: hashedPassword,
       }));
       await User.insertMany(modifiedUsers);
+      await Recipe.insertMany(recipes);
     } catch (e) {
       console.log(e);
       throw new Error();
@@ -140,7 +145,7 @@ describe('Integration Tests', () => {
 
         expect(response.body).to.deep.equal({
           message: 'Authentication successful',
-          user: testUserWithoutPassword,
+          user: expectedResults,
           token: testToken,
         });
       });

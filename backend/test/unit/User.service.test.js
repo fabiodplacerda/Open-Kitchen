@@ -4,6 +4,9 @@ import sinon, { assert } from 'sinon';
 import { expect } from 'chai';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import usersData from '../data/userData.js';
+
+const { expectedResults, users } = usersData;
 
 describe('UserService', () => {
   let userServices;
@@ -59,28 +62,22 @@ describe('UserService', () => {
     });
   });
   describe('accountLogin Tests', () => {
-    const testUser = {
-      _id: '1',
-      email: 'test@test.com',
-      username: 'testUserName',
-      password: 'testPassword',
-      savedRecipes: [],
-      recipes: [],
-    };
-    const testToken = 'testToken';
-
     it('should call findOne and return a user', async () => {
-      const { password, ...testUserWithoutPassword } = testUser;
-      const findOneStub = sinon.stub(User, 'findOne');
-      findOneStub.resolves(testUser);
+      const testToken = 'testToken';
+
+      const findOneStub = sinon.stub(User, 'findOne').returns({
+        populate: sinon.stub().returns({
+          populate: sinon.stub().resolves(expectedResults),
+        }),
+      });
 
       const result = await userServices.accountLogin(
-        testUser.username,
-        testUser.password
+        users[0].username,
+        users[0].password
       );
 
       expect(result).to.deep.equal({
-        user: testUserWithoutPassword,
+        user: expectedResults,
         token: testToken,
       });
       expect(findOneStub.calledOnce).to.be.true;
@@ -93,7 +90,7 @@ describe('UserService', () => {
       findOneStub.throws(error);
 
       try {
-        await userServices.accountLogin(testUser.username, testUser.password);
+        await userServices.accountLogin(users[0].username, users[0].password);
         assert.fail('Expect error was not thrown');
       } catch (e) {
         expect(e.message).to.equal(`Login failed: ${error.message}`);

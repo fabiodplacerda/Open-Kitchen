@@ -18,7 +18,9 @@ export default class UserServices {
   accountLogin = async (username, password) => {
     try {
       // Find user in the database
-      const foundUser = await User.findOne({ username: username });
+      const foundUser = await User.findOne({ username: username })
+        .populate('recipes')
+        .populate('savedRecipes');
       if (!foundUser) return null;
 
       // Match password using bcrypt
