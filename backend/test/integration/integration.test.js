@@ -19,28 +19,35 @@ import Recipe from '../../src/models/recipe.model.js';
 
 // Services
 import UserServices from '../../src/services/User.service.js';
+import RecipeService from '../../src/services/Recipe.service.js';
 
 // Controller
 import UserController from '../../src/controller/User.controller.js';
+import RecipeController from '../../src/controller/Recipe.controller.js';
 
 // Routes
 import UserRoutes from '../../src/routes/User.routes.js';
+import RecipeRoutes from '../../src/routes/Recipes.routes.js';
 
 describe('Integration Tests', () => {
-  let server, database, userService, request, secret;
+  let server, database, userService, recipeService, request;
 
   const { users, newUser, expectedResults } = usersData;
-  const { recipes } = recipesData;
+  const { recipes, newRecipe } = recipesData;
 
   before(async () => {
     Config.loadConfig();
-    const { PORT, HOST, DB_URI, SECRET } = process.env;
-    secret = SECRET;
+    const { PORT, HOST, DB_URI } = process.env;
+
     userService = new UserServices();
     const userController = new UserController(userService);
     const userRoutes = new UserRoutes(userController);
 
-    server = new Server(PORT, HOST, [userRoutes]);
+    recipeService = new RecipeService();
+    const recipeController = new RecipeController(recipeService);
+    const recipeRoutes = new RecipeRoutes(recipeController);
+
+    server = new Server(PORT, HOST, [userRoutes, recipeRoutes]);
     database = new Database(DB_URI);
 
     await database.connect();
@@ -395,6 +402,94 @@ describe('Integration Tests', () => {
 
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });
+      });
+    });
+  });
+  describe('Recipe Tests', () => {
+    describe('POST request to /recipe/createRecipe', () => {
+      const user = users[3];
+
+      const token = jwt.sign(
+        { id: user._id, username: user.username },
+        'openkitchen-secret-key-test',
+        { expiresIn: '1h' }
+      );
+      it('should respond with a 201 status code when request is successful', async () => {
+        const response = await request
+          .post('/recipe/createRecipe')
+          .set('Authorization', `Bearer ${token}`)
+          .send(newRecipe);
+
+        expect(response.status).to.equal(201);
+      });
+      it('should add the recipe to the database', async () => {
+        await request
+          .post('/recipe/createRecipe')
+          .set('Authorization', `Bearer ${token}`)
+          .send(newRecipe);
+
+        const allRecipes = await Recipe.find();
+        const recipesToObject = allRecipes.map(recipe => {
+          return {
+            _id: recipe._id.toString(),
+            author: recipe.author.toString(),
+            name: recipe.name,
+            imgUrl: recipe.imgUrl,
+            description: recipe.description,
+            reviews: recipe.reviews.map(id => id.toString()),
+            __v: recipe.__v,
+          };
+        });
+
+        expect(recipesToObject).to.deep.equal([...recipes, newRecipe]);
+      });
+
+      it('should send the new recipe back in the body response', async () => {
+        const response = await request
+          .post('/recipe/createRecipe')
+          .set('Authorization', `Bearer ${token}`)
+          .send(newRecipe);
+
+        expect(response.body.newRecipe).to.deep.equal({ ...newRecipe, __v: 0 });
+      });
+
+      it('should respond with a 400 status code if when adding a new user one of the required fields is missing', async () => {
+        const invalidRecipe = { ...newRecipe, name: null };
+        const response = await request
+          .post('/recipe/createRecipe')
+          .set('Authorization', `Bearer ${token}`)
+          .send(invalidRecipe);
+
+        expect(response.status).to.equal(400);
+      });
+      it('should respond with a 401 status code  if no token was provided', async () => {
+        const response = await request
+          .post('/recipe/createRecipe')
+          .send(newRecipe);
+
+        expect(response.status).to.equal(401);
+      });
+      it('should respond with a 403 status code  if the token was provide but is invalid', async () => {
+        const response = await request
+          .post('/recipe/createRecipe')
+          .set('Authorization', `Bearer ${null}`)
+          .send(newRecipe);
+
+        expect(response.status).to.equal(403);
+      });
+      it('should respond with a 500 status if a error occurs when creating a new recipe', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(recipeService, 'createRecipe');
+        stub.throws(error);
+
+        const response = await request
+          .post('/recipe/createRecipe')
+          .set('Authorization', `Bearer ${token}`)
+          .send(newRecipe);
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+        stub.restore();
       });
     });
   });
