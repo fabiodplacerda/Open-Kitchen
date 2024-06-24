@@ -14,6 +14,7 @@ describe('RecipeController', () => {
       getAllRecipes: sinon.stub(),
       getSingleRecipe: sinon.stub(),
       updateRecipe: sinon.stub(),
+      deleteRecipe: sinon.stub(),
     };
     recipeController = new RecipeController(recipeService);
     req = {
@@ -158,6 +159,44 @@ describe('RecipeController', () => {
       const testError = new Error('test error');
       recipeService.updateRecipe.throws(testError);
       await recipeController.updateRecipe(req, res);
+
+      expect(res.status.calledWith(500)).to.be.true;
+      expect(res.json.calledWith({ message: 'test error' })).to.be.true;
+    });
+  });
+  describe('deleteRecipe Tests', () => {
+    let recipeToDelete;
+
+    beforeEach(() => {
+      recipeToDelete = recipes[2];
+    });
+
+    it('should delete a recipe and return a 204 status code', async () => {
+      req.params.id = recipeToDelete._id;
+
+      recipeService.deleteRecipe.resolves(recipeToDelete);
+      await recipeController.deleteRecipe(req, res);
+
+      expect(res.status.calledWith(204)).to.be.true;
+    });
+    it('should return a 404 when recipe was not found', async () => {
+      req.params.id = 'invalidId';
+
+      recipeService.deleteRecipe.resolves(null);
+      await recipeController.deleteRecipe(req, res);
+
+      expect(res.status.calledWith(404)).to.be.true;
+      expect(
+        res.json.calledWith({
+          message: 'Recipe not found',
+        })
+      ).to.be.true;
+    });
+
+    it('should send a 500 a error occurs', async () => {
+      const testError = new Error('test error');
+      recipeService.deleteRecipe.throws(testError);
+      await recipeController.deleteRecipe(req, res);
 
       expect(res.status.calledWith(500)).to.be.true;
       expect(res.json.calledWith({ message: 'test error' })).to.be.true;

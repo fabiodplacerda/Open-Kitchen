@@ -75,4 +75,27 @@ export default class RecipeController {
       return res.status(500).json({ message: e.message });
     }
   };
+
+  deleteRecipe = async (req, res) => {
+    const { id } = req.params;
+    const { body } = req;
+
+    try {
+      const deletedRecipe = await this.#service.deleteRecipe(
+        id,
+        body.userId,
+        body.role
+      );
+
+      if (!deletedRecipe) {
+        return res.status(404).json({ message: 'Recipe not found' });
+      }
+
+      return res.status(204).send();
+    } catch (e) {
+      if (e.message.includes('User has no permission'))
+        return res.status(403).json({ message: e.message });
+      return res.status(500).json({ message: e.message });
+    }
+  };
 }

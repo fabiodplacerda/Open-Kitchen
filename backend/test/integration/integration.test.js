@@ -553,8 +553,6 @@ describe('Integration Tests', () => {
           'A simple and delicious recipe for fluffy pancakes with bacon that are perfect for breakfast.',
       };
 
-      // console.log(updates);
-
       it('should respond with a 200 status code when recipe was successfully updated', async () => {
         const response = await request
           .put(`/recipe/${recipeToUpdate._id}`)
@@ -640,6 +638,95 @@ describe('Integration Tests', () => {
             userId: user._id,
             updates,
           });
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+        stub.restore();
+      });
+    });
+    describe('DELETE request to /recipe/:id', () => {
+      const user = users[1];
+      const recipeToDelete = recipes[2];
+
+      const token = jwt.sign(
+        { id: user._id, username: user.username },
+        'openkitchen-secret-key-test',
+        { expiresIn: '1h' }
+      );
+      it('should respond with a 204 status code when recipe was successfully updated', async () => {
+        const response = await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(204);
+      });
+
+      it('should not have the deleted recipe in the database', async () => {
+        await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
+
+        const allRecipes = await Recipe.find();
+
+        const deleteRecipe = allRecipes.find(
+          recipe => recipe._id.toString() === recipeToDelete._id
+        );
+
+        expect(deleteRecipe).to.equal(undefined);
+      });
+      it('should respond with a 404 if the recipe was not found', async () => {
+        const response = await request
+          .delete(`/recipe/667441c68299324f52841920`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(404);
+      });
+      it('should respond with a 401 no token was provided', async () => {
+        const response = await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(401);
+      });
+      it('should respond with a 403 if a token was provided but it is invalid', async () => {
+        const response = await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .set('Authorization', `Bearer invalidToken`)
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(403);
+      });
+      it('should respond with a 403 user is not the author and not the admin', async () => {
+        const response = await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: 'notMatchingId', role: 'user' });
+
+        expect(response.status).to.equal(403);
+        expect(response.body).to.deep.equal({
+          message:
+            'Failed to delete the recipe: User has no permission to delete this recipe',
+        });
+      });
+      it('should delete the recipe if user is not the author but it has admin role', async () => {
+        const response = await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: 'notMatchingId', role: 'admin' });
+
+        expect(response.status).to.equal(204);
+      });
+      it('should respond with a 500 status if a error occurs when creating getting all the recipes', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(recipeService, 'deleteRecipe');
+        stub.throws(error);
+        const response = await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
 
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });

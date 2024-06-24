@@ -33,6 +33,11 @@ export default class RecipeRoutes {
       RecipeValidator.updateRecipeValidate(),
       this.#controller.updateRecipe
     );
+    this.#router.delete(
+      '/:id',
+      AuthenticationValidation.checkToken,
+      this.#controller.deleteRecipe
+    );
   };
 
   getRouter = () => this.#router;

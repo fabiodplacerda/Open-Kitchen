@@ -159,4 +159,49 @@ describe('RecipeService Tests', () => {
       }
     });
   });
+  describe('deleteRecipe Tests', () => {
+    let findByIdStub, findByIdAndDeleteStub, recipeToDelete, authorId;
+
+    beforeEach(() => {
+      findByIdStub = sinon.stub(Recipe, 'findOne');
+      findByIdAndDeleteStub = sinon.stub(Recipe, 'findByIdAndDelete');
+      recipeToDelete = recipes[2];
+      authorId = '667441c68299324f52841986';
+    });
+
+    afterEach(() => {
+      findByIdStub.restore();
+      findByIdAndDeleteStub.restore();
+    });
+    it('should call findById and findOneAndUpdate and return a the updated recipe', async () => {
+      // Arrange
+      findByIdStub.returns(recipeToDelete);
+      findByIdAndDeleteStub.returns(recipeToDelete);
+      // Act
+      const result = await recipeService.deleteRecipe(
+        recipeToDelete._id,
+        authorId,
+        'user'
+      );
+      // Assert
+      expect(result).to.equal(recipeToDelete);
+      expect(findByIdStub.calledOnce).to.be.true;
+      expect(findByIdAndDeleteStub.calledOnce).to.be.true;
+    });
+    it('should error throw if a error occurs', async () => {
+      // Arrange
+      const error = new Error('test error');
+      findByIdStub.returns(recipeToDelete);
+      findByIdAndDeleteStub.throws(error);
+      // Act && Assert
+      try {
+        await recipeService.deleteRecipe(recipeToDelete._id, authorId, 'user');
+        assert.fail('Expect error was not thrown');
+      } catch (e) {
+        expect(e.message).to.equal(
+          `Failed to delete the recipe: ${error.message}`
+        );
+      }
+    });
+  });
 });

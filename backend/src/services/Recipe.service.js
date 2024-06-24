@@ -52,4 +52,21 @@ export default class RecipeService {
       throw new Error(`Failed to update the recipe: ${e.message}`);
     }
   };
+
+  deleteRecipe = async (recipeId, userId, role) => {
+    try {
+      const recipe = await Recipe.findById(recipeId);
+
+      if (!recipe) return null;
+
+      if (recipe.author.toString() !== userId && role !== 'admin')
+        throw new Error('User has no permission to delete this recipe');
+
+      const deletedRecipe = await Recipe.findByIdAndDelete(recipeId);
+
+      return deletedRecipe;
+    } catch (e) {
+      throw new Error(`Failed to delete the recipe: ${e.message}`);
+    }
+  };
 }
