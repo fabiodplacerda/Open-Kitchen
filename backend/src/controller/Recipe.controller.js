@@ -53,4 +53,26 @@ export default class RecipeController {
       return res.status(500).json({ message: e.message });
     }
   };
+
+  updateRecipe = async (req, res) => {
+    const { id } = req.params;
+    const { body } = req;
+    try {
+      const updatedRecipe = await this.#service.updateRecipe(
+        id,
+        body.userId,
+        body.updates
+      );
+
+      if (!updatedRecipe) {
+        return res.status(404).json({ message: 'Recipe not found' });
+      }
+
+      return res
+        .status(200)
+        .json({ message: 'Recipe updated successfully', updatedRecipe });
+    } catch (e) {
+      return res.status(500).json({ message: e.message });
+    }
+  };
 }

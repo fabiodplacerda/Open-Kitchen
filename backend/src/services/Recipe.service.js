@@ -28,4 +28,28 @@ export default class RecipeService {
       throw new Error(`Failed to retrieve the recipe: ${e.message}`);
     }
   };
+
+  updateRecipe = async (recipeId, userId, updates) => {
+    try {
+      const recipe = await Recipe.findById(recipeId);
+
+      if (!recipe) return null;
+
+      if (recipe.author.toString() !== userId)
+        throw new Error('User has no permission to edit this recipe');
+
+      const updatedRecipe = await Recipe.findOneAndUpdate(
+        { _id: recipeId },
+        { $set: updates },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      return updatedRecipe;
+    } catch (e) {
+      throw new Error(`Failed to update the recipe: ${e.message}`);
+    }
+  };
 }

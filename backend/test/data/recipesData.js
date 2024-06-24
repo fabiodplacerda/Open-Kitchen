@@ -47,6 +47,16 @@ const recipesData = {
     reviews: [],
     __v: 0,
   },
+  updatedRecipe: {
+    _id: '667441c68299324f52841990',
+    author: '667441c68299324f52841985', // ObjectId of user1
+    name: 'Delicious Pancakes with bacon',
+    imgUrl: 'https://example.com/pancakes.jpg',
+    description:
+      'A simple and delicious recipe for fluffy pancakes with bacon that are perfect for breakfast.',
+    reviews: ['667441c68299324f52841998', '667441c68299324f5284199c'],
+    __v: 0,
+  },
 };
 
 export default recipesData;

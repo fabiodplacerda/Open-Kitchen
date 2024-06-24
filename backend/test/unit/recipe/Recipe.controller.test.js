@@ -3,7 +3,7 @@ import RecipeController from '../../../src/controller/Recipe.controller.js';
 import recipesData from '../../data/recipesData.js';
 
 import sinon from 'sinon';
-const { recipes, newRecipe } = recipesData;
+const { recipes, newRecipe, updatedRecipe } = recipesData;
 
 describe('RecipeController', () => {
   let recipeController, recipeService, req, res, testError;
@@ -13,6 +13,7 @@ describe('RecipeController', () => {
       createRecipe: sinon.stub(),
       getAllRecipes: sinon.stub(),
       getSingleRecipe: sinon.stub(),
+      updateRecipe: sinon.stub(),
     };
     recipeController = new RecipeController(recipeService);
     req = {
@@ -113,6 +114,50 @@ describe('RecipeController', () => {
       const testError = new Error('test error');
       recipeService.getSingleRecipe.throws(testError);
       await recipeController.getSingleRecipe(req, res);
+
+      expect(res.status.calledWith(500)).to.be.true;
+      expect(res.json.calledWith({ message: 'test error' })).to.be.true;
+    });
+  });
+  describe('updateRecipe Tests', () => {
+    let recipeToUpdate;
+
+    beforeEach(() => {
+      recipeToUpdate = recipes[0];
+    });
+
+    it('should update a recipe and return it', async () => {
+      req.params.id = recipeToUpdate._id;
+
+      recipeService.updateRecipe.resolves(updatedRecipe);
+      await recipeController.updateRecipe(req, res);
+
+      expect(res.status.calledWith(200)).to.be.true;
+      expect(
+        res.json.calledWith({
+          message: 'Recipe updated successfully',
+          updatedRecipe,
+        })
+      ).to.be.true;
+    });
+    it('should return a 404 when recipe was not found', async () => {
+      req.params.id = 'invalidId';
+
+      recipeService.updateRecipe.resolves(null);
+      await recipeController.updateRecipe(req, res);
+
+      expect(res.status.calledWith(404)).to.be.true;
+      expect(
+        res.json.calledWith({
+          message: 'Recipe not found',
+        })
+      ).to.be.true;
+    });
+
+    it('should send a 500 a error occurs', async () => {
+      const testError = new Error('test error');
+      recipeService.updateRecipe.throws(testError);
+      await recipeController.updateRecipe(req, res);
 
       expect(res.status.calledWith(500)).to.be.true;
       expect(res.json.calledWith({ message: 'test error' })).to.be.true;
