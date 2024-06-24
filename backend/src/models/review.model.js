@@ -2,8 +2,9 @@ import { model, Schema } from 'mongoose';
 
 const reviewSchema = new Schema({
   author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  comment: { type: String, required: true },
+  body: { type: String, required: true },
   rating: { type: Number, required: true },
+  recipeId: { type: Schema.Types.ObjectId, ref: 'Recipe', required: true },
 });
 
 const Review = model('Review', reviewSchema);

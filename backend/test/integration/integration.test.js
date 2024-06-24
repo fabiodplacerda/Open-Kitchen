@@ -12,28 +12,34 @@ import Database from '../../src/database/Database.js';
 // Test Data
 import usersData from '../data/userData.js';
 import recipesData from '../data/recipesData.js';
+import reviewsData from '../data/reviewsData.js';
 
 // Models
 import User from '../../src/models/user.model.js';
 import Recipe from '../../src/models/recipe.model.js';
+import Review from '../../src/models/review.model.js';
 
 // Services
 import UserServices from '../../src/services/User.service.js';
 import RecipeService from '../../src/services/Recipe.service.js';
+import ReviewService from '../../src/services/Review.service.js';
 
 // Controller
 import UserController from '../../src/controller/User.controller.js';
 import RecipeController from '../../src/controller/Recipe.controller.js';
+import ReviewController from '../../src/controller/Review.controller.js';
 
 // Routes
 import UserRoutes from '../../src/routes/User.routes.js';
 import RecipeRoutes from '../../src/routes/Recipes.routes.js';
+import ReviewRoutes from '../../src/routes/Review.routes.js';
 
 describe('Integration Tests', () => {
-  let server, database, userService, recipeService, request;
+  let server, database, userService, recipeService, reviewService, request;
 
   const { users, newUser, expectedResults } = usersData;
   const { recipes, newRecipe, updatedRecipe } = recipesData;
+  const { reviews, newReview } = reviewsData;
 
   before(async () => {
     Config.loadConfig();
@@ -47,7 +53,11 @@ describe('Integration Tests', () => {
     const recipeController = new RecipeController(recipeService);
     const recipeRoutes = new RecipeRoutes(recipeController);
 
-    server = new Server(PORT, HOST, [userRoutes, recipeRoutes]);
+    reviewService = new ReviewService();
+    const reviewController = new ReviewController(reviewService);
+    const reviewRoutes = new ReviewRoutes(reviewController);
+
+    server = new Server(PORT, HOST, [userRoutes, recipeRoutes, reviewRoutes]);
     database = new Database(DB_URI);
 
     await database.connect();
@@ -65,6 +75,7 @@ describe('Integration Tests', () => {
     try {
       await Recipe.deleteMany();
       await User.deleteMany();
+      await Review.deleteMany();
       const hashedPassword = await bcrypt.hash('Password1', 10);
       const modifiedUsers = users.map(user => ({
         ...user,
@@ -72,6 +83,7 @@ describe('Integration Tests', () => {
       }));
       await User.insertMany(modifiedUsers);
       await Recipe.insertMany(recipes);
+      await Review.insertMany(reviews);
     } catch (e) {
       console.log(e);
       throw new Error();
@@ -727,6 +739,90 @@ describe('Integration Tests', () => {
           .delete(`/recipe/${recipeToDelete._id}`)
           .set('Authorization', `Bearer ${token}`)
           .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+        stub.restore();
+      });
+    });
+  });
+  describe('Review Tests', () => {
+    describe('POST request to /recipe/:id/createReview', () => {
+      const recipe = recipes[3];
+      const user = users[1];
+
+      const token = jwt.sign(
+        { id: user._id, username: user.username },
+        'openkitchen-secret-key-test',
+        { expiresIn: '1h' }
+      );
+
+      it('should respond with a 201 status code and the create review when review was successfully created', async () => {
+        const response = await request
+          .post(`/recipe/${recipe._id}/createReview`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(newReview);
+
+        expect(response.status).to.equal(201);
+        expect(response.body.newReview).to.deep.equal(newReview);
+      });
+      it('should have added the comment in the database', async () => {
+        await request
+          .post(`/recipe/${recipe._id}/createReview`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(newReview);
+
+        const getAllReviews = await Review.find();
+        const reviewsToObj = getAllReviews.map(review => {
+          return {
+            _id: review._id.toString(),
+            author: review.author.toString(),
+            recipeId: review.recipeId.toString(),
+            body: review.body,
+            rating: review.rating,
+            __v: 0,
+          };
+        });
+
+        const createdReview = reviewsToObj.find(
+          recipe => recipe._id === newReview._id
+        );
+
+        expect(createdReview).to.deep.equal(newReview);
+      });
+      it('should respond with a 400 status code if one of the review fields is invalid', async () => {
+        const response = await request
+          .post(`/recipe/${recipe._id}/createReview`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ ...newReview, body: null });
+
+        expect(response.status).to.equal(400);
+      });
+
+      it('should respond with a 401 status if no token was provided', async () => {
+        const response = await request
+          .post(`/recipe/${recipe._id}/createReview`)
+          .send(newReview);
+
+        expect(response.status).to.equal(401);
+      });
+      it('should respond with a 403 status if no valid token was provided', async () => {
+        const response = await request
+          .post(`/recipe/${recipe._id}/createReview`)
+          .set('Authorization', `Bearer invalid`)
+          .send(newReview);
+
+        expect(response.status).to.equal(403);
+      });
+      it('should respond with a 500 status if there is an error when creating the review', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(reviewService, 'createReview');
+        stub.throws(error);
+
+        const response = await request
+          .post(`/recipe/${recipe._id}/createReview`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(newReview);
 
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });
