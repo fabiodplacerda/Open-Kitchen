@@ -1,0 +1,110 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Dependency directories
+node_modules/
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Build output directories
+build/
+dist/
+out/
+tmp/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE and editor specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment variables
+.env
+.env.local
+.env.development+.local
+.env.test.local
+.env.production.local
+.env.dev
+
+# Testing and linting outputs
+junit.xml
+*.lcov
+*.report
+.eslintcache
+.nyc_output/
+
+# Bower dependency directory
+bower_components/
+
+# Miscellaneous
+*.log
+*.tgz
+*.gz
+*.zip
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Next.js build output
+.next/
+
+# Svelte build output
+.svelte-kit/
+
+# Gatsby files
+.cache/
+public/
+
+# Temporary files
+*.tmp
+*.temp
+*.pid
+*.seed
+
+# Parcel build output
+.cache/
+.parcel-cache/
+
+# Storybook files
+.storybook-out/
+
+# React Native files
+.expo/
+.expo-shared/
+
+# Project configuration files
+.vscode/
+.idea/
+*.iml
+*.sublime-workspace
+*.sublime-project
+*.code-workspace
+
+# PM2 process files
+.pids/
+
+# AWS SAM build output
+.aws-sam/build/
+.aws-sam/deploy/
+
+# Visual Studio Code
+.history/
+
+# TernJS
+.tern-port
+
+# Vim
+*.swp
+
+.prettierrc
