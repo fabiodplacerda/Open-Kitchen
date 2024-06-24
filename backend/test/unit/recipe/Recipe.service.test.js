@@ -79,4 +79,40 @@ describe('RecipeService Tests', () => {
       }
     });
   });
+  describe('getSingleRecipe Tests', () => {
+    let findOneStub;
+    let singleRecipe;
+
+    beforeEach(() => {
+      findOneStub = sinon.stub(Recipe, 'findOne');
+      singleRecipe = recipes[0];
+    });
+
+    afterEach(() => {
+      findOneStub.restore();
+    });
+    it('should call find and return a single recipe', async () => {
+      // Arrange
+      findOneStub.returns(singleRecipe);
+      // Act
+      const result = await recipeService.getSingleRecipe(singleRecipe);
+      // Assert
+      expect(result).to.equal(singleRecipe);
+      expect(findOneStub.calledOnce).to.be.true;
+    });
+    it('should error throw if a error occurs', async () => {
+      // Arrange
+      const error = new Error('test error');
+      findOneStub.throws(error);
+      // Act && Assert
+      try {
+        await recipeService.getSingleRecipe(singleRecipe);
+        assert.fail('Expect error was not thrown');
+      } catch (e) {
+        expect(e.message).to.equal(
+          `Failed to retrieve the recipe: ${error.message}`
+        );
+      }
+    });
+  });
 });

@@ -18,4 +18,14 @@ export default class RecipeService {
       throw new Error(`Failed to retrieve all recipes: ${e.message}`);
     }
   };
+
+  getSingleRecipe = async recipeId => {
+    try {
+      const recipe = await Recipe.findOne({ _id: recipeId });
+
+      return recipe;
+    } catch (e) {
+      throw new Error(`Failed to retrieve the recipe: ${e.message}`);
+    }
+  };
 }

@@ -37,4 +37,20 @@ export default class RecipeController {
       return res.status(500).json({ message: e.message });
     }
   };
+  getSingleRecipe = async (req, res) => {
+    const { id } = req.params;
+    try {
+      if (!id) res.status(400).json({ message: 'A valid Id must be provided' });
+
+      const recipe = await this.#service.getSingleRecipe(id);
+
+      if (!recipe) res.status(404).json({ message: 'Recipe was not found' });
+
+      return res
+        .status(200)
+        .json({ message: 'Request was successful', recipe });
+    } catch (e) {
+      return res.status(500).json({ message: e.message });
+    }
+  };
 }
