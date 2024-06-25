@@ -5,4 +5,9 @@
 
 .recipe-card {
   width: 18rem;
+  text-decoration: none;
+}
+
+.recipe-img {
+  width: 500px;
 }

@@ -11,7 +11,6 @@ const Recipes = () => {
     try {
       const recipesData = await getRecipes();
       setRecipes(recipesData.recipes);
-      console.log(recipes);
     } catch (e) {
       setError({ message: "Failed to retrieve recipes" });
     }
@@ -28,7 +27,7 @@ const Recipes = () => {
           <Link
             className="card recipe-card"
             key={recipe._id}
-            to={`recipes/${recipe._id}`}
+            to={`/recipes/${recipe._id}`}
           >
             <RecipeCard recipe={recipe} />
           </Link>
