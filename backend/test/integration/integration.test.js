@@ -12,28 +12,34 @@ import Database from '../../src/database/Database.js';
 // Test Data
 import usersData from '../data/userData.js';
 import recipesData from '../data/recipesData.js';
+import reviewsData from '../data/reviewsData.js';
 
 // Models
 import User from '../../src/models/user.model.js';
 import Recipe from '../../src/models/recipe.model.js';
+import Review from '../../src/models/review.model.js';
 
 // Services
 import UserServices from '../../src/services/User.service.js';
 import RecipeService from '../../src/services/Recipe.service.js';
+import ReviewService from '../../src/services/Review.service.js';
 
 // Controller
 import UserController from '../../src/controller/User.controller.js';
 import RecipeController from '../../src/controller/Recipe.controller.js';
+import ReviewController from '../../src/controller/Review.controller.js';
 
 // Routes
 import UserRoutes from '../../src/routes/User.routes.js';
 import RecipeRoutes from '../../src/routes/Recipes.routes.js';
+import ReviewRoutes from '../../src/routes/Review.routes.js';
 
 describe('Integration Tests', () => {
-  let server, database, userService, recipeService, request;
+  let server, database, userService, recipeService, reviewService, request;
 
   const { users, newUser, expectedResults } = usersData;
-  const { recipes, newRecipe } = recipesData;
+  const { recipes, newRecipe, updatedRecipe } = recipesData;
+  const { reviews, newReview, expectedReviews } = reviewsData;
 
   before(async () => {
     Config.loadConfig();
@@ -47,7 +53,11 @@ describe('Integration Tests', () => {
     const recipeController = new RecipeController(recipeService);
     const recipeRoutes = new RecipeRoutes(recipeController);
 
-    server = new Server(PORT, HOST, [userRoutes, recipeRoutes]);
+    reviewService = new ReviewService();
+    const reviewController = new ReviewController(reviewService);
+    const reviewRoutes = new ReviewRoutes(reviewController);
+
+    server = new Server(PORT, HOST, [userRoutes, recipeRoutes, reviewRoutes]);
     database = new Database(DB_URI);
 
     await database.connect();
@@ -65,6 +75,7 @@ describe('Integration Tests', () => {
     try {
       await Recipe.deleteMany();
       await User.deleteMany();
+      await Review.deleteMany();
       const hashedPassword = await bcrypt.hash('Password1', 10);
       const modifiedUsers = users.map(user => ({
         ...user,
@@ -72,6 +83,7 @@ describe('Integration Tests', () => {
       }));
       await User.insertMany(modifiedUsers);
       await Recipe.insertMany(recipes);
+      await Review.insertMany(reviews);
     } catch (e) {
       console.log(e);
       throw new Error();
@@ -492,7 +504,7 @@ describe('Integration Tests', () => {
         stub.restore();
       });
     });
-    describe('Get request to /recipe/getAllRecipes', () => {
+    describe('GET request to /recipe/getAllRecipes', () => {
       it('should respond with a 200 status code when request is successful', async () => {
         const response = await request.get('/recipe/getAllRecipes');
 
@@ -508,6 +520,340 @@ describe('Integration Tests', () => {
         const stub = sinon.stub(recipeService, 'getAllRecipes');
         stub.throws(error);
         const response = await request.get('/recipe/getAllRecipes');
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+        stub.restore();
+      });
+    });
+    describe('GET request to /recipe/:id', () => {
+      it('should respond with a 200 status code when request is successful', async () => {
+        const response = await request.get(`/recipe/${recipes[1]._id}`);
+
+        expect(response.status).to.equal(200);
+      });
+      it('should respond with recipe object', async () => {
+        const response = await request.get(`/recipe/${recipes[1]._id}`);
+
+        expect(response.body.recipe).to.deep.equal(recipes[1]);
+      });
+      it('should respond with a 500 status if a error occurs when creating getting all the recipes', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(recipeService, 'getSingleRecipe');
+        stub.throws(error);
+        const response = await request.get(`/recipe/${recipes[1]._id}`);
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+        stub.restore();
+      });
+    });
+    describe('PUT request to /recipe/:id', () => {
+      const user = users[0];
+      const recipeToUpdate = recipes[0];
+
+      const token = jwt.sign(
+        { id: user._id, username: user.username },
+        'openkitchen-secret-key-test',
+        { expiresIn: '1h' }
+      );
+
+      const updates = {
+        ...recipeToUpdate,
+        name: 'Delicious Pancakes with bacon',
+        description:
+          'A simple and delicious recipe for fluffy pancakes with bacon that are perfect for breakfast.',
+      };
+
+      it('should respond with a 200 status code when recipe was successfully updated', async () => {
+        const response = await request
+          .put(`/recipe/${recipeToUpdate._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, updates });
+
+        expect(response.status).to.equal(200);
+      });
+      it('should respond with a updated recipe object', async () => {
+        const response = await request
+          .put(`/recipe/${recipeToUpdate._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, updates });
+
+        expect(response.body.updatedRecipe).to.deep.equal(updatedRecipe);
+      });
+      it('should have the update recipe in the database', async () => {
+        await request
+          .put(`/recipe/${recipeToUpdate._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, updates });
+
+        const allRecipes = await Recipe.find();
+
+        const updatedRecipeInDb = allRecipes.find(
+          recipe => recipe._id.toString() === recipeToUpdate._id
+        );
+
+        const recipeToObject = {
+          _id: updatedRecipeInDb._id.toString(),
+          author: updatedRecipeInDb.author.toString(),
+          description: updatedRecipeInDb.description,
+          imgUrl: updatedRecipeInDb.imgUrl,
+          name: updatedRecipeInDb.name,
+          reviews: updatedRecipeInDb.reviews.map(review => review.toString()),
+          __v: 0,
+        };
+
+        expect(recipeToObject).to.deep.equal(updatedRecipe);
+      });
+      it('should respond with a 400 if one of the updated fields is not valid', async () => {
+        const response = await request
+          .put(`/recipe/${recipeToUpdate._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            userId: user._id,
+            updates: { ...updates, imgUrl: 'hello' },
+          });
+
+        expect(response.status).to.equal(400);
+      });
+      it('should respond with a 404 if the recipe was not found', async () => {
+        const response = await request
+          .put(`/recipe/667441c68299324f52841920`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, updates });
+
+        expect(response.status).to.equal(404);
+      });
+      it('should respond with a 401 no token was provided', async () => {
+        const response = await request
+          .put(`/recipe/667441c68299324f52841920`)
+          .send({ userId: user._id, updates });
+
+        expect(response.status).to.equal(401);
+      });
+      it('should respond with a 403 if a token was provided but it is invalid', async () => {
+        const response = await request
+          .put(`/recipe/667441c68299324f52841920`)
+          .set('Authorization', `Bearer invalidToken`)
+          .send({ userId: user._id, updates });
+
+        expect(response.status).to.equal(403);
+      });
+      it('should respond with a 500 status if a error occurs when creating getting all the recipes', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(recipeService, 'updateRecipe');
+        stub.throws(error);
+        const response = await request
+          .put(`/recipe/${recipeToUpdate._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            userId: user._id,
+            updates,
+          });
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+        stub.restore();
+      });
+    });
+    describe('DELETE request to /recipe/:id', () => {
+      const user = users[1];
+      const recipeToDelete = recipes[2];
+
+      const token = jwt.sign(
+        { id: user._id, username: user.username },
+        'openkitchen-secret-key-test',
+        { expiresIn: '1h' }
+      );
+      it('should respond with a 204 status code when recipe was successfully updated', async () => {
+        const response = await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(204);
+      });
+
+      it('should not have the deleted recipe in the database', async () => {
+        await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
+
+        const allRecipes = await Recipe.find();
+
+        const deleteRecipe = allRecipes.find(
+          recipe => recipe._id.toString() === recipeToDelete._id
+        );
+
+        expect(deleteRecipe).to.equal(undefined);
+      });
+      it('should respond with a 404 if the recipe was not found', async () => {
+        const response = await request
+          .delete(`/recipe/667441c68299324f52841920`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(404);
+      });
+      it('should respond with a 401 no token was provided', async () => {
+        const response = await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(401);
+      });
+      it('should respond with a 403 if a token was provided but it is invalid', async () => {
+        const response = await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .set('Authorization', `Bearer invalidToken`)
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(403);
+      });
+      it('should respond with a 403 user is not the author and not the admin', async () => {
+        const response = await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: 'notMatchingId', role: 'user' });
+
+        expect(response.status).to.equal(403);
+        expect(response.body).to.deep.equal({
+          message:
+            'Failed to delete the recipe: User has no permission to delete this recipe',
+        });
+      });
+      it('should delete the recipe if user is not the author but it has admin role', async () => {
+        const response = await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: 'notMatchingId', role: 'admin' });
+
+        expect(response.status).to.equal(204);
+      });
+      it('should respond with a 500 status if a error occurs when creating getting all the recipes', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(recipeService, 'deleteRecipe');
+        stub.throws(error);
+        const response = await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+        stub.restore();
+      });
+    });
+  });
+  describe('Review Tests', () => {
+    describe('POST request to /recipe/:id/createReview', () => {
+      const recipe = recipes[3];
+      const user = users[1];
+
+      const token = jwt.sign(
+        { id: user._id, username: user.username },
+        'openkitchen-secret-key-test',
+        { expiresIn: '1h' }
+      );
+
+      it('should respond with a 201 status code and the create review when review was successfully created', async () => {
+        const response = await request
+          .post(`/recipe/${recipe._id}/createReview`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(newReview);
+
+        expect(response.status).to.equal(201);
+        expect(response.body.newReview).to.deep.equal(newReview);
+      });
+      it('should have added the comment in the database', async () => {
+        await request
+          .post(`/recipe/${recipe._id}/createReview`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(newReview);
+
+        const getAllReviews = await Review.find();
+        const reviewsToObj = getAllReviews.map(review => {
+          return {
+            _id: review._id.toString(),
+            author: review.author.toString(),
+            recipeId: review.recipeId.toString(),
+            body: review.body,
+            rating: review.rating,
+            __v: 0,
+          };
+        });
+
+        const createdReview = reviewsToObj.find(
+          recipe => recipe._id === newReview._id
+        );
+
+        expect(createdReview).to.deep.equal(newReview);
+      });
+      it('should respond with a 400 status code if one of the review fields is invalid', async () => {
+        const response = await request
+          .post(`/recipe/${recipe._id}/createReview`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ ...newReview, body: null });
+
+        expect(response.status).to.equal(400);
+      });
+
+      it('should respond with a 401 status if no token was provided', async () => {
+        const response = await request
+          .post(`/recipe/${recipe._id}/createReview`)
+          .send(newReview);
+
+        expect(response.status).to.equal(401);
+      });
+      it('should respond with a 403 status if no valid token was provided', async () => {
+        const response = await request
+          .post(`/recipe/${recipe._id}/createReview`)
+          .set('Authorization', `Bearer invalid`)
+          .send(newReview);
+
+        expect(response.status).to.equal(403);
+      });
+      it('should respond with a 500 status if there is an error when creating the review', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(reviewService, 'createReview');
+        stub.throws(error);
+
+        const response = await request
+          .post(`/recipe/${recipe._id}/createReview`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(newReview);
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+        stub.restore();
+      });
+    });
+    describe('GET request to /recipe/:id/reviews', () => {
+      it('should respond with a 200 status code when request to get reviews by recipe id was successful', async () => {
+        const recipe = recipes[0];
+        const response = await request.get(`/recipe/${recipe._id}/reviews`);
+
+        expect(response.status).to.equal(200);
+      });
+      it('should respond with an array of reviews', async () => {
+        const recipe = recipes[0];
+        const response = await request.get(`/recipe/${recipe._id}/reviews`);
+
+        expect(response.body.reviews).to.deep.equal(expectedReviews);
+      });
+      it("should respond with an empty array if recipe doesn't have any reviews", async () => {
+        const recipe = recipes[3];
+        const response = await request.get(`/recipe/${recipe._id}/reviews`);
+
+        expect(response.body.reviews).to.deep.equal([]);
+      });
+      it('should respond with a 500 status if a error occurs when creating getting the reviews', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(reviewService, 'getReviewsByRecipeId');
+        stub.throws(error);
+        const recipe = recipes[0];
+        const response = await request.get(`/recipe/${recipe._id}/reviews`);
 
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });

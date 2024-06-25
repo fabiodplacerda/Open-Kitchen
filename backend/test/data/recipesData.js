@@ -33,7 +33,7 @@ const recipesData = {
       name: 'Spaghetti Carbonara',
       imgUrl: 'https://example.com/spaghetti-carbonara.jpg',
       description: 'Classic Italian pasta dish.',
-      reviews: ['667441c68299324f5284199b'],
+      reviews: [],
       __v: 0,
     },
   ],
@@ -45,6 +45,16 @@ const recipesData = {
     description:
       'Make pizza at home with this easy recipe. Enjoy a delicious homemade pizza with a crispy crust, tangy tomato sauce, melted cheese, and your favorite toppings. Perfect for family dinners or a fun cooking activity.',
     reviews: [],
+    __v: 0,
+  },
+  updatedRecipe: {
+    _id: '667441c68299324f52841990',
+    author: '667441c68299324f52841985', // ObjectId of user1
+    name: 'Delicious Pancakes with bacon',
+    imgUrl: 'https://example.com/pancakes.jpg',
+    description:
+      'A simple and delicious recipe for fluffy pancakes with bacon that are perfect for breakfast.',
+    reviews: ['667441c68299324f52841998', '667441c68299324f5284199c'],
     __v: 0,
   },
 };

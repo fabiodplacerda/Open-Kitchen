@@ -26,6 +26,18 @@ export default class RecipeRoutes {
       this.#controller.createRecipe
     );
     this.#router.get('/getAllRecipes', this.#controller.getAllRecipes);
+    this.#router.get('/:id', this.#controller.getSingleRecipe);
+    this.#router.put(
+      '/:id',
+      AuthenticationValidation.checkToken,
+      RecipeValidator.updateRecipeValidate(),
+      this.#controller.updateRecipe
+    );
+    this.#router.delete(
+      '/:id',
+      AuthenticationValidation.checkToken,
+      this.#controller.deleteRecipe
+    );
   };
 
   getRouter = () => this.#router;

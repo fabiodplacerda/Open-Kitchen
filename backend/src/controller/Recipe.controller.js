@@ -37,4 +37,65 @@ export default class RecipeController {
       return res.status(500).json({ message: e.message });
     }
   };
+  getSingleRecipe = async (req, res) => {
+    const { id } = req.params;
+    try {
+      if (!id) res.status(400).json({ message: 'A valid Id must be provided' });
+
+      const recipe = await this.#service.getSingleRecipe(id);
+
+      if (!recipe) res.status(404).json({ message: 'Recipe was not found' });
+
+      return res
+        .status(200)
+        .json({ message: 'Request was successful', recipe });
+    } catch (e) {
+      return res.status(500).json({ message: e.message });
+    }
+  };
+
+  updateRecipe = async (req, res) => {
+    const { id } = req.params;
+    const { body } = req;
+    try {
+      const updatedRecipe = await this.#service.updateRecipe(
+        id,
+        body.userId,
+        body.updates
+      );
+
+      if (!updatedRecipe) {
+        return res.status(404).json({ message: 'Recipe not found' });
+      }
+
+      return res
+        .status(200)
+        .json({ message: 'Recipe updated successfully', updatedRecipe });
+    } catch (e) {
+      return res.status(500).json({ message: e.message });
+    }
+  };
+
+  deleteRecipe = async (req, res) => {
+    const { id } = req.params;
+    const { body } = req;
+
+    try {
+      const deletedRecipe = await this.#service.deleteRecipe(
+        id,
+        body.userId,
+        body.role
+      );
+
+      if (!deletedRecipe) {
+        return res.status(404).json({ message: 'Recipe not found' });
+      }
+
+      return res.status(204).send();
+    } catch (e) {
+      if (e.message.includes('User has no permission'))
+        return res.status(403).json({ message: e.message });
+      return res.status(500).json({ message: e.message });
+    }
+  };
 }
