@@ -25,6 +25,7 @@ export default class ReviewRoutes {
       ReviewValidator.reviewCreation(),
       this.#controller.createReview
     );
+    this.#router.get('/:id/reviews', this.#controller.getReviewsByRecipeId);
   };
 
   getRouter = () => this.#router;

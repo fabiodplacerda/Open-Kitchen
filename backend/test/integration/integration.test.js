@@ -39,7 +39,7 @@ describe('Integration Tests', () => {
 
   const { users, newUser, expectedResults } = usersData;
   const { recipes, newRecipe, updatedRecipe } = recipesData;
-  const { reviews, newReview } = reviewsData;
+  const { reviews, newReview, expectedReviews } = reviewsData;
 
   before(async () => {
     Config.loadConfig();
@@ -823,6 +823,37 @@ describe('Integration Tests', () => {
           .post(`/recipe/${recipe._id}/createReview`)
           .set('Authorization', `Bearer ${token}`)
           .send(newReview);
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+        stub.restore();
+      });
+    });
+    describe('GET request to /recipe/:id/reviews', () => {
+      it('should respond with a 200 status code when request to get reviews by recipe id was successful', async () => {
+        const recipe = recipes[0];
+        const response = await request.get(`/recipe/${recipe._id}/reviews`);
+
+        expect(response.status).to.equal(200);
+      });
+      it('should respond with an array of reviews', async () => {
+        const recipe = recipes[0];
+        const response = await request.get(`/recipe/${recipe._id}/reviews`);
+
+        expect(response.body.reviews).to.deep.equal(expectedReviews);
+      });
+      it("should respond with an empty array if recipe doesn't have any reviews", async () => {
+        const recipe = recipes[3];
+        const response = await request.get(`/recipe/${recipe._id}/reviews`);
+
+        expect(response.body.reviews).to.deep.equal([]);
+      });
+      it('should respond with a 500 status if a error occurs when creating getting the reviews', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(reviewService, 'getReviewsByRecipeId');
+        stub.throws(error);
+        const recipe = recipes[0];
+        const response = await request.get(`/recipe/${recipe._id}/reviews`);
 
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });

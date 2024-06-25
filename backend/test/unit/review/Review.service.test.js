@@ -45,4 +45,41 @@ describe('ReviewService Tests', () => {
       saveStub.restore();
     });
   });
+  describe('getReviewsByRecipeId Tests', () => {
+    it('should call find an return all reviews for that recipe', async () => {
+      // Arrange
+      const recipeId = '667441c68299324f52841990';
+      const reviewsByRecipeId = reviews.find(
+        review => review.recipeId === recipeId
+      );
+      const findStub = sinon.stub(Review, 'find');
+      findStub.returns(reviewsByRecipeId);
+      // Act
+      const result = await reviewService.getReviewsByRecipeId(recipeId);
+      // Assert
+      expect(result).to.equal(reviewsByRecipeId);
+      expect(findStub.calledOnce).to.be.true;
+      // Restore
+      findStub.restore();
+    });
+    it('should error when find fails', async () => {
+      // Arrange
+      const recipeId = '667441c68299324f52841990';
+      const error = new Error('test error');
+      const findStub = sinon.stub(Review, 'find');
+      findStub.throws(error);
+      // Act && Assert
+
+      try {
+        await reviewService.getReviewsByRecipeId(recipeId);
+        assert.fail('Expect error was not thrown');
+      } catch (e) {
+        expect(e.message).to.equal(
+          `Failed to retrieve reviews for recipeId ${recipeId}: ${error.message}`
+        );
+      }
+      // Restore
+      findStub.restore();
+    });
+  });
 });

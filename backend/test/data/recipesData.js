@@ -33,7 +33,7 @@ const recipesData = {
       name: 'Spaghetti Carbonara',
       imgUrl: 'https://example.com/spaghetti-carbonara.jpg',
       description: 'Classic Italian pasta dish.',
-      reviews: ['667441c68299324f5284199b'],
+      reviews: [],
       __v: 0,
     },
   ],

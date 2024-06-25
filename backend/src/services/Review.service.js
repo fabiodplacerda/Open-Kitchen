@@ -9,4 +9,16 @@ export default class ReviewService {
       throw new Error(`Failed to create a new review: ${e.message}`);
     }
   };
+
+  getReviewsByRecipeId = async recipeId => {
+    try {
+      const reviews = await Review.find({ recipeId: recipeId });
+
+      return reviews;
+    } catch (e) {
+      throw new Error(
+        `Failed to retrieve reviews for recipeId ${recipeId}: ${e.message}`
+      );
+    }
+  };
 }

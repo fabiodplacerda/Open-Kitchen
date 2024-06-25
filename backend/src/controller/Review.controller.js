@@ -25,4 +25,19 @@ export default class ReviewController {
       return res.status(500).json({ message: e.message });
     }
   };
+  getReviewsByRecipeId = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      if (!id) res.status(400).json({ message: 'Invalid id' });
+
+      const reviews = await this.#service.getReviewsByRecipeId(id);
+
+      return res
+        .status(200)
+        .json({ message: 'reviews retrieved successfully', reviews });
+    } catch (e) {
+      return res.status(500).json({ message: e.message });
+    }
+  };
 }
