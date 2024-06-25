@@ -23,6 +23,7 @@ export default class Server {
       console.log(`Server in running on http://${this.#host}:${this.#port}`);
     });
     this.#app.use(express.json());
+    this.#app.use(cors());
     this.#router.forEach(route => {
       this.#app.use(route.getRouteStartingPoint(), route.getRouter());
     });
