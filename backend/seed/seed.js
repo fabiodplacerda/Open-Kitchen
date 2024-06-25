@@ -2,7 +2,7 @@ import Config from '../src/config/Config.js';
 import Database from '../src/database/Database.js';
 import User from '../src/models/user.model.js';
 import Recipe from '../src/models/recipe.model.js';
-import Review from '../src/models/review.mode.js';
+import Review from '../src/models/review.model.js';
 import reviewsData from './data/reviewsData.js';
 import recipesData from './data/recipesData.js';
 import userData from './data/userData.js';
