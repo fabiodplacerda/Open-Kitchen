@@ -860,5 +860,134 @@ describe('Integration Tests', () => {
         stub.restore();
       });
     });
+    describe('DELETE request to /recipe/:recipeId/reviews/:reviewId', () => {
+      const reviewToDelete = reviews[3];
+      const user = users[4];
+
+      const token = jwt.sign(
+        { id: user._id, username: user.username },
+        'openkitchen-secret-key-test',
+        { expiresIn: '1h' }
+      );
+      it('should return a 204 status code when deleting a review was successful', async () => {
+        const response = await request
+          .delete(
+            `/recipe/${reviewToDelete.recipeId}/reviews/${reviewToDelete._id}`
+          )
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(204);
+      });
+      it('should not have the delete review in the database', async () => {
+        await request
+          .delete(
+            `/recipe/${reviewToDelete.recipeId}/reviews/${reviewToDelete._id}`
+          )
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
+
+        const reviewsInDb = await Review.find();
+        const reviewsToObject = reviewsInDb.map(review => {
+          return {
+            _id: review._id.toString(),
+            author: review.author.toString(),
+            recipeId: review.recipeId.toString(),
+            body: review.body,
+            rating: review.rating,
+            __v: 0,
+          };
+        });
+
+        const findReview = reviewsToObject.find(
+          review => review._id === reviewToDelete
+        );
+
+        expect(findReview).to.equal(undefined);
+      });
+      it('should have removed the deleted review from the recipe', async () => {
+        await request
+          .delete(
+            `/recipe/${reviewToDelete.recipeId}/reviews/${reviewToDelete._id}`
+          )
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
+
+        const recipe = await Recipe.findById(reviewToDelete.recipeId);
+
+        const findDeletedReview = recipe.reviews.find(
+          review => review.toString() === reviewToDelete._id
+        );
+
+        expect(findDeletedReview).to.equal(undefined);
+      });
+
+      it('should return a 404 status when review was not found', async () => {
+        const response = await request
+          .delete(
+            `/recipe/${reviewToDelete.recipeId}/reviews/667441c68299324f52841210`
+          )
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(404);
+        expect(response.body.message).to.equal('review was not found');
+      });
+      it('should return a 403 if user is not the author and also not admin role', async () => {
+        const response = await request
+          .delete(
+            `/recipe/${reviewToDelete.recipeId}/reviews/${reviewToDelete._id}`
+          )
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: users[0]._id, role: user.role });
+
+        expect(response.status).to.equal(403);
+      });
+      it('should return a 204 if user is not the author and but has admin role', async () => {
+        const response = await request
+          .delete(
+            `/recipe/${reviewToDelete.recipeId}/reviews/${reviewToDelete._id}`
+          )
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: users[1]._id, role: users[1].role });
+
+        expect(response.status).to.equal(204);
+      });
+      it('should respond with a 401 no token was provided', async () => {
+        const response = await request
+          .delete(
+            `/recipe/${reviewToDelete.recipeId}/reviews/${reviewToDelete._id}`
+          )
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(401);
+      });
+      it('should respond with a 403 if a token was provided but it is invalid', async () => {
+        const response = await request
+          .delete(
+            `/recipe/${reviewToDelete.recipeId}/reviews/${reviewToDelete._id}`
+          )
+          .set('Authorization', `Bearer invalidToken`)
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(403);
+      });
+      it('should respond with a 500 status if a error occurs when deleting a review', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(reviewService, 'deleteReview');
+        stub.throws(error);
+
+        const response = await request
+          .delete(
+            `/recipe/${reviewToDelete.recipeId}/reviews/${reviewToDelete._id}`
+          )
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+        stub.restore();
+      });
+    });
   });
 });

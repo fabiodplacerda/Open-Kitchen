@@ -16,6 +16,7 @@ describe('ReviewController', () => {
     reviewService = {
       createReview: sinon.stub(),
       getReviewsByRecipeId: sinon.stub(),
+      deleteReview: sinon.stub(),
     };
     reviewController = new ReviewController(reviewService);
     req = {
@@ -67,7 +68,7 @@ describe('ReviewController', () => {
       expect(res.json.calledWith({ message: 'test error' })).to.be.true;
     });
   });
-  describe('getReviewsByRecipeId', () => {
+  describe('getReviewsByRecipeId Test', () => {
     it('should get all the reviews by recipe id', async () => {
       const recipeId = '667441c68299324f52841990';
       const reviewsByRecipeId = reviews.find(
@@ -116,6 +117,41 @@ describe('ReviewController', () => {
       const testError = new Error('test error');
       reviewService.getReviewsByRecipeId.throws(testError);
       await reviewController.getReviewsByRecipeId(req, res);
+
+      expect(res.status.calledWith(500)).to.be.true;
+      expect(res.json.calledWith({ message: 'test error' })).to.be.true;
+    });
+  });
+  describe('deleteReview Tests', () => {
+    it('should delete a review and return a 204', async () => {
+      const reviewToDelete = reviews[3];
+      reviewService.deleteReview.resolves(reviewToDelete);
+
+      await reviewController.deleteReview(req, res);
+
+      expect(res.status.calledWith(204)).to.be.true;
+    });
+    it('should return a 404 when recipe was not found', async () => {
+      reviewService.deleteReview.resolves(null);
+
+      await reviewController.deleteReview(req, res);
+
+      expect(res.status.calledWith(404)).to.be.true;
+      expect(res.json.calledWith({ message: 'review was not found' })).to.be
+        .true;
+    });
+    it('should return a 403 if user has no permission to delete review', async () => {
+      const permissionError = new Error('User has no permissions');
+      reviewService.deleteReview.throws(permissionError);
+
+      await reviewController.deleteReview(req, res);
+
+      expect(res.status.calledWith(403)).to.be.true;
+    });
+    it('should send a 500 a error occurs', async () => {
+      const testError = new Error('test error');
+      reviewService.deleteReview.throws(testError);
+      await reviewController.deleteReview(req, res);
 
       expect(res.status.calledWith(500)).to.be.true;
       expect(res.json.calledWith({ message: 'test error' })).to.be.true;

@@ -40,4 +40,31 @@ export default class ReviewController {
       return res.status(500).json({ message: e.message });
     }
   };
+
+  deleteReview = async (req, res) => {
+    const { recipeId, reviewId } = req.params;
+    const { body } = req;
+
+    try {
+      if (!body)
+        return res.status(400).json({ message: 'Body must be provided' });
+
+      const deletedReview = await this.#service.deleteReview(
+        reviewId,
+        recipeId,
+        body.userId,
+        body.role
+      );
+
+      if (!deletedReview)
+        return res.status(404).json({ message: 'review was not found' });
+
+      return res.status(204).send();
+    } catch (e) {
+      if (e.message.includes('User has no permissions'))
+        return res.status(403).json({ message: e.message });
+
+      return res.status(500).json({ message: e.message });
+    }
+  };
 }

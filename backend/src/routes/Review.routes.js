@@ -26,6 +26,11 @@ export default class ReviewRoutes {
       this.#controller.createReview
     );
     this.#router.get('/:id/reviews', this.#controller.getReviewsByRecipeId);
+    this.#router.delete(
+      '/:recipeId/reviews/:reviewId',
+      AuthenticationValidation.checkToken,
+      this.#controller.deleteReview
+    );
   };
 
   getRouter = () => this.#router;
