@@ -1,4 +1,6 @@
 import Recipe from '../models/recipe.model.js';
+import Review from '../models/review.model.js';
+import User from '../models/user.model.js';
 
 export default class RecipeService {
   createRecipe = async newRecipe => {
@@ -63,6 +65,12 @@ export default class RecipeService {
         throw new Error('User has no permission to delete this recipe');
 
       const deletedRecipe = await Recipe.findByIdAndDelete(recipeId);
+
+      await User.findByIdAndUpdate(recipe.author, {
+        $pull: { recipes: recipeId },
+      });
+
+      await Review.deleteMany({ recipeId: recipeId });
 
       return deletedRecipe;
     } catch (e) {

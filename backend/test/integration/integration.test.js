@@ -674,6 +674,21 @@ describe('Integration Tests', () => {
         expect(response.status).to.equal(204);
       });
 
+      it('should update the user recipes and should delete all the reviews associated with recipe', async () => {
+        const expectedRecipesLength = user.recipes.length - 1;
+        await request
+          .delete(`/recipe/${recipeToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({ userId: user._id, role: user.role });
+
+        const updatedUser = await User.findById(user._id);
+        const afterDeleteReviews = await Review.find({
+          recipeId: recipeToDelete._id,
+        });
+
+        expect(expectedRecipesLength).to.equal(updatedUser.recipes.length);
+        expect(afterDeleteReviews).to.have.lengthOf(0);
+      });
       it('should not have the deleted recipe in the database', async () => {
         await request
           .delete(`/recipe/${recipeToDelete._id}`)

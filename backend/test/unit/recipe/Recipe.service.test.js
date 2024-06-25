@@ -3,6 +3,8 @@ import sinon from 'sinon';
 import Recipe from '../../../src/models/recipe.model.js';
 import RecipeService from '../../../src/services/Recipe.service.js';
 import recipesData from '../../data/recipesData.js';
+import User from '../../../src/models/user.model.js';
+import Review from '../../../src/models/review.model.js';
 
 const { recipes, newRecipe, updatedRecipe } = recipesData;
 
@@ -160,11 +162,18 @@ describe('RecipeService Tests', () => {
     });
   });
   describe('deleteRecipe Tests', () => {
-    let findByIdStub, findByIdAndDeleteStub, recipeToDelete, authorId;
+    let findByIdStub,
+      findByIdAndDeleteStub,
+      recipeToDelete,
+      authorId,
+      findByIdAndUpdateStub,
+      deleteManyStub;
 
     beforeEach(() => {
       findByIdStub = sinon.stub(Recipe, 'findOne');
       findByIdAndDeleteStub = sinon.stub(Recipe, 'findByIdAndDelete');
+      findByIdAndUpdateStub = sinon.stub(User, 'findByIdAndUpdate');
+      deleteManyStub = sinon.stub(Review, 'deleteMany');
       recipeToDelete = recipes[2];
       authorId = '667441c68299324f52841986';
     });
@@ -172,6 +181,8 @@ describe('RecipeService Tests', () => {
     afterEach(() => {
       findByIdStub.restore();
       findByIdAndDeleteStub.restore();
+      findByIdAndUpdateStub.restore();
+      deleteManyStub.restore();
     });
     it('should call findById and findOneAndUpdate and return a the updated recipe', async () => {
       // Arrange
