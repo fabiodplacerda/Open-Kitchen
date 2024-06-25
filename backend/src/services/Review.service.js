@@ -13,7 +13,10 @@ export default class ReviewService {
 
   getReviewsByRecipeId = async recipeId => {
     try {
-      const reviews = await Review.find({ recipeId: recipeId });
+      const reviews = await Review.find({ recipeId: recipeId }).populate(
+        'author',
+        'username'
+      );
 
       return reviews;
     } catch (e) {

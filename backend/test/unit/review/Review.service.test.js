@@ -53,8 +53,9 @@ describe('ReviewService Tests', () => {
       const reviewsByRecipeId = reviews.find(
         review => review.recipeId === recipeId
       );
-      const findStub = sinon.stub(Review, 'find');
-      findStub.returns(reviewsByRecipeId);
+      const findStub = sinon.stub(Review, 'find').returns({
+        populate: sinon.stub().resolves(reviewsByRecipeId),
+      });
       // Act
       const result = await reviewService.getReviewsByRecipeId(recipeId);
       // Assert
@@ -67,7 +68,9 @@ describe('ReviewService Tests', () => {
       // Arrange
       const recipeId = '667441c68299324f52841990';
       const error = new Error('test error');
-      const findStub = sinon.stub(Review, 'find');
+      const findStub = sinon.stub(Review, 'find').returns({
+        populate: sinon.stub().resolves(error),
+      });
       findStub.throws(error);
       // Act && Assert
 
