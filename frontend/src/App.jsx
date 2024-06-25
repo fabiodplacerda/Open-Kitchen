@@ -4,13 +4,15 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Recipes from "./components/Recipes";
 import SingleRecipe from "./components/SingleRecipe";
+import Homepage from "./components/Homepage";
 
 function App() {
   return (
     <>
       <Header />
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Homepage />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/recipes/:recipeId" element={<SingleRecipe />} />
         <Route path="/recipes" element={<Recipes />} />

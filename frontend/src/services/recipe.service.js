@@ -12,7 +12,7 @@ export const getRecipes = async () => {
   }
 };
 
-export const singleRecipe = async (recipeId) => {
+export const getSingleRecipe = async (recipeId) => {
   try {
     const response = await axios.get(
       `http://localhost:3000/recipe/${recipeId}`
