@@ -5,8 +5,10 @@ import RecipeService from '../../../src/services/Recipe.service.js';
 import recipesData from '../../data/recipesData.js';
 import User from '../../../src/models/user.model.js';
 import Review from '../../../src/models/review.model.js';
+import usersData from '../../data/userData.js';
 
 const { recipes, newRecipe, updatedRecipe } = recipesData;
+const { users } = usersData;
 
 describe('RecipeService Tests', () => {
   let recipeService;
@@ -20,7 +22,7 @@ describe('RecipeService Tests', () => {
       // Arrange
       const saveStub = sinon.stub(Recipe.prototype, 'save');
       const findByIdAndUpdateStub = sinon.stub(User, 'findByIdAndUpdate');
-      findByIdAndUpdateStub.resolves();
+      findByIdAndUpdateStub.resolves(users[0]);
       saveStub.returns(newRecipe);
       // Act
       const result = await recipeService.createRecipe(newRecipe);
@@ -34,6 +36,7 @@ describe('RecipeService Tests', () => {
     it('should error when save fails', async () => {
       // Arrange
       const error = new Error('test error');
+
       const saveStub = sinon.stub(Recipe.prototype, 'save');
       const findByIdAndUpdateStub = sinon.stub(User, 'findByIdAndUpdate');
       findByIdAndUpdateStub.resolves();
