@@ -1,8 +1,16 @@
 import { useContext, useEffect, useState } from "react";
-import { createReview, getReviews } from "../services/review.service";
-import { Button, Rating, Typography } from "@mui/material/";
+import {
+  createReview,
+  deleteReview,
+  getReviews,
+} from "../services/review.service";
+import { Button, Rating, IconButton } from "@mui/material/";
 import AddCommentIcon from "@mui/icons-material/AddComment";
 import { UserContext } from "../context/UserContext";
+import AddReviewForm from "./AddReviewForm";
+import DeleteIcon from "@mui/icons-material/Delete";
+import showFeedbackMessage from "../utils/feedbackMessages";
+import { ToastContainer } from "react-toastify";
 
 const Reviews = ({ recipeId }) => {
   const { loggedUser } = useContext(UserContext);
@@ -10,6 +18,24 @@ const Reviews = ({ recipeId }) => {
   const [rating, setRating] = useState(1);
   const [body, setBody] = useState("");
   const [isRating, setIsRating] = useState(false);
+
+  const deleteReviewData = async (reviewId) => {
+    try {
+      const response = await deleteReview(
+        recipeId,
+        reviewId,
+        loggedUser.user._id,
+        loggedUser.user.role,
+        loggedUser.userToken
+      );
+      if (response === 204) {
+        setReviews((prevReviews) => {
+          return prevReviews.filter((review) => review._id !== reviewId);
+        });
+        showFeedbackMessage("success", "Review successfully removed.");
+      }
+    } catch (e) {}
+  };
 
   const postNewReview = async () => {
     const newReview = {
@@ -25,11 +51,9 @@ const Reviews = ({ recipeId }) => {
         loggedUser.userToken
       );
 
-      console.log(newReviewResponse.newReview);
+      console.log(newReviewResponse);
 
       if (newReviewResponse && newReviewResponse.newReview) {
-        console.log(newReviewResponse.newReview);
-
         setReviews((prevReviews) => [
           newReviewResponse.newReview,
           ...prevReviews,
@@ -38,8 +62,16 @@ const Reviews = ({ recipeId }) => {
         setBody("");
         setRating(1);
         setIsRating(false);
+      } else {
+        showFeedbackMessage(
+          "error",
+          `${newReviewResponse.status}: ${newReviewResponse.statusText}`,
+          2000
+        );
       }
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const getReviewsData = async () => {
@@ -74,42 +106,30 @@ const Reviews = ({ recipeId }) => {
       )}
 
       {isRating && (
-        <form action="">
-          <Typography component="legend">Rating</Typography>
-          <Rating
-            value={rating}
-            onChange={(event, newValue) => {
-              setRating(newValue);
-            }}
-          />
-          <textarea
-            className="form-control"
-            id="exampleFormControlTextarea1"
-            rows="3"
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-          ></textarea>
-          <Button variant="contained" color="primary" onClick={postNewReview}>
-            Submit review
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => setIsRating(false)}
-          >
-            Cancel
-          </Button>
-        </form>
+        <AddReviewForm
+          rating={rating}
+          setRating={setRating}
+          setIsRating={setIsRating}
+          postNewReview={postNewReview}
+          body={body}
+          setBody={setBody}
+        />
       )}
       {reviews.map((review) => {
         return (
           <div className="card" key={review._id}>
+            {loggedUser && loggedUser.user._id === review.author._id && (
+              <IconButton onClick={() => deleteReviewData(review._id)}>
+                <DeleteIcon color="error" aria-label="delete" />
+              </IconButton>
+            )}
             <p>Author: {review.author.username}</p>
             <Rating value={review.rating} readOnly />
             <p>{review.body}</p>
           </div>
         );
       })}
+      <ToastContainer />
     </>
   );
 };

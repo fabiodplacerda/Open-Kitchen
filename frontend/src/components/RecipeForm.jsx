@@ -10,14 +10,13 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { showFeedbackMessage } from "../utils/feedbackMessages";
+import showFeedbackMessage from "../utils/feedbackMessages";
 
 const RecipeForm = ({ action }) => {
   const navigate = useNavigate();
   const { recipeId } = useParams();
   const { loggedUser } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [feedBackMessage, setFeedBackMessage] = useState(null);
   const [recipe, setRecipe] = useState({
     name: "",
     imgUrl: "",
@@ -72,7 +71,6 @@ const RecipeForm = ({ action }) => {
   };
 
   const onChangeHandler = (e) => {
-    setFeedBackMessage(null);
     const { name, value } = e.target;
     setRecipe((prevState) => ({
       ...prevState,
