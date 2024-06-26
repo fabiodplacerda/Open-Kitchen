@@ -14,7 +14,6 @@ export default class RecipeService {
 
       return savedRecipe;
     } catch (e) {
-      console.log(e);
       throw new Error(`Failed to create a new recipe: ${e.message}`);
     }
   };

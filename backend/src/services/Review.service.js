@@ -5,7 +5,18 @@ export default class ReviewService {
   createReview = async newReview => {
     try {
       const review = new Review(newReview);
-      return await review.save();
+      const savedReview = await review.save();
+
+      await Recipe.findByIdAndUpdate(savedReview.recipeId, {
+        $push: { reviews: savedReview._id },
+      });
+
+      const populatedReview = await Review.findById(savedReview._id).populate(
+        'author',
+        'username'
+      );
+
+      return populatedReview;
     } catch (e) {
       throw new Error(`Failed to create a new review: ${e.message}`);
     }

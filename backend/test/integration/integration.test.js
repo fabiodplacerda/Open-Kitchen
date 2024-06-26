@@ -39,7 +39,8 @@ describe('Integration Tests', () => {
 
   const { users, newUser, expectedResults } = usersData;
   const { recipes, newRecipe, updatedRecipe } = recipesData;
-  const { reviews, newReview, expectedReviews } = reviewsData;
+  const { reviews, newReview, expectedReviews, expectedNewReview } =
+    reviewsData;
 
   before(async () => {
     Config.loadConfig();
@@ -779,7 +780,7 @@ describe('Integration Tests', () => {
           .send(newReview);
 
         expect(response.status).to.equal(201);
-        expect(response.body.newReview).to.deep.equal(newReview);
+        expect(response.body.newReview).to.deep.equal(expectedNewReview);
       });
       it('should have added the comment in the database', async () => {
         await request

@@ -18,6 +18,11 @@ describe('ReviewService Tests', () => {
     it('should call save and return the result if a new review has been successfully created', async () => {
       // Arrange
       const saveStub = sinon.stub(Review.prototype, 'save');
+      const findByIdAndUpdateStub = sinon.stub(Recipe, 'findByIdAndUpdate');
+      const findByIdStub = sinon.stub(Review, 'findById').returns({
+        populate: sinon.stub().resolves(newReview),
+      });
+      findByIdAndUpdateStub.resolves();
       saveStub.returns(newReview);
       // Act
       const result = await reviewService.createReview(newReview);
@@ -26,12 +31,19 @@ describe('ReviewService Tests', () => {
       expect(saveStub.calledOnce).to.be.true;
       // Restore
       saveStub.restore();
+      findByIdAndUpdateStub.restore();
+      findByIdStub.restore();
     });
     it('should error when save fails', async () => {
       // Arrange
       const error = new Error('test error');
       const saveStub = sinon.stub(Review.prototype, 'save');
+      const findByIdAndUpdateStub = sinon.stub(Recipe, 'findByIdAndUpdate');
+      findByIdAndUpdateStub.resolves();
       saveStub.throws(error);
+      const findByIdStub = sinon.stub(Review, 'findById').returns({
+        populate: sinon.stub().throws(error),
+      });
       // Act && Assert
 
       try {
@@ -44,6 +56,8 @@ describe('ReviewService Tests', () => {
       }
       // Restore
       saveStub.restore();
+      findByIdAndUpdateStub.restore();
+      findByIdStub.restore();
     });
   });
   describe('getReviewsByRecipeId Tests', () => {
