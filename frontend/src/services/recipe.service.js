@@ -40,3 +40,28 @@ export const addRecipe = async (newRecipe, token) => {
     return e;
   }
 };
+
+export const deleteRecipe = async (recipeId, userId, role, token) => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  const dataToSend = {
+    data: {
+      userId,
+      role,
+    },
+    headers,
+  };
+
+  try {
+    const response = await axios.delete(
+      `http://localhost:3000/recipe/${recipeId}`,
+      dataToSend
+    );
+    console.log(response);
+  } catch (e) {
+    console.log(e);
+    return e;
+  }
+};

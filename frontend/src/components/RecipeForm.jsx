@@ -18,12 +18,14 @@ const RecipeForm = ({ action }) => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+
     if (action === "add") {
-      setRecipe((prevState) => ({
-        ...prevState,
+      const updatedRecipe = {
+        ...recipe,
         author: loggedUser.user._id,
-      }));
-      const recipeData = await addRecipe(recipe, loggedUser.userToken);
+      };
+
+      const recipeData = await addRecipe(updatedRecipe, loggedUser.userToken);
 
       if (recipeData.message.includes("successfully")) {
         console.log(recipeData.newRecipe);
