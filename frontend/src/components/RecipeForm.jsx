@@ -1,11 +1,20 @@
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useContext, useEffect, useState } from "react";
-import { addRecipe } from "../services/recipe.service";
+import {
+  addRecipe,
+  getSingleRecipe,
+  updateRecipe,
+} from "../services/recipe.service";
 import { UserContext } from "../context/UserContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { showFeedbackMessage } from "../utils/feedbackMessages";
 
 const RecipeForm = ({ action }) => {
   const navigate = useNavigate();
+  const { recipeId } = useParams();
   const { loggedUser } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
   const [feedBackMessage, setFeedBackMessage] = useState(null);
@@ -24,26 +33,40 @@ const RecipeForm = ({ action }) => {
         ...recipe,
         author: loggedUser.user._id,
       };
-
       const recipeData = await addRecipe(updatedRecipe, loggedUser.userToken);
-
       if (recipeData.message.includes("successfully")) {
         console.log(recipeData.newRecipe);
         setIsLoading(true);
-        setFeedBackMessage({ message: "Recipe was successfully created" });
-        setRecipe({
-          name: "",
-          imgUrl: "",
-          description: "",
-          author: "",
-        });
+        showFeedbackMessage("success", "Recipe was successfully created");
         setTimeout(() => {
           navigate(`/recipes/${recipeData.newRecipe._id}`);
+          setRecipe({
+            name: "",
+            imgUrl: "",
+            description: "",
+            author: "",
+          });
         }, 1500);
       } else {
-        setFeedBackMessage({
-          message: "Failed to create a new recipe",
-        });
+        showFeedbackMessage("error", "Failed to create a new recipe", 2000);
+      }
+    } else {
+      const recipeData = await updateRecipe(
+        recipeId,
+        loggedUser.user._id,
+        recipe,
+        loggedUser.userToken
+      );
+
+      if (recipeData.message.includes("successfully")) {
+        showFeedbackMessage(
+          "success",
+          "Recipe successfully updated, redirecting now..."
+        );
+        setIsLoading(true);
+        setTimeout(() => {
+          navigate(`/recipes/${recipeData.updatedRecipe._id}`);
+        }, 1500);
       }
     }
   };
@@ -57,6 +80,19 @@ const RecipeForm = ({ action }) => {
     }));
   };
 
+  const getRecipeData = async () => {
+    try {
+      const recipeData = await getSingleRecipe(recipeId);
+      setRecipe(recipeData.recipe);
+    } catch (e) {}
+  };
+
+  useEffect(() => {
+    if (action === "edit") {
+      getRecipeData();
+    }
+  }, []);
+
   return (
     <form onSubmit={onSubmitHandler}>
       <div className="mb-3 form-floating">
@@ -68,6 +104,7 @@ const RecipeForm = ({ action }) => {
           placeholder="Recipe Name"
           value={recipe.name}
           onChange={onChangeHandler}
+          disabled={isLoading}
         />
         <label htmlFor="recipeName" className="form-label">
           Recipe Name
@@ -83,6 +120,7 @@ const RecipeForm = ({ action }) => {
           placeholder="https://image-url.com"
           value={recipe.imgUrl}
           onChange={onChangeHandler}
+          disabled={isLoading}
         />
         <label htmlFor="imgUrl" className="form-label">
           Image url
@@ -97,28 +135,28 @@ const RecipeForm = ({ action }) => {
           name="description"
           value={recipe.description}
           onChange={onChangeHandler}
+          disabled={isLoading}
         ></textarea>
         <label htmlFor="description">Recipe Description</label>
       </div>
-      {feedBackMessage && (
-        <p
-          className={
-            feedBackMessage.message.includes("successfully")
-              ? "text-success"
-              : "text-danger"
-          }
-        >
-          {feedBackMessage.message}
-        </p>
-      )}
       <LoadingButton
         loading={isLoading}
         loadingIndicator={action === "add" ? "adding" : "saving"}
-        variant="outlined"
+        variant="contained"
         type="submit"
       >
         {action}
       </LoadingButton>
+      <LoadingButton
+        loading={isLoading}
+        loadingIndicator={action === "add" ? "adding" : "saving"}
+        variant="contained"
+        color="error"
+        onClick={() => navigate(-1)}
+      >
+        Cancel
+      </LoadingButton>
+      <ToastContainer />
     </form>
   );
 };

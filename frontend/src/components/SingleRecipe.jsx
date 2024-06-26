@@ -52,7 +52,11 @@ const SingleRecipe = () => {
     <>
       {loggedUser && loggedUser.user._id === singleRecipe.author && (
         <>
-          <Button variant="contained" color="success">
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => navigate(`/recipes/${recipeId}/editRecipe`)}
+          >
             Edit
           </Button>
           <Button variant="contained" color="error" onClick={handleOpen}>

@@ -41,6 +41,27 @@ export const addRecipe = async (newRecipe, token) => {
   }
 };
 
+export const updateRecipe = async (recipeId, userId, updates, token) => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  const dataToSend = {
+    userId,
+    updates,
+  };
+
+  try {
+    const response = await axios.put(
+      `http://localhost:3000/recipe/${recipeId}`,
+      dataToSend,
+      { headers }
+    );
+
+    return response.data;
+  } catch (e) {}
+};
+
 export const deleteRecipe = async (recipeId, userId, role, token) => {
   const headers = {
     Authorization: `Bearer ${token}`,
