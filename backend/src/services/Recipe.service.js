@@ -6,8 +6,15 @@ export default class RecipeService {
   createRecipe = async newRecipe => {
     try {
       const recipe = new Recipe(newRecipe);
-      return await recipe.save();
+      const savedRecipe = await recipe.save();
+
+      await User.findByIdAndUpdate(savedRecipe.author, {
+        $push: { recipes: savedRecipe._id },
+      });
+
+      return savedRecipe;
     } catch (e) {
+      console.log(e);
       throw new Error(`Failed to create a new recipe: ${e.message}`);
     }
   };

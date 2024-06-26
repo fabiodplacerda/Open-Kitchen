@@ -19,6 +19,8 @@ describe('RecipeService Tests', () => {
     it('should call save and return the result if a new has been successfully created', async () => {
       // Arrange
       const saveStub = sinon.stub(Recipe.prototype, 'save');
+      const findByIdAndUpdateStub = sinon.stub(User, 'findByIdAndUpdate');
+      findByIdAndUpdateStub.resolves();
       saveStub.returns(newRecipe);
       // Act
       const result = await recipeService.createRecipe(newRecipe);
@@ -27,11 +29,14 @@ describe('RecipeService Tests', () => {
       expect(saveStub.calledOnce).to.be.true;
       // Restore
       saveStub.restore();
+      findByIdAndUpdateStub.restore();
     });
     it('should error when save fails', async () => {
       // Arrange
       const error = new Error('test error');
       const saveStub = sinon.stub(Recipe.prototype, 'save');
+      const findByIdAndUpdateStub = sinon.stub(User, 'findByIdAndUpdate');
+      findByIdAndUpdateStub.resolves();
       saveStub.throws(error);
       // Act && Assert
 
@@ -45,6 +50,7 @@ describe('RecipeService Tests', () => {
       }
       // Restore
       saveStub.restore();
+      findByIdAndUpdateStub.restore();
     });
   });
   describe('getAllRecipes Tests', () => {
