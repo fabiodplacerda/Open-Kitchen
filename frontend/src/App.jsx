@@ -5,18 +5,23 @@ import Register from "./components/Register";
 import Recipes from "./components/Recipes";
 import SingleRecipe from "./components/SingleRecipe";
 import Homepage from "./components/Homepage";
+import { UserProvider } from "./context/UserContext";
+import AddRecipe from "./components/AddRecipe";
 
 function App() {
   return (
     <>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/recipes/:recipeId" element={<SingleRecipe />} />
-        <Route path="/recipes" element={<Recipes />} />
-      </Routes>
+      <UserProvider>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/recipes" element={<Recipes />} />
+          <Route path="/recipes/:recipeId" element={<SingleRecipe />} />
+          <Route path="/recipes/addRecipe" element={<AddRecipe />} />
+        </Routes>
+      </UserProvider>
     </>
   );
 }

@@ -1,24 +1,34 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { login, register } from "../services/user.service";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 
 const AccountForm = ({ action }) => {
+  const { setLoggedUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [user, setUser] = useState({ email: "", username: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
-  const [loginSuccessful, setLoginSuccessful] = useState(false);
+  const [loginSuccessful, setLoginSuccessful] = useState({ message: "" });
+
   const [registerSuccessful, setRegisterSuccessful] = useState(false);
 
   const loginUser = async () => {
     try {
       const userData = await login(user.username, user.password);
-      setIsLoading(true);
-      setLoginSuccessful(true);
-      setTimeout(() => {
-        navigate("/recipes");
-      }, 1500);
       console.log(userData);
+      if (userData.message) {
+        setIsLoading(true);
+        setLoginSuccessful({ message: "success" });
+        setLoggedUser({ user: userData.user, userToken: userData.token });
+        setTimeout(() => {
+          navigate("/recipes");
+        }, 1500);
+      } else if (userData.includes("401")) {
+        setLoginSuccessful({ message: "fail" });
+      } else {
+        setLoginSuccessful({ message: "network" });
+      }
     } catch (e) {
       console.log(e);
     }
@@ -49,6 +59,7 @@ const AccountForm = ({ action }) => {
   };
 
   const onChangeHandler = (e) => {
+    setLoginSuccessful({ message: "" });
     const { name, value } = e.target;
     setUser((prevState) => ({
       ...prevState,
@@ -76,7 +87,7 @@ const AccountForm = ({ action }) => {
         </div>
       )}
       <div className="mb-3">
-        <label htmlFor="email" className="form-label">
+        <label htmlFor="username" className="form-label">
           Username
         </label>
         <input
@@ -103,7 +114,17 @@ const AccountForm = ({ action }) => {
           value={user.password}
         />
       </div>
-      {loginSuccessful && <p className="text-success">Login successful.</p>}
+      {loginSuccessful.message === "success" && (
+        <p className="text-success">Login successful.</p>
+      )}
+      {loginSuccessful.message === "fail" && (
+        <p className="text-danger">Password or Username are incorrect.</p>
+      )}
+      {loginSuccessful.message === "network" && (
+        <p className="text-danger">
+          Something went wrong please try again later!
+        </p>
+      )}
       {registerSuccessful && (
         <p className="text-success">The account was registered successfully.</p>
       )}

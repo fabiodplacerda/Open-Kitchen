@@ -1,6 +1,15 @@
-import { NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { NavLink, Link } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
+import { logout } from "../services/user.service";
 
 const Header = () => {
+  const { loggedUser, setLoggedUser } = useContext(UserContext);
+  const logoutHandler = () => {
+    logout();
+    setLoggedUser(null);
+  };
+
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
@@ -34,18 +43,67 @@ const Header = () => {
                 Recipes
               </NavLink>
             </li>
+            {loggedUser && loggedUser.user.recipes.length > 0 && (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/recipes">
+                  My Recipes
+                </NavLink>
+              </li>
+            )}
+            {loggedUser && loggedUser.user.savedRecipes.length > 0 && (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/recipes">
+                  My Recipes
+                </NavLink>
+              </li>
+            )}
           </ul>
           <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/login">
-                Login
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/register">
-                Register
-              </NavLink>
-            </li>
+            {!loggedUser ? (
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/login">
+                    Login
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/register">
+                    Register
+                  </NavLink>
+                </li>
+              </>
+            ) : (
+              <li className="nav-item dropdown">
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  My account
+                </a>
+                <ul className="dropdown-menu">
+                  <li>
+                    <NavLink
+                      className="dropdown-item"
+                      to="/user/accountManagement"
+                    >
+                      Manage
+                    </NavLink>
+                  </li>
+                  <li>
+                    <Link
+                      className="dropdown-item"
+                      onClick={logoutHandler}
+                      to="/login"
+                    >
+                      Logout
+                    </Link>
+                  </li>
+                </ul>
+              </li>
+            )}
           </ul>
         </div>
       </div>
