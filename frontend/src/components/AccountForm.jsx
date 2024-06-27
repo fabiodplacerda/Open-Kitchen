@@ -1,11 +1,12 @@
-import { useContext, useState } from "react";
-import { login, register } from "../services/user.service";
+import { useContext, useEffect, useState } from "react";
+import { login, register, updateUser } from "../services/user.service";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import showFeedbackMessage from "../utils/feedbackMessages";
 
 const AccountForm = ({ action }) => {
-  const { setLoggedUser } = useContext(UserContext);
+  const { loggedUser, setLoggedUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [user, setUser] = useState({ email: "", username: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +26,7 @@ const AccountForm = ({ action }) => {
         };
         setLoggedUser(storeUser);
         setIsLoading(true);
-        setLoginSuccessful({ message: "success" });
+        showFeedbackMessage("success", "Login successful.");
         setTimeout(() => {
           navigate("/recipes");
         }, 1500);
@@ -53,12 +54,36 @@ const AccountForm = ({ action }) => {
     }
   };
 
+  const updateUserData = async () => {
+    try {
+      const { recipes, savedRecipes, ...userWithoutRecipes } = user;
+      console.log(userWithoutRecipes);
+      const updatedUserData = await updateUser(
+        loggedUser._id,
+        userWithoutRecipes,
+        loggedUser.userToken
+      );
+
+      if (updatedUserData.message.includes("successfully")) {
+        setIsLoading(true);
+        showFeedbackMessage("success", "Password successfully updated");
+        setTimeout(() => {
+          navigate("/recipes");
+        }, 1500);
+      }
+
+      console.log(updatedUserData);
+    } catch (e) {}
+  };
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     if (action === "Login") {
       await loginUser();
     } else if (action === "Register") {
       await registerUser();
+    } else {
+      await updateUserData();
     }
     setUser({ email: "", username: "", password: "" });
   };
@@ -72,9 +97,15 @@ const AccountForm = ({ action }) => {
     }));
   };
 
+  useEffect(() => {
+    if (action === "Edit" && loggedUser) {
+      setUser({ ...loggedUser, password: "" });
+    }
+  }, [loggedUser]);
+
   return (
     <form onSubmit={onSubmitHandler}>
-      {action === "Register" && (
+      {(action === "Register" || action === "Edit") && (
         <div className="mb-3">
           <label htmlFor="email" className="form-label">
             Email
@@ -88,6 +119,7 @@ const AccountForm = ({ action }) => {
             placeholder="email@email.com"
             value={user.email}
             onChange={onChangeHandler}
+            disabled={action === "Edit" ? true : false}
           />
         </div>
       )}
@@ -103,6 +135,7 @@ const AccountForm = ({ action }) => {
           placeholder="username"
           value={user.username}
           onChange={onChangeHandler}
+          disabled={action === "Edit" ? true : false}
         />
       </div>
       <div className="mb-3">
@@ -119,9 +152,6 @@ const AccountForm = ({ action }) => {
           value={user.password}
         />
       </div>
-      {loginSuccessful.message === "success" && (
-        <p className="text-success">Login successful.</p>
-      )}
       {loginSuccessful.message === "fail" && (
         <p className="text-danger">Password or Username are incorrect.</p>
       )}
@@ -136,7 +166,7 @@ const AccountForm = ({ action }) => {
       <LoadingButton
         loading={isLoading}
         loadingIndicator="Loading"
-        variant="outlined"
+        variant="contained"
         type="submit"
       >
         {action}

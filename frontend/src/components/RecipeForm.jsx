@@ -8,7 +8,6 @@ import {
 import { UserContext } from "../context/UserContext";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import showFeedbackMessage from "../utils/feedbackMessages";
 
@@ -23,8 +22,6 @@ const RecipeForm = ({ action }) => {
     description: "",
     author: "",
   });
-
-  console.log(loggedUser);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -156,7 +153,6 @@ const RecipeForm = ({ action }) => {
       >
         Cancel
       </LoadingButton>
-      <ToastContainer />
     </form>
   );
 };

@@ -12,6 +12,8 @@ const Recipes = () => {
   const [error, setError] = useState(null);
   const [recipes, setRecipes] = useState([]);
 
+  console.log(loggedUser);
+
   const getRecipesData = async () => {
     try {
       const recipesData = await getRecipes();

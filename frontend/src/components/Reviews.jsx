@@ -10,7 +10,6 @@ import { UserContext } from "../context/UserContext";
 import AddReviewForm from "./AddReviewForm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import showFeedbackMessage from "../utils/feedbackMessages";
-import { ToastContainer } from "react-toastify";
 
 const Reviews = ({ recipeId }) => {
   const { loggedUser } = useContext(UserContext);
@@ -129,7 +128,6 @@ const Reviews = ({ recipeId }) => {
           </div>
         );
       })}
-      <ToastContainer />
     </>
   );
 };

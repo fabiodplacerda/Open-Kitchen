@@ -44,3 +44,26 @@ export const logout = () => {
 export const getCurrentUser = () => {
   return JSON.parse(localStorage.getItem(`user`));
 };
+
+export const updateUser = async (userId, updates, token) => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  console.log(userId, updates, token);
+
+  try {
+    const response = await axios.put(
+      `http://localhost:3000/user/${userId}`,
+      updates,
+      { headers }
+    );
+
+    return response.data;
+  } catch (e) {
+    return {
+      status: e.response.status,
+      statusText: e.response.statusText,
+    };
+  }
+};
