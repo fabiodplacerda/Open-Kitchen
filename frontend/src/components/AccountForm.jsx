@@ -152,7 +152,7 @@ const AccountForm = ({ action }) => {
             placeholder="email@email.com"
             value={user.email}
             onChange={onChangeHandler}
-            disabled={action === "Edit" ? true : false}
+            disabled={action === "Edit" ? true : isLoading}
           />
           {(action === "Register" || action === "Edit") && (
             <div id="emailHelpBlock" className="form-text">
@@ -173,7 +173,7 @@ const AccountForm = ({ action }) => {
           placeholder="username"
           value={user.username}
           onChange={onChangeHandler}
-          disabled={action === "Edit" ? true : false}
+          disabled={action === "Edit" ? true : isLoading}
           aria-describedby="usernameHelpBlock"
         />
         {(action === "Register" || action === "Edit") && (
@@ -196,6 +196,7 @@ const AccountForm = ({ action }) => {
           onChange={onChangeHandler}
           value={user.password}
           aria-describedby="passwordHelpBlock"
+          disabled={isLoading}
         />
         {(action === "Register" || action === "Edit") && (
           <div id="passwordHelpBlock" className="form-text">
@@ -218,6 +219,7 @@ const AccountForm = ({ action }) => {
             placeholder="confirm password"
             onChange={onChangeHandlerPassword}
             value={confirmPassword}
+            disabled={isLoading}
           />
         </div>
       )}

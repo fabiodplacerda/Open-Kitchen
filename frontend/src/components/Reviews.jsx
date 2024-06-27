@@ -115,7 +115,8 @@ const Reviews = ({ recipeId }) => {
       {reviews.map((review) => {
         return (
           <div className="card" key={review._id}>
-            {loggedUser && loggedUser._id === review.author._id && (
+            {((loggedUser && loggedUser._id === review.author._id) ||
+              loggedUser.role === "admin") && (
               <IconButton onClick={() => deleteReviewData(review._id)}>
                 <DeleteIcon color="error" aria-label="delete" />
               </IconButton>

@@ -29,13 +29,9 @@ export const allValidFields = (email, username, password) => {
 };
 
 export const recipeInputValid = (recipeName, imgUrl, recipeDescription) => {
-  console.log(recipeName, imgUrl, recipeDescription);
   const recipeNameRegex = recipeName.length >= 3 && recipeName.length <= 30;
   const recipeDescriptionRegex = recipeDescription.length >= 50;
   const imageRegex =
     /^(https?:\/\/(?:www\.)?[^\.]+\.[^/]+\/.*\.(?:png|jpg|jpeg|gif|bmp|svg))$/;
-  console.log(
-    imageRegex.test(imgUrl) && recipeNameRegex && recipeDescriptionRegex
-  );
   return imageRegex.test(imgUrl) && recipeNameRegex && recipeDescriptionRegex;
 };

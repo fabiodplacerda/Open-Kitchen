@@ -53,29 +53,30 @@ const SingleRecipe = () => {
   return (
     <>
       {loggedUser && loggedUser._id === singleRecipe.author && (
-        <>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={() => navigate(`/recipes/${recipeId}/editRecipe`)}
-          >
-            Edit
-          </Button>
-          <Button variant="contained" color="error" onClick={handleOpen}>
-            Delete
-          </Button>
-          <ModalBox
-            title={"Delete Recipe"}
-            text={
-              " Are you certain you want to delete this recipe Please note that this action cannot be reversed?"
-            }
-            open={open}
-            isLoading={isLoading}
-            handleOpen={handleOpen}
-            deleteFunction={deleteHandler}
-          />
-        </>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={() => navigate(`/recipes/${recipeId}/editRecipe`)}
+        >
+          Edit
+        </Button>
       )}
+      {((loggedUser && loggedUser._id === singleRecipe.author) ||
+        loggedUser.role === "admin") && (
+        <Button variant="contained" color="error" onClick={handleOpen}>
+          Delete
+        </Button>
+      )}
+      <ModalBox
+        title={"Delete Recipe"}
+        text={
+          " Are you certain you want to delete this recipe Please note that this action cannot be reversed?"
+        }
+        open={open}
+        isLoading={isLoading}
+        handleOpen={handleOpen}
+        deleteFunction={deleteHandler}
+      />
       <h2>{singleRecipe.name}</h2>
       <img
         src={singleRecipe.imgUrl}
