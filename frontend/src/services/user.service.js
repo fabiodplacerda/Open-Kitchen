@@ -10,7 +10,26 @@ export const register = async (email, username, password) => {
 
     return user.status;
   } catch (e) {
-    console.log(e);
+    console.log(e.response);
+    if (
+      e.response.data.message &&
+      e.response.data.message.includes("dup key")
+    ) {
+      return {
+        status: 500,
+        message: "Username or Email already in use",
+      };
+    } else if (e.response) {
+      return {
+        status: e.response.status,
+        message: e.response.statusText,
+      };
+    } else {
+      return {
+        status: 500,
+        message: "Network Error",
+      };
+    }
   }
 };
 
@@ -33,7 +52,15 @@ export const login = async (username, password) => {
 
     return response.data;
   } catch (e) {
-    return e.message;
+    console.log(e.response);
+    if (e.response) {
+      return {
+        status: e.response.status,
+        message: e.response.statusText,
+      };
+    } else {
+      return e;
+    }
   }
 };
 
@@ -50,8 +77,6 @@ export const updateUser = async (userId, updates, token) => {
     Authorization: `Bearer ${token}`,
   };
 
-  console.log(userId, updates, token);
-
   try {
     const response = await axios.put(
       `http://localhost:3000/user/${userId}`,
@@ -61,9 +86,14 @@ export const updateUser = async (userId, updates, token) => {
 
     return response.data;
   } catch (e) {
-    return {
-      status: e.response.status,
-      statusText: e.response.statusText,
-    };
+    console.log(e.response);
+    if (e.response) {
+      return {
+        status: e.response.status,
+        message: e.response.statusText,
+      };
+    } else {
+      return e;
+    }
   }
 };

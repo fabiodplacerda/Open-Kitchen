@@ -4,21 +4,21 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import showFeedbackMessage from "../utils/feedbackMessages";
+import { allValidFields, passwordMatchConfirmation } from "../utils/utils";
 
 const AccountForm = ({ action }) => {
   const { loggedUser, setLoggedUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [user, setUser] = useState({ email: "", username: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
-  const [loginSuccessful, setLoginSuccessful] = useState({ message: "" });
-
-  const [registerSuccessful, setRegisterSuccessful] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [inputsValidity, setInputsValidity] = useState(false);
 
   const loginUser = async () => {
     try {
       const userData = await login(user.username, user.password);
 
-      if (userData.message) {
+      if (userData.token) {
         const { user, token } = userData;
         const storeUser = {
           ...user,
@@ -30,10 +30,10 @@ const AccountForm = ({ action }) => {
         setTimeout(() => {
           navigate("/recipes");
         }, 1500);
-      } else if (userData.includes("401")) {
-        setLoginSuccessful({ message: "fail" });
+      } else if (userData.status && userData.status === 401) {
+        showFeedbackMessage("error", "Username or password don't match.", 2500);
       } else {
-        setLoginSuccessful({ message: "network" });
+        showFeedbackMessage("error", `Error: ${userData.message}`, 2500);
       }
     } catch (e) {
       console.log(e);
@@ -41,14 +41,21 @@ const AccountForm = ({ action }) => {
   };
 
   const registerUser = async () => {
-    console.log("register");
     try {
       const userData = await register(user.email, user.username, user.password);
-      setIsLoading(true);
-      setRegisterSuccessful(true);
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
+      if (userData === 201) {
+        setIsLoading(true);
+        showFeedbackMessage(
+          "success",
+          "The account was registered successfully."
+        );
+        setTimeout(() => {
+          navigate("/login");
+          setUser({ email: "", username: "", password: "" });
+        }, 1500);
+      } else {
+        showFeedbackMessage("error", `Error: ${userData.message}`, 2500);
+      }
     } catch (e) {
       console.log(e);
     }
@@ -57,7 +64,6 @@ const AccountForm = ({ action }) => {
   const updateUserData = async () => {
     try {
       const { recipes, savedRecipes, ...userWithoutRecipes } = user;
-      console.log(userWithoutRecipes);
       const updatedUserData = await updateUser(
         loggedUser._id,
         userWithoutRecipes,
@@ -70,10 +76,14 @@ const AccountForm = ({ action }) => {
         setTimeout(() => {
           navigate("/recipes");
         }, 1500);
+      } else if (updatedUserData.status === 400) {
+        showFeedbackMessage("error", "400: Invalid password", 2000);
+        setConfirmPassword("");
+        setUser((prevState) => ({ ...prevState, password: "" }));
       }
-
-      console.log(updatedUserData);
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const onSubmitHandler = async (e) => {
@@ -83,18 +93,42 @@ const AccountForm = ({ action }) => {
     } else if (action === "Register") {
       await registerUser();
     } else {
-      await updateUserData();
+      const passwordMatch = passwordMatchConfirmation(
+        user.password,
+        confirmPassword
+      );
+      if (passwordMatch) {
+        await updateUserData();
+      } else {
+        showFeedbackMessage("error", "Passwords don't match", 2500);
+        setConfirmPassword("");
+        setUser((prevState) => ({ ...prevState, password: "" }));
+      }
     }
-    setUser({ email: "", username: "", password: "" });
+    // setUser({ email: "", username: "", password: "" });
   };
 
   const onChangeHandler = (e) => {
-    setLoginSuccessful({ message: "" });
     const { name, value } = e.target;
-    setUser((prevState) => ({
-      ...prevState,
+
+    const newUserState = {
+      ...user,
       [name]: value,
-    }));
+    };
+    if (action === "Register") {
+      const isValid = allValidFields(
+        newUserState.email,
+        newUserState.username,
+        newUserState.password
+      );
+      setInputsValidity(isValid);
+    }
+
+    setUser(newUserState);
+  };
+
+  const onChangeHandlerPassword = (e) => {
+    setConfirmPassword(e.target.value);
   };
 
   useEffect(() => {
@@ -151,23 +185,36 @@ const AccountForm = ({ action }) => {
           onChange={onChangeHandler}
           value={user.password}
         />
+        {(action === "Register" || action === "Edit") && (
+          <div id="passwordHelpBlock" className="form-text">
+            Your password must be 8-20 characters long, contain letters and
+            numbers, and must not contain spaces, special characters, or emoji.
+          </div>
+        )}
       </div>
-      {loginSuccessful.message === "fail" && (
-        <p className="text-danger">Password or Username are incorrect.</p>
+      {action === "Edit" && (
+        <div className="mb-3">
+          <label htmlFor="passwordConfirmation" className="form-label">
+            Confirm Password
+          </label>
+          <input
+            name="passwordConfirmation"
+            type="password"
+            className="form-control"
+            id="passwordConfirmation"
+            placeholder="confirm password"
+            onChange={onChangeHandlerPassword}
+            value={confirmPassword}
+          />
+        </div>
       )}
-      {loginSuccessful.message === "network" && (
-        <p className="text-danger">
-          Something went wrong please try again later!
-        </p>
-      )}
-      {registerSuccessful && (
-        <p className="text-success">The account was registered successfully.</p>
-      )}
+
       <LoadingButton
         loading={isLoading}
         loadingIndicator="Loading"
         variant="contained"
         type="submit"
+        disabled={action === "Register" ? !inputsValidity : false}
       >
         {action}
       </LoadingButton>
