@@ -10,13 +10,19 @@ import { UserContext } from "../context/UserContext";
 import AddReviewForm from "./AddReviewForm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import showFeedbackMessage from "../utils/feedbackMessages";
+import { calculateAverage } from "../utils/utils";
 
-const Reviews = ({ recipeId }) => {
+const Reviews = ({ recipeId, setReviewsAverage }) => {
   const { loggedUser } = useContext(UserContext);
   const [reviews, setReviews] = useState([]);
   const [rating, setRating] = useState(1);
   const [body, setBody] = useState("");
   const [isRating, setIsRating] = useState(false);
+
+  const updateAverageRating = (reviewsArr) => {
+    const rating = calculateAverage(reviewsArr);
+    setReviewsAverage(rating);
+  };
 
   const deleteReviewData = async (reviewId) => {
     try {
@@ -29,7 +35,11 @@ const Reviews = ({ recipeId }) => {
       );
       if (response === 204) {
         setReviews((prevReviews) => {
-          return prevReviews.filter((review) => review._id !== reviewId);
+          const updatedReviews = prevReviews.filter(
+            (review) => review._id !== reviewId
+          );
+          updateAverageRating(updatedReviews);
+          return updatedReviews;
         });
         showFeedbackMessage("success", "Review successfully removed.");
       }
@@ -52,11 +62,11 @@ const Reviews = ({ recipeId }) => {
 
       if (newReviewResponse && newReviewResponse.newReview) {
         showFeedbackMessage("success", "Reviews had been successfully added");
-        setReviews((prevReviews) => [
-          newReviewResponse.newReview,
-          ...prevReviews,
-          ,
-        ]);
+        setReviews((prevReviews) => {
+          const updatedReviews = [newReviewResponse.newReview, ...prevReviews];
+          updateAverageRating(updatedReviews);
+          return updatedReviews;
+        });
         setBody("");
         setRating(1);
         setIsRating(false);
@@ -76,6 +86,7 @@ const Reviews = ({ recipeId }) => {
     try {
       const reviewsData = await getReviews(recipeId);
       setReviews(reviewsData.reviews.reverse());
+      updateAverageRating(reviewsData.reviews);
     } catch (e) {}
   };
 

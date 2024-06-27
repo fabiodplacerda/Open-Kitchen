@@ -35,3 +35,15 @@ export const recipeInputValid = (recipeName, imgUrl, recipeDescription) => {
     /^(https?:\/\/(?:www\.)?[^\.]+\.[^/]+\/.*\.(?:png|jpg|jpeg|gif|bmp|svg))$/;
   return imageRegex.test(imgUrl) && recipeNameRegex && recipeDescriptionRegex;
 };
+
+export const calculateAverage = (reviews) => {
+  if (reviews.length < 0) {
+    return 0;
+  } else if (reviews.length === 1) {
+    return 1;
+  } else {
+    const ratings = reviews.map((review) => review.rating);
+    const total = ratings.reduce((acc, curr) => acc + curr);
+    return total / reviews.length;
+  }
+};

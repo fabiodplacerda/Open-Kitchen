@@ -6,7 +6,7 @@ import Reviews from "./Reviews";
 import ModalBox from "./ModalBox";
 
 // UI components
-import { Button } from "@mui/material";
+import { Button, Rating, Typography } from "@mui/material";
 import showFeedbackMessage from "../utils/feedbackMessages";
 
 const SingleRecipe = () => {
@@ -17,6 +17,7 @@ const SingleRecipe = () => {
   const [singleRecipe, setSingleRecipe] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [reviewsAverage, setReviewsAverage] = useState(0);
 
   const handleOpen = () => setOpen(!open);
 
@@ -48,7 +49,7 @@ const SingleRecipe = () => {
 
   useEffect(() => {
     getSingleRecipeData();
-  }, []);
+  }, [reviewsAverage]);
 
   return (
     <>
@@ -62,7 +63,7 @@ const SingleRecipe = () => {
         </Button>
       )}
       {((loggedUser && loggedUser._id === singleRecipe.author) ||
-        loggedUser.role === "admin") && (
+        (loggedUser && loggedUser.role) === "admin") && (
         <Button variant="contained" color="error" onClick={handleOpen}>
           Delete
         </Button>
@@ -78,13 +79,14 @@ const SingleRecipe = () => {
         deleteFunction={deleteHandler}
       />
       <h2>{singleRecipe.name}</h2>
+      <Rating value={reviewsAverage} readOnly precision={0.5} />
       <img
         src={singleRecipe.imgUrl}
         alt={singleRecipe.name}
         className="recipe-img"
       />
       <p>{singleRecipe.description}</p>
-      <Reviews recipeId={recipeId} />
+      <Reviews recipeId={recipeId} setReviewsAverage={setReviewsAverage} />
     </>
   );
 };
