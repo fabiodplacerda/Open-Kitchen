@@ -2,11 +2,13 @@ import { useContext, useEffect } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { logout } from "../services/user.service";
+import showFeedbackMessage from "../utils/feedbackMessages";
 
 const Header = () => {
   const { loggedUser, setLoggedUser } = useContext(UserContext);
   const logoutHandler = () => {
     logout();
+    showFeedbackMessage("success", "You've been successfully logged out. ");
     setLoggedUser(null);
   };
 

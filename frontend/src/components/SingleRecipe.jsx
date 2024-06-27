@@ -7,6 +7,7 @@ import ModalBox from "./ModalBox";
 
 // UI components
 import { Button } from "@mui/material";
+import showFeedbackMessage from "../utils/feedbackMessages";
 
 const SingleRecipe = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const SingleRecipe = () => {
       setIsLoading(true);
       setTimeout(() => {
         navigate("/recipes");
+        showFeedbackMessage("success", "Recipe was successfully deleted");
         setIsLoading(false);
       }, 1500);
     } catch (e) {

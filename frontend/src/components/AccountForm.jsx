@@ -105,7 +105,6 @@ const AccountForm = ({ action }) => {
         setUser((prevState) => ({ ...prevState, password: "" }));
       }
     }
-    // setUser({ email: "", username: "", password: "" });
   };
 
   const onChangeHandler = (e) => {
@@ -149,12 +148,17 @@ const AccountForm = ({ action }) => {
             type="email"
             className="form-control"
             id="email"
-            aria-describedby="emailHelp"
+            aria-describedby="emailHelpBlock"
             placeholder="email@email.com"
             value={user.email}
             onChange={onChangeHandler}
             disabled={action === "Edit" ? true : false}
           />
+          {(action === "Register" || action === "Edit") && (
+            <div id="emailHelpBlock" className="form-text">
+              You must provide a valid email
+            </div>
+          )}
         </div>
       )}
       <div className="mb-3">
@@ -170,7 +174,14 @@ const AccountForm = ({ action }) => {
           value={user.username}
           onChange={onChangeHandler}
           disabled={action === "Edit" ? true : false}
+          aria-describedby="usernameHelpBlock"
         />
+        {(action === "Register" || action === "Edit") && (
+          <div id="usernameHelpBlock" className="form-text">
+            Username must be 3-15 characters long and cannot include special
+            characters or spaces."
+          </div>
+        )}
       </div>
       <div className="mb-3">
         <label htmlFor="password" className="form-label">
@@ -184,11 +195,13 @@ const AccountForm = ({ action }) => {
           placeholder="password"
           onChange={onChangeHandler}
           value={user.password}
+          aria-describedby="passwordHelpBlock"
         />
         {(action === "Register" || action === "Edit") && (
           <div id="passwordHelpBlock" className="form-text">
-            Your password must be 8-20 characters long, contain letters and
-            numbers, and must not contain spaces, special characters, or emoji.
+            Your password must be 8-20 characters, include at least one
+            uppercase letter and a number, and contain no spaces or special
+            characters.
           </div>
         )}
       </div>

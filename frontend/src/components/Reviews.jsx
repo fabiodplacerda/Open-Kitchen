@@ -51,6 +51,7 @@ const Reviews = ({ recipeId }) => {
       );
 
       if (newReviewResponse && newReviewResponse.newReview) {
+        showFeedbackMessage("success", "Reviews had been successfully added");
         setReviews((prevReviews) => [
           newReviewResponse.newReview,
           ...prevReviews,

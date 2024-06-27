@@ -19,11 +19,11 @@ export const validateUsername = (username) => {
 export const allValidFields = (email, username, password) => {
   const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const usernameRegex = /^[a-zA-Z0-9]{3,15}$/;
 
   return (
     emailRegex.test(email) &&
-    username.length >= 3 &&
-    username.length <= 15 &&
+    usernameRegex.test(username) &&
     passwordRegex.test(password)
   );
 };
