@@ -24,8 +24,8 @@ const Reviews = ({ recipeId }) => {
       const response = await deleteReview(
         recipeId,
         reviewId,
-        loggedUser.user._id,
-        loggedUser.user.role,
+        loggedUser._id,
+        loggedUser.role,
         loggedUser.userToken
       );
       if (response === 204) {
@@ -41,7 +41,7 @@ const Reviews = ({ recipeId }) => {
     const newReview = {
       rating,
       body,
-      author: loggedUser.user._id,
+      author: loggedUser._id,
       recipeId,
     };
     try {
@@ -118,7 +118,7 @@ const Reviews = ({ recipeId }) => {
       {reviews.map((review) => {
         return (
           <div className="card" key={review._id}>
-            {loggedUser && loggedUser.user._id === review.author._id && (
+            {loggedUser && loggedUser._id === review.author._id && (
               <IconButton onClick={() => deleteReviewData(review._id)}>
                 <DeleteIcon color="error" aria-label="delete" />
               </IconButton>

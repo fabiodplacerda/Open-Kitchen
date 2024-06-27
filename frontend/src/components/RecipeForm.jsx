@@ -24,13 +24,15 @@ const RecipeForm = ({ action }) => {
     author: "",
   });
 
+  console.log(loggedUser);
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
     if (action === "add") {
       const updatedRecipe = {
         ...recipe,
-        author: loggedUser.user._id,
+        author: loggedUser._id,
       };
       const recipeData = await addRecipe(updatedRecipe, loggedUser.userToken);
       if (recipeData.message.includes("successfully")) {
@@ -52,7 +54,7 @@ const RecipeForm = ({ action }) => {
     } else {
       const recipeData = await updateRecipe(
         recipeId,
-        loggedUser.user._id,
+        loggedUser._id,
         recipe,
         loggedUser.userToken
       );

@@ -23,8 +23,8 @@ const SingleRecipe = () => {
     try {
       const response = await deleteRecipe(
         singleRecipe._id,
-        loggedUser.user._id,
-        loggedUser.user.role,
+        loggedUser._id,
+        loggedUser.role,
         loggedUser.userToken
       );
       setIsLoading(true);
@@ -50,7 +50,7 @@ const SingleRecipe = () => {
 
   return (
     <>
-      {loggedUser && loggedUser.user._id === singleRecipe.author && (
+      {loggedUser && loggedUser._id === singleRecipe.author && (
         <>
           <Button
             variant="contained"

@@ -16,11 +16,16 @@ const AccountForm = ({ action }) => {
   const loginUser = async () => {
     try {
       const userData = await login(user.username, user.password);
-      console.log(userData);
+
       if (userData.message) {
+        const { user, token } = userData;
+        const storeUser = {
+          ...user,
+          userToken: token,
+        };
+        setLoggedUser(storeUser);
         setIsLoading(true);
         setLoginSuccessful({ message: "success" });
-        setLoggedUser({ user: userData.user, userToken: userData.token });
         setTimeout(() => {
           navigate("/recipes");
         }, 1500);
@@ -52,7 +57,7 @@ const AccountForm = ({ action }) => {
     e.preventDefault();
     if (action === "Login") {
       await loginUser();
-    } else {
+    } else if (action === "Register") {
       await registerUser();
     }
     setUser({ email: "", username: "", password: "" });

@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { logout } from "../services/user.service";
@@ -43,14 +43,15 @@ const Header = () => {
                 Recipes
               </NavLink>
             </li>
-            {loggedUser && loggedUser.user.recipes.length > 0 && (
+            {loggedUser && loggedUser.recipes.length > 0 && (
               <li className="nav-item">
                 <NavLink className="nav-link" to="/recipes">
                   My Recipes
                 </NavLink>
               </li>
             )}
-            {loggedUser && loggedUser.user.savedRecipes.length > 0 && (
+
+            {loggedUser && loggedUser.savedRecipes.length > 0 && (
               <li className="nav-item">
                 <NavLink className="nav-link" to="/recipes">
                   My Recipes

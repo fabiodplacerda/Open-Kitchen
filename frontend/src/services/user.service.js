@@ -21,11 +21,15 @@ export const login = async (username, password) => {
       password,
     });
 
-    const { user, token } = response.data;
-
-    localStorage.setItem("userToken", token);
-    localStorage.setItem("userId", user._id);
-    localStorage.setItem("userRole", user.role);
+    if (response.data.token) {
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          ...response.data.user,
+          userToken: response.data.token,
+        })
+      );
+    }
 
     return response.data;
   } catch (e) {
@@ -34,7 +38,9 @@ export const login = async (username, password) => {
 };
 
 export const logout = () => {
-  localStorage.removeItem("userToken");
-  localStorage.removeItem("userId");
-  localStorage.removeItem("userRole");
+  localStorage.removeItem(`user`);
+};
+
+export const getCurrentUser = () => {
+  return JSON.parse(localStorage.getItem(`user`));
 };
