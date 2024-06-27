@@ -50,8 +50,6 @@ const Reviews = ({ recipeId }) => {
         loggedUser.userToken
       );
 
-      console.log(newReviewResponse);
-
       if (newReviewResponse && newReviewResponse.newReview) {
         setReviews((prevReviews) => [
           newReviewResponse.newReview,
@@ -76,7 +74,6 @@ const Reviews = ({ recipeId }) => {
   const getReviewsData = async () => {
     try {
       const reviewsData = await getReviews(recipeId);
-      console.log(reviewsData);
       setReviews(reviewsData.reviews.reverse());
     } catch (e) {}
   };

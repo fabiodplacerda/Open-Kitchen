@@ -80,7 +80,6 @@ export const deleteRecipe = async (recipeId, userId, role, token) => {
       `http://localhost:3000/recipe/${recipeId}`,
       dataToSend
     );
-    console.log(response);
   } catch (e) {
     console.log(e);
     return e;

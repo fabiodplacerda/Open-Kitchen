@@ -10,6 +10,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import "react-toastify/dist/ReactToastify.css";
 import showFeedbackMessage from "../utils/feedbackMessages";
+import { recipeInputValid } from "../utils/utils";
 
 const RecipeForm = ({ action }) => {
   const navigate = useNavigate();
@@ -23,6 +24,8 @@ const RecipeForm = ({ action }) => {
     author: "",
   });
 
+  const [validRecipe, setValidRecipe] = useState(false);
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
@@ -33,7 +36,6 @@ const RecipeForm = ({ action }) => {
       };
       const recipeData = await addRecipe(updatedRecipe, loggedUser.userToken);
       if (recipeData.message.includes("successfully")) {
-        console.log(recipeData.newRecipe);
         setIsLoading(true);
         showFeedbackMessage("success", "Recipe was successfully created");
         setTimeout(() => {
@@ -71,10 +73,18 @@ const RecipeForm = ({ action }) => {
 
   const onChangeHandler = (e) => {
     const { name, value } = e.target;
-    setRecipe((prevState) => ({
-      ...prevState,
+
+    const recipeData = {
+      ...recipe,
       [name]: value,
-    }));
+    };
+    const validity = recipeInputValid(
+      recipeData.name,
+      recipeData.imgUrl,
+      recipeData.description
+    );
+    setValidRecipe(validity);
+    setRecipe(recipeData);
   };
 
   const getRecipeData = async () => {
@@ -141,6 +151,7 @@ const RecipeForm = ({ action }) => {
         loadingIndicator={action === "add" ? "adding" : "saving"}
         variant="contained"
         type="submit"
+        disabled={!validRecipe}
       >
         {action}
       </LoadingButton>
