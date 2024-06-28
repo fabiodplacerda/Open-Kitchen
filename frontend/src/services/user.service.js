@@ -97,3 +97,28 @@ export const updateUser = async (userId, updates, token) => {
     }
   }
 };
+
+export const getSingleUser = async (userId, token) => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  try {
+    const response = await axios.get(`http://localhost:3000/user/${userId}`, {
+      headers,
+    });
+
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const updateUserRecipes = async (user, setLoggedUser) => {
+  const userData = await getSingleUser(user._id, user.userToken);
+  localStorage.setItem(
+    "user",
+    JSON.stringify({ ...userData, userToken: user.userToken })
+  );
+  setLoggedUser({ ...userData, userToken: user.userToken });
+};

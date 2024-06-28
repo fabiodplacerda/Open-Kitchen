@@ -11,11 +11,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import showFeedbackMessage from "../utils/feedbackMessages";
 import { recipeInputValid } from "../utils/utils";
+import { getSingleUser, updateUserRecipes } from "../services/user.service";
 
 const RecipeForm = ({ action }) => {
   const navigate = useNavigate();
   const { recipeId } = useParams();
-  const { loggedUser } = useContext(UserContext);
+  const { loggedUser, setLoggedUser } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
   const [recipe, setRecipe] = useState({
     name: "",
@@ -36,6 +37,7 @@ const RecipeForm = ({ action }) => {
       };
       const recipeData = await addRecipe(updatedRecipe, loggedUser.userToken);
       if (recipeData.message.includes("successfully")) {
+        await updateUserRecipes(loggedUser, setLoggedUser);
         setIsLoading(true);
         showFeedbackMessage("success", "Recipe was successfully created");
         setTimeout(() => {
@@ -59,6 +61,7 @@ const RecipeForm = ({ action }) => {
       );
 
       if (recipeData.message.includes("successfully")) {
+        await updateUserRecipes(loggedUser, setLoggedUser);
         showFeedbackMessage(
           "success",
           "Recipe successfully updated, redirecting now..."

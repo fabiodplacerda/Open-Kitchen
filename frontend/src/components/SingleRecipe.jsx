@@ -8,10 +8,11 @@ import ModalBox from "./ModalBox";
 // UI components
 import { Button, Rating, Typography } from "@mui/material";
 import showFeedbackMessage from "../utils/feedbackMessages";
+import { updateUserRecipes } from "../services/user.service";
 
 const SingleRecipe = () => {
   const navigate = useNavigate();
-  const { loggedUser } = useContext(UserContext);
+  const { loggedUser, setLoggedUser } = useContext(UserContext);
   const { recipeId } = useParams();
 
   const [singleRecipe, setSingleRecipe] = useState({});
@@ -30,7 +31,8 @@ const SingleRecipe = () => {
         loggedUser.userToken
       );
       setIsLoading(true);
-      setTimeout(() => {
+      setTimeout(async () => {
+        await updateUserRecipes(loggedUser, setLoggedUser);
         navigate("/recipes");
         showFeedbackMessage("success", "Recipe was successfully deleted");
         setIsLoading(false);

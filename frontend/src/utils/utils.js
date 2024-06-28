@@ -40,10 +40,10 @@ export const calculateAverage = (reviews) => {
   if (reviews.length < 0) {
     return 0;
   } else if (reviews.length === 1) {
-    return 1;
+    return reviews[0].rating;
   } else {
     const ratings = reviews.map((review) => review.rating);
-    const total = ratings.reduce((acc, curr) => acc + curr);
+    const total = ratings.reduce((acc, curr) => acc + curr, 0);
     return total / reviews.length;
   }
 };
