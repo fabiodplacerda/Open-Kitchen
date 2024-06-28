@@ -91,4 +91,18 @@ export default class UserServices {
       throw new Error(`Failed to get all users: ${e.message}`);
     }
   };
+
+  getSingleUser = async userId => {
+    try {
+      const user = await User.findById(userId, '-password')
+        .populate('recipes')
+        .populate('savedRecipes');
+
+      if (!user) return null;
+
+      return user;
+    } catch (e) {
+      throw new Error(`Failed to retrieved the user: ${e.message}`);
+    }
+  };
 }

@@ -37,7 +37,8 @@ import ReviewRoutes from '../../src/routes/Review.routes.js';
 describe('Integration Tests', () => {
   let server, database, userService, recipeService, reviewService, request;
 
-  const { users, newUser, expectedResults } = usersData;
+  const { users, newUser, expectedResults, expectedSingleUserResult } =
+    usersData;
   const { recipes, newRecipe, updatedRecipe } = recipesData;
   const { reviews, newReview, expectedReviews, expectedNewReview } =
     reviewsData;
@@ -415,6 +416,65 @@ describe('Integration Tests', () => {
 
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });
+      });
+    });
+    describe('GET request to /user/:id', () => {
+      const token = jwt.sign(
+        {
+          id: expectedSingleUserResult._id,
+          username: expectedSingleUserResult.username,
+        },
+        'openkitchen-secret-key-test',
+        { expiresIn: '24h' }
+      );
+      it('should return a 200 status code if request was successful', async () => {
+        const response = await request
+          .get(`/user/${expectedSingleUserResult._id}`)
+          .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).to.equal(200);
+      });
+      it('should return a user if request was successful', async () => {
+        const response = await request
+          .get(`/user/${expectedSingleUserResult._id}`)
+          .set('Authorization', `Bearer ${token}`);
+
+        expect(response.body).to.deep.equal(expectedSingleUserResult);
+      });
+      it('should respond with a 401 if token was not provided', async () => {
+        const response = await request.get(
+          `/user/${expectedSingleUserResult._id}`
+        );
+
+        expect(response.status).to.equal(401);
+      });
+      it('should respond with a 403 if auth fails', async () => {
+        const response = await request
+          .get(`/user/${expectedSingleUserResult._id}`)
+          .set('Authorization', `Bearer invalidToken`);
+
+        expect(response.status).to.equal(403);
+      });
+      it('should return a 404 status code if no user was found', async () => {
+        const response = await request
+          .get(`/user/667441c68299324f52841910`)
+          .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).to.equal(404);
+        expect(response.body).to.deep.equal({ message: 'User not found' });
+      });
+      it('should return a 500 status code a error occurs', async () => {
+        const error = new Error('Test error');
+        const stub = sinon.stub(userService, 'getSingleUser');
+        stub.throws(error);
+        const response = await request
+          .get(`/user/667441c68299324f52841910`)
+          .set('Authorization', `Bearer ${token}`);
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+
+        stub.restore();
       });
     });
   });

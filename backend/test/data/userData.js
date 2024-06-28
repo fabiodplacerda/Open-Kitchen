@@ -97,6 +97,15 @@ const usersData = {
     ],
     __v: 0,
   },
+  expectedSingleUserResult: {
+    _id: '667441c68299324f52841989',
+    email: 'user5@example.com',
+    username: 'user5',
+    role: 'user',
+    savedRecipes: [],
+    recipes: [],
+    __v: 0,
+  },
 };
 
 export default usersData;

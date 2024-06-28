@@ -3,7 +3,7 @@ import UserController from '../../../src/controller/User.controller.js';
 import sinon from 'sinon';
 import usersData from '../../data/userData.js';
 
-const { users } = usersData;
+const { users, expectedSingleUserResult } = usersData;
 
 describe('UserController', () => {
   let userController, userService, req, res, testError;
@@ -15,6 +15,7 @@ describe('UserController', () => {
       updateAccount: sinon.stub(),
       deleteAccount: sinon.stub(),
       getAllAccounts: sinon.stub(),
+      getSingleUser: sinon.stub(),
     };
     userController = new UserController(userService);
     req = {
@@ -242,6 +243,46 @@ describe('UserController', () => {
 
       expect(res.status.calledWith(500)).to.be.true;
       expect(res.json.calledWith({ message: 'test error' })).to.be.true;
+    });
+  });
+  describe('getSingleUser Tests', () => {
+    it('should response with a user', async () => {
+      req.params.id = expectedSingleUserResult._id;
+
+      userService.getSingleUser.resolves(expectedSingleUserResult);
+
+      await userController.getSingleUser(req, res);
+
+      expect(res.status.calledWith(200)).to.be.true;
+      expect(res.json.calledWith(expectedSingleUserResult)).to.be.true;
+    });
+    it('should respond with a 400 when no id is provided', async () => {
+      req.params.id = null;
+
+      userService.getSingleUser.resolves(expectedSingleUserResult);
+
+      await userController.getSingleUser(req, res);
+
+      expect(res.status.calledWith(400)).to.be.true;
+    });
+    it('should respond with a 404 when user was not found', async () => {
+      req.params.id = expectedSingleUserResult._id;
+
+      userService.getSingleUser.resolves(null);
+
+      await userController.getSingleUser(req, res);
+
+      expect(res.status.calledWith(404)).to.be.true;
+    });
+    it('should respond with a 500 a error occurs in userService', async () => {
+      req.params.id = expectedSingleUserResult._id;
+
+      userService.getSingleUser.throws(testError);
+
+      await userController.getSingleUser(req, res);
+
+      expect(res.status.calledWith(500)).to.be.true;
+      expect(res.json.calledWith({ message: testError.message })).to.be.true;
     });
   });
 });

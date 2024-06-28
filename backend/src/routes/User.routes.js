@@ -40,6 +40,11 @@ export default class UserRoutes {
       AuthorizationValidation.authorizeAdmin,
       this.#controller.getAllAccounts
     );
+    this.#router.get(
+      '/:id',
+      AuthenticationValidation.checkToken,
+      this.#controller.getSingleUser
+    );
   };
 
   getRouter = () => this.#router;

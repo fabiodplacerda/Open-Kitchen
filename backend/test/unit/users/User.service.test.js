@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import usersData from '../../data/userData.js';
 
-const { expectedResults, users } = usersData;
+const { expectedResults, users, expectedSingleUserResult } = usersData;
 
 describe('UserService', () => {
   let userServices;
@@ -229,6 +229,38 @@ describe('UserService', () => {
       } catch (e) {
         expect(e.message).to.equal(`Failed to get all users: ${error.message}`);
       }
+    });
+  });
+  describe('getSingleUser Tests', () => {
+    it('should call findById and return the user', async () => {
+      const findById = sinon.stub(User, 'findById').returns({
+        populate: sinon.stub().returns({
+          populate: sinon.stub().resolves(expectedSingleUserResult),
+        }),
+      });
+
+      const result = await userServices.getSingleUser(
+        expectedSingleUserResult._id
+      );
+
+      expect(findById.calledOnce).to.be.true;
+      expect(result).to.deep.equal(expectedSingleUserResult);
+      findById.restore();
+    });
+    it('should call findById and return the user', async () => {
+      const error = new Error('test error');
+      const findById = sinon.stub(User, 'findById').throws(error);
+
+      try {
+        await userServices.getSingleUser(expectedSingleUserResult._id);
+        assert.fail('Expect error was not thrown');
+      } catch (e) {
+        expect(e.message).to.equal(
+          `Failed to retrieved the user: ${error.message}`
+        );
+      }
+
+      findById.restore();
     });
   });
 });
