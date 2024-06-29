@@ -1,14 +1,15 @@
 import axios from "axios";
 
+const recipeUrl = import.meta.env.VITE_APP_RECIPE;
+
 export const getReviews = async (recipeId) => {
   try {
-    const response = await axios.get(
-      `http://localhost:3000/recipe/${recipeId}/reviews`
-    );
+    const response = await axios.get(`${recipeUrl}/${recipeId}/reviews`);
 
     return response.data;
   } catch (e) {
     console.log(e);
+    return e.message;
   }
 };
 
@@ -18,7 +19,7 @@ export const createReview = async (recipeId, newReview, token) => {
   };
   try {
     const response = await axios.post(
-      `http://localhost:3000/recipe/${recipeId}/createReview`,
+      `${recipeUrl}/${recipeId}/createReview`,
       newReview,
       { headers }
     );
@@ -46,10 +47,13 @@ export const deleteReview = async (recipeId, reviewId, userId, role, token) => {
 
   try {
     const response = await axios.delete(
-      `http://localhost:3000/recipe/${recipeId}/reviews/${reviewId}`,
+      `${recipeUrl}/${recipeId}/reviews/${reviewId}`,
       dataToSend
     );
 
     return response.status;
-  } catch (e) {}
+  } catch (e) {
+    console.log(e);
+    return e.message;
+  }
 };

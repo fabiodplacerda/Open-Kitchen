@@ -1,8 +1,10 @@
 import axios from "axios";
 
+const userUrl = import.meta.env.VITE_APP_USER;
+
 export const register = async (email, username, password) => {
   try {
-    const user = await axios.post(`http://localhost:3000/user/createAccount`, {
+    const user = await axios.post(`${userUrl}/createAccount`, {
       email,
       username,
       password,
@@ -10,7 +12,7 @@ export const register = async (email, username, password) => {
 
     return user.status;
   } catch (e) {
-    console.log(e.response);
+    console.log(e);
     if (
       e.response.data.message &&
       e.response.data.message.includes("dup key")
@@ -35,7 +37,7 @@ export const register = async (email, username, password) => {
 
 export const login = async (username, password) => {
   try {
-    const response = await axios.post(`http://localhost:3000/user/login`, {
+    const response = await axios.post(`${userUrl}/login`, {
       username,
       password,
     });
@@ -78,11 +80,9 @@ export const updateUser = async (userId, updates, token) => {
   };
 
   try {
-    const response = await axios.put(
-      `http://localhost:3000/user/${userId}`,
-      updates,
-      { headers }
-    );
+    const response = await axios.put(`${userUrl}/${userId}`, updates, {
+      headers,
+    });
 
     return response.data;
   } catch (e) {
@@ -104,13 +104,14 @@ export const getSingleUser = async (userId, token) => {
   };
 
   try {
-    const response = await axios.get(`http://localhost:3000/user/${userId}`, {
+    const response = await axios.get(`${userUrl}/${userId}`, {
       headers,
     });
 
     return response.data;
   } catch (e) {
     console.log(e);
+    return e.message;
   }
 };
 

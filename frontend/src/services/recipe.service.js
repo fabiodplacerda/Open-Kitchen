@@ -1,26 +1,26 @@
 import axios from "axios";
 
+const userUrl = import.meta.env.VITE_APP_RECIPE;
+
 export const getRecipes = async () => {
   try {
-    const response = await axios.get(
-      "http://localhost:3000/recipe/getAllRecipes"
-    );
+    const response = await axios.get(`${userUrl}/getAllRecipes`);
 
     return response.data;
   } catch (e) {
     console.log(e);
+    return e.message;
   }
 };
 
 export const getSingleRecipe = async (recipeId) => {
   try {
-    const response = await axios.get(
-      `http://localhost:3000/recipe/${recipeId}`
-    );
+    const response = await axios.get(`${userUrl}/${recipeId}`);
 
     return response.data;
   } catch (e) {
     console.log(e);
+    return e.message;
   }
 };
 
@@ -29,15 +29,13 @@ export const addRecipe = async (newRecipe, token) => {
     Authorization: `Bearer ${token}`,
   };
   try {
-    const response = await axios.post(
-      "http://localhost:3000/recipe/createRecipe",
-      newRecipe,
-      { headers }
-    );
+    const response = await axios.post(`${userUrl}/createRecipe`, newRecipe, {
+      headers,
+    });
 
     return response.data;
   } catch (e) {
-    return e;
+    return e.message;
   }
 };
 
@@ -52,14 +50,14 @@ export const updateRecipe = async (recipeId, userId, updates, token) => {
   };
 
   try {
-    const response = await axios.put(
-      `http://localhost:3000/recipe/${recipeId}`,
-      dataToSend,
-      { headers }
-    );
+    const response = await axios.put(`${userUrl}/${recipeId}`, dataToSend, {
+      headers,
+    });
 
     return response.data;
-  } catch (e) {}
+  } catch (e) {
+    return e.message;
+  }
 };
 
 export const deleteRecipe = async (recipeId, userId, role, token) => {
@@ -76,13 +74,12 @@ export const deleteRecipe = async (recipeId, userId, role, token) => {
   };
 
   try {
-    const response = await axios.delete(
-      `http://localhost:3000/recipe/${recipeId}`,
-      dataToSend
-    );
+    const response = await axios.delete(`${userUrl}/${recipeId}`, dataToSend);
+
+    return response.status;
   } catch (e) {
     console.log(e);
-    return e;
+    return e.message;
   }
 };
 
@@ -92,15 +89,13 @@ export const getRecipesByAuthorId = async (authorId, token) => {
   };
 
   try {
-    const response = await axios.get(
-      `http://localhost:3000/recipe/author/${authorId}`,
-      {
-        headers,
-      }
-    );
+    const response = await axios.get(`${userUrl}/author/${authorId}`, {
+      headers,
+    });
 
     return response.data;
   } catch (e) {
     console.log(e);
+    return e.message;
   }
 };
