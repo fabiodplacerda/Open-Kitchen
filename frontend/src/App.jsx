@@ -13,6 +13,8 @@ import Homepage from "./components/Homepage";
 import AddRecipe from "./components/AddRecipe";
 import EditRecipe from "./components/EditRecipe";
 import AccountManagement from "./components/AccountManagement";
+import AllRecipes from "./components/AllRecipes";
+import MyRecipes from "./components/MyRecipes";
 
 function App() {
   const { loggedUser, setLoggedUser } = useContext(UserContext);
@@ -32,7 +34,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/user/accountManagement" element={<AccountManagement />} />
-        <Route path="/recipes" element={<Recipes />} />
+        <Route path="/recipes" element={<AllRecipes />} />
+        <Route path="/myRecipes" element={<MyRecipes />} />
         <Route path="/recipes/:recipeId" element={<SingleRecipe />} />
         <Route path="/recipes/:recipeId/editRecipe" element={<EditRecipe />} />
         <Route path="/recipes/addRecipe" element={<AddRecipe />} />

@@ -85,3 +85,22 @@ export const deleteRecipe = async (recipeId, userId, role, token) => {
     return e;
   }
 };
+
+export const getRecipesByAuthorId = async (authorId, token) => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/recipe/author/${authorId}`,
+      {
+        headers,
+      }
+    );
+
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
