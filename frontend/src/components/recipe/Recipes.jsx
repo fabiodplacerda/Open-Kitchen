@@ -1,8 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import { getRecipes, getRecipesByAuthorId } from "../services/recipe.service";
+import {
+  getRecipes,
+  getRecipesByAuthorId,
+} from "../../services/recipe.service";
 import RecipeCard from "./RecipeCard";
 import { Link, useNavigate } from "react-router-dom";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../../context/UserContext";
 import Button from "@mui/material/Button";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 

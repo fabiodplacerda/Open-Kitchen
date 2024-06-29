@@ -3,14 +3,14 @@ import {
   createReview,
   deleteReview,
   getReviews,
-} from "../services/review.service";
+} from "../../services/review.service";
 import { Button, Rating, IconButton } from "@mui/material/";
 import AddCommentIcon from "@mui/icons-material/AddComment";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../../context/UserContext";
 import AddReviewForm from "./AddReviewForm";
 import DeleteIcon from "@mui/icons-material/Delete";
-import showFeedbackMessage from "../utils/feedbackMessages";
-import { calculateAverage } from "../utils/utils";
+import showFeedbackMessage from "../../utils/feedbackMessages";
+import { calculateAverage } from "../../utils/utils";
 
 const Reviews = ({ recipeId, setReviewsAverage }) => {
   const { loggedUser } = useContext(UserContext);

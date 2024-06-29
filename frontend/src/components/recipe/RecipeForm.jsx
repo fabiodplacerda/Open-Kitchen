@@ -4,14 +4,14 @@ import {
   addRecipe,
   getSingleRecipe,
   updateRecipe,
-} from "../services/recipe.service";
-import { UserContext } from "../context/UserContext";
+} from "../../services/recipe.service";
+import { UserContext } from "../../context/UserContext";
 import { useNavigate, useParams } from "react-router-dom";
 
 import "react-toastify/dist/ReactToastify.css";
-import showFeedbackMessage from "../utils/feedbackMessages";
-import { recipeInputValid } from "../utils/utils";
-import { getSingleUser, updateUserRecipes } from "../services/user.service";
+import showFeedbackMessage from "../../utils/feedbackMessages";
+import { recipeInputValid } from "../../utils/utils";
+import { getSingleUser, updateUserRecipes } from "../../services/user.service";
 
 const RecipeForm = ({ action }) => {
   const navigate = useNavigate();

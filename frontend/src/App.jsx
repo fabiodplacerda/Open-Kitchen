@@ -5,16 +5,16 @@ import { ToastContainer } from "react-toastify";
 import { getCurrentUser } from "./services/user.service";
 
 import Header from "./components/Header";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import Recipes from "./components/Recipes";
-import SingleRecipe from "./components/SingleRecipe";
+import Login from "./components/account/Login";
+import Register from "./components/account/Register";
+import Recipes from "./components/recipe/Recipes";
+import SingleRecipe from "./components/recipe/SingleRecipe";
 import Homepage from "./components/Homepage";
-import AddRecipe from "./components/AddRecipe";
-import EditRecipe from "./components/EditRecipe";
-import AccountManagement from "./components/AccountManagement";
-import AllRecipes from "./components/AllRecipes";
-import MyRecipes from "./components/MyRecipes";
+import AddRecipe from "./components/recipe/AddRecipe";
+import EditRecipe from "./components/recipe/EditRecipe";
+import AccountManagement from "./components/account/AccountManagement";
+import AllRecipes from "./components/recipe/AllRecipes";
+import MyRecipes from "./components/recipe/MyRecipes";
 
 function App() {
   const { loggedUser, setLoggedUser } = useContext(UserContext);

@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import { login, register, updateUser } from "../services/user.service";
+import { login, register, updateUser } from "../../services/user.service";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../context/UserContext";
-import showFeedbackMessage from "../utils/feedbackMessages";
-import { allValidFields, passwordMatchConfirmation } from "../utils/utils";
+import { UserContext } from "../../context/UserContext";
+import showFeedbackMessage from "../../utils/feedbackMessages";
+import { allValidFields, passwordMatchConfirmation } from "../../utils/utils";
 
 const AccountForm = ({ action }) => {
   const { loggedUser, setLoggedUser } = useContext(UserContext);

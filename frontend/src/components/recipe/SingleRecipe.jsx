@@ -1,14 +1,14 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../../context/UserContext";
 import { useNavigate, useParams } from "react-router-dom";
-import { deleteRecipe, getSingleRecipe } from "../services/recipe.service";
-import Reviews from "./Reviews";
-import ModalBox from "./ModalBox";
+import { deleteRecipe, getSingleRecipe } from "../../services/recipe.service";
+import Reviews from "../review/Reviews";
+import ModalBox from "../ModalBox";
 
 // UI components
 import { Button, Rating, Typography } from "@mui/material";
-import showFeedbackMessage from "../utils/feedbackMessages";
-import { updateUserRecipes } from "../services/user.service";
+import showFeedbackMessage from "../../utils/feedbackMessages";
+import { updateUserRecipes } from "../../services/user.service";
 
 const SingleRecipe = () => {
   const navigate = useNavigate();
