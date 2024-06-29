@@ -83,4 +83,14 @@ export default class RecipeService {
       throw new Error(`Failed to delete the recipe: ${e.message}`);
     }
   };
+
+  getRecipesByAuthorId = async authorId => {
+    try {
+      const recipes = await Recipe.find({ author: authorId });
+
+      return recipes;
+    } catch (e) {
+      throw new Error(`Failed to retrieve recipes by userId: ${e.message}`);
+    }
+  };
 }

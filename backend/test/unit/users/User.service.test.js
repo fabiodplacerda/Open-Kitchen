@@ -247,7 +247,7 @@ describe('UserService', () => {
       expect(result).to.deep.equal(expectedSingleUserResult);
       findById.restore();
     });
-    it('should call findById and return the user', async () => {
+    it('should error throw if a error occurs', async () => {
       const error = new Error('test error');
       const findById = sinon.stub(User, 'findById').throws(error);
 

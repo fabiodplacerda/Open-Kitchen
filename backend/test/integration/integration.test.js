@@ -39,7 +39,7 @@ describe('Integration Tests', () => {
 
   const { users, newUser, expectedResults, expectedSingleUserResult } =
     usersData;
-  const { recipes, newRecipe, updatedRecipe } = recipesData;
+  const { recipes, newRecipe, updatedRecipe, recipesByAuthorId } = recipesData;
   const { reviews, newReview, expectedReviews, expectedNewReview } =
     reviewsData;
 
@@ -576,7 +576,7 @@ describe('Integration Tests', () => {
 
         expect(response.body.recipes).to.deep.equal(recipes);
       });
-      it('should respond with a 500 status if a error occurs when creating getting all the recipes', async () => {
+      it('should respond with a 500 status if a error occurs when getting all the recipes', async () => {
         const error = new Error('test error');
         const stub = sinon.stub(recipeService, 'getAllRecipes');
         stub.throws(error);
@@ -815,6 +815,59 @@ describe('Integration Tests', () => {
           .delete(`/recipe/${recipeToDelete._id}`)
           .set('Authorization', `Bearer ${token}`)
           .send({ userId: user._id, role: user.role });
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: error.message });
+        stub.restore();
+      });
+    });
+    describe('GET request to /recipe/author/:id', () => {
+      let user, token;
+      beforeEach(() => {
+        user = users[0];
+        token = jwt.sign(
+          { id: user._id, username: user.username },
+          'openkitchen-secret-key-test',
+          { expiresIn: '1h' }
+        );
+      });
+      it('should respond with a 200 status code when request as successful', async () => {
+        const response = await request
+          .get(`/recipe/author/${user._id}`)
+          .set('Authorization', `Bearer ${token}`);
+        expect(response.status).to.equal(200);
+      });
+      it('should respond with an array of recipes', async () => {
+        const response = await request
+          .get(`/recipe/author/${user._id}`)
+          .set('Authorization', `Bearer ${token}`);
+        expect(response.body).to.deep.equal(recipesByAuthorId);
+      });
+      it('should respond with an empty array if user has no recipes', async () => {
+        const response = await request
+          .get(`/recipe/author/${users[4]._id}`)
+          .set('Authorization', `Bearer ${token}`);
+        expect(response.body).to.deep.equal([]);
+      });
+      it('should respond with a 401 no token was provided', async () => {
+        const response = await request.get(`/recipe/author/${user._id}`);
+
+        expect(response.status).to.equal(401);
+      });
+      it('should respond with a 403 if a token was provided but it is invalid', async () => {
+        const response = await request
+          .get(`/recipe/author/${user._id}`)
+          .set('Authorization', `Bearer invalidToken`);
+
+        expect(response.status).to.equal(403);
+      });
+      it('should respond with a 500 status if a error occurs when getting the recipes by authorId', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(recipeService, 'getRecipesByAuthorId');
+        stub.throws(error);
+        const response = await request
+          .get(`/recipe/author/${user._Id}`)
+          .set('Authorization', `Bearer ${token}`);
 
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });

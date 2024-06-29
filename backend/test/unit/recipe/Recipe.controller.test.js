@@ -3,7 +3,7 @@ import RecipeController from '../../../src/controller/Recipe.controller.js';
 import recipesData from '../../data/recipesData.js';
 
 import sinon from 'sinon';
-const { recipes, newRecipe, updatedRecipe } = recipesData;
+const { recipes, newRecipe, updatedRecipe, recipesByAuthorId } = recipesData;
 
 describe('RecipeController', () => {
   let recipeController, recipeService, req, res, testError;
@@ -15,6 +15,7 @@ describe('RecipeController', () => {
       getSingleRecipe: sinon.stub(),
       updateRecipe: sinon.stub(),
       deleteRecipe: sinon.stub(),
+      getRecipesByAuthorId: sinon.stub(),
     };
     recipeController = new RecipeController(recipeService);
     req = {
@@ -197,6 +198,26 @@ describe('RecipeController', () => {
       const testError = new Error('test error');
       recipeService.deleteRecipe.throws(testError);
       await recipeController.deleteRecipe(req, res);
+
+      expect(res.status.calledWith(500)).to.be.true;
+      expect(res.json.calledWith({ message: 'test error' })).to.be.true;
+    });
+  });
+  describe('getRecipesByAuthorID Tests', () => {
+    it('should return an array of recipes by author id', async () => {
+      req.params.id = '667441c68299324f52841985';
+      recipeService.getRecipesByAuthorId.resolves(recipesByAuthorId);
+
+      await recipeController.getRecipesByAuthorId(req, res);
+
+      expect(res.status.calledWith(200)).to.be.true;
+      expect(res.json.calledWith(recipesByAuthorId)).to.be.true;
+    });
+    it('should return 500 if a error occurs in the service', async () => {
+      req.params.id = '667441c68299324f52841985';
+      recipeService.getRecipesByAuthorId.throws(testError);
+
+      await recipeController.getRecipesByAuthorId(req, res);
 
       expect(res.status.calledWith(500)).to.be.true;
       expect(res.json.calledWith({ message: 'test error' })).to.be.true;

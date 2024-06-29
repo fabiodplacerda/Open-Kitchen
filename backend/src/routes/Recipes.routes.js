@@ -38,6 +38,11 @@ export default class RecipeRoutes {
       AuthenticationValidation.checkToken,
       this.#controller.deleteRecipe
     );
+    this.#router.get(
+      '/author/:id',
+      AuthenticationValidation.checkToken,
+      this.#controller.getRecipesByAuthorId
+    );
   };
 
   getRouter = () => this.#router;

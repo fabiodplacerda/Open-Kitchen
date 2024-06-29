@@ -57,6 +57,26 @@ const recipesData = {
     reviews: ['667441c68299324f52841998', '667441c68299324f5284199c'],
     __v: 0,
   },
+  recipesByAuthorId: [
+    {
+      _id: '667441c68299324f52841990',
+      author: '667441c68299324f52841985', // ObjectId of user1
+      name: 'Delicious Pancakes',
+      imgUrl: 'https://example.com/pancakes.jpg',
+      description: 'A simple recipe for fluffy pancakes.',
+      reviews: ['667441c68299324f52841998', '667441c68299324f5284199c'],
+      __v: 0,
+    },
+    {
+      _id: '667441c68299324f52841991',
+      author: '667441c68299324f52841985', // ObjectId of user1
+      name: 'Homemade Pizza',
+      imgUrl: 'https://example.com/pizza.jpg',
+      description: 'Make pizza at home with this easy recipe.',
+      reviews: ['667441c68299324f52841999'],
+      __v: 0,
+    },
+  ],
 };
 
 export default recipesData;

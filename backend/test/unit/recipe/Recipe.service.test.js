@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import sinon from 'sinon';
 import Recipe from '../../../src/models/recipe.model.js';
 import RecipeService from '../../../src/services/Recipe.service.js';
@@ -7,7 +7,7 @@ import User from '../../../src/models/user.model.js';
 import Review from '../../../src/models/review.model.js';
 import usersData from '../../data/userData.js';
 
-const { recipes, newRecipe, updatedRecipe } = recipesData;
+const { recipes, newRecipe, updatedRecipe, recipesByAuthorId } = recipesData;
 const { users } = usersData;
 
 describe('RecipeService Tests', () => {
@@ -222,6 +222,35 @@ describe('RecipeService Tests', () => {
           `Failed to delete the recipe: ${error.message}`
         );
       }
+    });
+  });
+  describe('getRecipesByAuthorId', () => {
+    it('should call find and return all the recipes create by the author', async () => {
+      const findStub = sinon.stub(Recipe, 'find').resolves(recipesByAuthorId);
+
+      const result = await recipeService.getRecipesByAuthorId(
+        '667441c68299324f52841985'
+      );
+
+      expect(findStub.calledOnce).to.be.true;
+      expect(result).to.deep.equal(recipesByAuthorId);
+
+      findStub.restore();
+    });
+    it('should error throw if a error occurs', async () => {
+      const error = new Error('test error');
+      const findStub = sinon.stub(Recipe, 'find').throws(error);
+
+      try {
+        await recipeService.getRecipesByAuthorId('667441c68299324f52841985');
+        assert.fail('expected error was not thrown');
+      } catch (e) {
+        expect(e.message).to.deep.equal(
+          `Failed to retrieve recipes by userId: ${error.message}`
+        );
+      }
+
+      findStub.restore();
     });
   });
 });
