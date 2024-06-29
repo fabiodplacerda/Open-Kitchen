@@ -86,8 +86,9 @@ const SingleRecipe = () => {
         src={singleRecipe.imgUrl}
         alt={singleRecipe.name}
         className="recipe-img"
+        data-testid="recipe-img"
       />
-      <p>{singleRecipe.description}</p>
+      <p data-testid="recipe-description">{singleRecipe.description}</p>
       <Reviews recipeId={recipeId} setReviewsAverage={setReviewsAverage} />
     </>
   );

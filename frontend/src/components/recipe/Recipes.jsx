@@ -59,6 +59,7 @@ const Recipes = ({ action }) => {
       {recipes.map((recipe) => {
         return (
           <Link
+            data-testid="recipe-card"
             className="card recipe-card"
             key={recipe._id}
             to={`/recipes/${recipe._id}`}
