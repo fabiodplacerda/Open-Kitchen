@@ -32,7 +32,7 @@ body {
 .recipe-card:hover {
   transform: scale(1.05);
 }
-
+/* 
 .recipe-img {
   width: 800px;
   height: 500px;
@@ -44,7 +44,7 @@ body {
     rgba(42, 51, 70, 0.04) 0px 6px 6px -3px,
     rgba(14, 63, 126, 0.04) 0px 12px 12px -6px,
     rgba(14, 63, 126, 0.04) 0px 24px 24px -12px;
-}
+} */
 
 #description {
   height: 200px;
@@ -68,6 +68,9 @@ body {
 
 .card-text {
   height: 60px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 .card-body {
@@ -76,4 +79,44 @@ body {
 
 #user-form-container {
   height: 90vh;
+}
+
+.single-recipe-card {
+  width: 95%;
+  height: auto;
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+}
+
+.single-recipe-text {
+  word-wrap: break-word;
+  hyphens: auto;
+  white-space: pre-wrap;
+  margin: 20px;
+}
+
+.single-recipe-img {
+  height: 500px;
+  object-fit: cover;
+  width: 100%;
+  border-radius: 10px 0px 0px 10px;
+}
+
+.button-single-recipe {
+  width: 100px;
+}
+
+.review-card,
+.review-form {
+  background-color: rgb(255, 255, 255);
+  width: 48%;
+  border-radius: 10px;
+}
+
+.review-content {
+  padding: 7px;
+}
+
+#review-description-label {
+  font-size: 18px;
 }

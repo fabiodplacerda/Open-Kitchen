@@ -61,11 +61,10 @@ const Recipes = ({ action }) => {
         <div className="row">
           {recipes.map((recipe) => {
             return (
-              <div className="col-3 mt-5">
+              <div className="col-3 mt-5" key={recipe._id}>
                 <Link
                   data-testid="recipe-card"
                   className="card recipe-card"
-                  key={recipe._id}
                   to={`/recipes/${recipe._id}`}
                 >
                   <RecipeCard recipe={recipe} />

@@ -55,48 +55,73 @@ const SingleRecipe = () => {
 
   return (
     <>
-      {loggedUser && loggedUser._id === singleRecipe.author && (
-        <Button
-          variant="contained"
-          color="success"
-          onClick={() => navigate(`/recipes/${recipeId}/editRecipe`)}
-        >
-          Edit
-        </Button>
-      )}
-      {((loggedUser && loggedUser._id === singleRecipe.author) ||
-        (loggedUser && loggedUser.role) === "admin") && (
-        <Button variant="contained" color="error" onClick={handleOpen}>
-          Delete
-        </Button>
-      )}
-      <ModalBox
-        title={"Delete Recipe"}
-        text={
-          " Are you certain you want to delete this recipe Please note that this action cannot be reversed?"
-        }
-        open={open}
-        isLoading={isLoading}
-        handleOpen={handleOpen}
-        deleteFunction={deleteHandler}
-      />
-      <div className="d-flex flex-column justify-content-center align-items-center">
-        <h2 className="text-center">{singleRecipe.name}</h2>
-        <Rating
-          value={reviewsAverage}
-          readOnly
-          precision={0.5}
-          className="mb-4"
-        />
-        <img
-          src={singleRecipe.imgUrl}
-          alt={singleRecipe.name}
-          className="recipe-img"
-          data-testid="recipe-img"
-        />
-        <p data-testid="recipe-description">{singleRecipe.description}</p>
+      <div className="single-recipe-container d-flex justify-content-center align-items-center flex-column">
+        <div className="buttons my-4">
+          {loggedUser && loggedUser._id === singleRecipe.author && (
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => navigate(`/recipes/${recipeId}/editRecipe`)}
+              className="mx-2 button-single-recipe"
+            >
+              Edit
+            </Button>
+          )}
+
+          {((loggedUser && loggedUser._id === singleRecipe.author) ||
+            (loggedUser && loggedUser.role) === "admin") && (
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleOpen}
+              className="mx-2 button-single-recipe"
+            >
+              Delete
+            </Button>
+          )}
+        </div>
+        <div className="single-recipe-card mb-3">
+          <div className="row g-0">
+            <ModalBox
+              title={"Delete Recipe"}
+              text={
+                " Are you certain you want to delete this recipe Please note that this action cannot be reversed?"
+              }
+              open={open}
+              isLoading={isLoading}
+              handleOpen={handleOpen}
+              deleteFunction={deleteHandler}
+            />
+            <div className="col-md-4">
+              <img
+                src={singleRecipe.imgUrl}
+                alt={singleRecipe.name}
+                className="single-recipe-img"
+                data-testid="recipe-img"
+              />
+            </div>
+
+            <div className="col-md-8 d-flex flex-column justify-content-center align-items-center">
+              <h2 className="text-center">{singleRecipe.name}</h2>
+              <Rating
+                value={reviewsAverage}
+                readOnly
+                precision={0.5}
+                className="mb-4"
+              />
+
+              <p
+                data-testid="recipe-description"
+                className="single-recipe-text"
+              >
+                {singleRecipe.description}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <Reviews recipeId={recipeId} setReviewsAverage={setReviewsAverage} />
       </div>
-      <Reviews recipeId={recipeId} setReviewsAverage={setReviewsAverage} />
     </>
   );
 };

@@ -108,6 +108,7 @@ const Reviews = ({ recipeId, setReviewsAverage }) => {
           color="success"
           startIcon={<AddCommentIcon />}
           onClick={() => setIsRating(true)}
+          className="mt-4 mb-5"
         >
           Add a review
         </Button>
@@ -125,16 +126,21 @@ const Reviews = ({ recipeId, setReviewsAverage }) => {
       )}
       {reviews.map((review) => {
         return (
-          <div className="card" key={review._id}>
-            {((loggedUser && loggedUser._id === review.author._id) ||
-              loggedUser.role === "admin") && (
-              <IconButton onClick={() => deleteReviewData(review._id)}>
-                <DeleteIcon color="error" aria-label="delete" />
-              </IconButton>
-            )}
-            <p>Author: {review.author.username}</p>
-            <Rating value={review.rating} readOnly />
-            <p>{review.body}</p>
+          <div className="review-card mb-2 position-relative" key={review._id}>
+            <div className="review-content">
+              {((loggedUser && loggedUser._id === review.author._id) ||
+                (loggedUser && loggedUser.role === "admin")) && (
+                <IconButton
+                  onClick={() => deleteReviewData(review._id)}
+                  className="position-absolute top-0 end-0"
+                >
+                  <DeleteIcon color="error" aria-label="delete" />
+                </IconButton>
+              )}
+              <p className="text-muted">Author: {review.author.username}</p>
+              <Rating value={review.rating} readOnly />
+              <p className="mt-2">{review.body}</p>
+            </div>
           </div>
         );
       })}
