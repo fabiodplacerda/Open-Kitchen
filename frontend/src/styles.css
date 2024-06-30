@@ -147,7 +147,10 @@ body {
   background-color: rgb(248, 249, 250);
 }
 
-/* HTML:  */
+.add-recipe-button {
+  width: 150px;
+}
+
 .loader {
   width: 50px;
   padding: 8px;

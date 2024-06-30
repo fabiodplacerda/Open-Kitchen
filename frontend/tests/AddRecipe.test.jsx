@@ -21,7 +21,7 @@ describe("AddRecipe Tests", () => {
     const recipeImg = screen.getByPlaceholderText("https://image-url.com");
     const recipeDescription = screen.getByPlaceholderText(/Recipe Description/);
 
-    const button = screen.getByText(/add/);
+    const button = screen.getByRole("button", { name: /Add/ });
 
     await userEvent.type(recipeNameInput, "Test Recipe");
     await userEvent.type(

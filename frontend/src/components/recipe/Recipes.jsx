@@ -20,7 +20,7 @@ const Recipes = ({ action }) => {
   const getRecipesData = async () => {
     try {
       const recipesData = await getRecipes();
-      setRecipes(recipesData.recipes);
+      setRecipes(recipesData.recipes || []);
       setIsLoading(false);
     } catch (e) {
       setError({ message: "Failed to retrieve recipes" });
@@ -48,19 +48,26 @@ const Recipes = ({ action }) => {
   }, []);
 
   return (
-    <main id="recipes-container" className="position-relative">
+    <main
+      id="recipes-container"
+      className="position-relative  d-flex flex-column mb-3"
+    >
       {isLoading ? (
         <Loader />
       ) : (
         <>
-          {!recipes.length && <p>Sorry, we don't have any recipes yet.</p>}
+          {!recipes.length && (
+            <p className="text-white fs-4 align-self-center justify-se">
+              Sorry, we don't have any recipes yet.
+            </p>
+          )}
           {loggedUser && (
             <Button
               variant="contained"
               color="success"
               startIcon={<AddCircleIcon />}
               onClick={() => navigate("/recipes/addRecipe")}
-              className="add-button"
+              className="add-button m-4 add-recipe-button align-self-end"
             >
               Add Recipe
             </Button>
