@@ -56,18 +56,24 @@ const Recipes = ({ action }) => {
           Add a new Recipe
         </Button>
       )}
-      {recipes.map((recipe) => {
-        return (
-          <Link
-            data-testid="recipe-card"
-            className="card recipe-card"
-            key={recipe._id}
-            to={`/recipes/${recipe._id}`}
-          >
-            <RecipeCard recipe={recipe} />
-          </Link>
-        );
-      })}
+      <div className="container">
+        <div className="row">
+          {recipes.map((recipe) => {
+            return (
+              <div className="col-3 mt-5">
+                <Link
+                  data-testid="recipe-card"
+                  className="card recipe-card"
+                  key={recipe._id}
+                  to={`/recipes/${recipe._id}`}
+                >
+                  <RecipeCard recipe={recipe} />
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </>
   );
 };

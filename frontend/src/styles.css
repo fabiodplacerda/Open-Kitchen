@@ -1,3 +1,16 @@
+body {
+  background: linear-gradient(
+      0deg,
+      rgba(80, 80, 80, 0.5),
+      rgba(80, 80, 80, 0.5)
+    ),
+    url("../public/assets/background/pexels-dana-tentis-118658-691114.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 100vh;
+}
+
 #page-logo {
   max-width: 180px;
   margin-right: 25px;
@@ -6,10 +19,31 @@
 .recipe-card {
   width: 18rem;
   text-decoration: none;
+  transition: transform 0.2s;
+  border: none !important;
+  box-shadow: rgba(14, 63, 126, 0.04) 0px 0px 0px 1px,
+    rgba(42, 51, 69, 0.04) 0px 1px 1px -0.5px,
+    rgba(42, 51, 70, 0.04) 0px 3px 3px -1.5px,
+    rgba(42, 51, 70, 0.04) 0px 6px 6px -3px,
+    rgba(14, 63, 126, 0.04) 0px 12px 12px -6px,
+    rgba(14, 63, 126, 0.04) 0px 24px 24px -12px;
+}
+
+.recipe-card:hover {
+  transform: scale(1.05);
 }
 
 .recipe-img {
-  width: 500px;
+  width: 800px;
+  height: 500px;
+  object-fit: cover;
+  border-radius: 5px;
+  box-shadow: rgba(14, 63, 126, 0.04) 0px 0px 0px 1px,
+    rgba(42, 51, 69, 0.04) 0px 1px 1px -0.5px,
+    rgba(42, 51, 70, 0.04) 0px 3px 3px -1.5px,
+    rgba(42, 51, 70, 0.04) 0px 6px 6px -3px,
+    rgba(14, 63, 126, 0.04) 0px 12px 12px -6px,
+    rgba(14, 63, 126, 0.04) 0px 24px 24px -12px;
 }
 
 #description {
@@ -25,4 +59,17 @@
   background-color: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 16px;
+}
+
+.card-img-top {
+  height: 220px;
+  object-fit: cover;
+}
+
+.card-text {
+  height: 60px;
+}
+
+.card-body {
+  height: 170px;
 }

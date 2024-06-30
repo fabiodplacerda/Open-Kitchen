@@ -80,15 +80,22 @@ const SingleRecipe = () => {
         handleOpen={handleOpen}
         deleteFunction={deleteHandler}
       />
-      <h2>{singleRecipe.name}</h2>
-      <Rating value={reviewsAverage} readOnly precision={0.5} />
-      <img
-        src={singleRecipe.imgUrl}
-        alt={singleRecipe.name}
-        className="recipe-img"
-        data-testid="recipe-img"
-      />
-      <p data-testid="recipe-description">{singleRecipe.description}</p>
+      <div className="d-flex flex-column justify-content-center align-items-center">
+        <h2 className="text-center">{singleRecipe.name}</h2>
+        <Rating
+          value={reviewsAverage}
+          readOnly
+          precision={0.5}
+          className="mb-4"
+        />
+        <img
+          src={singleRecipe.imgUrl}
+          alt={singleRecipe.name}
+          className="recipe-img"
+          data-testid="recipe-img"
+        />
+        <p data-testid="recipe-description">{singleRecipe.description}</p>
+      </div>
       <Reviews recipeId={recipeId} setReviewsAverage={setReviewsAverage} />
     </>
   );
