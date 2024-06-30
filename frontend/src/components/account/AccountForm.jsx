@@ -1,14 +1,22 @@
 import { useContext, useEffect, useState } from "react";
-import { login, register, updateUser } from "../../services/user.service";
-import LoadingButton from "@mui/lab/LoadingButton";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 import { UserContext } from "../../context/UserContext";
+import { login, register, updateUser } from "../../services/user.service";
 import showFeedbackMessage from "../../utils/feedbackMessages";
 import { allValidFields, passwordMatchConfirmation } from "../../utils/utils";
+
+import Sheet from "@mui/joy/Sheet";
+import Typography from "@mui/joy/Typography";
+import FormControl from "@mui/joy/FormControl";
+import FormLabel from "@mui/joy/FormLabel";
+import Input from "@mui/joy/Input";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const AccountForm = ({ action }) => {
   const { loggedUser, setLoggedUser } = useContext(UserContext);
   const navigate = useNavigate();
+
   const [user, setUser] = useState({ email: "", username: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -37,6 +45,7 @@ const AccountForm = ({ action }) => {
       }
     } catch (e) {
       console.log(e);
+      showFeedbackMessage("error", `Error: ${e.message}`, 2500);
     }
   };
 
@@ -58,6 +67,7 @@ const AccountForm = ({ action }) => {
       }
     } catch (e) {
       console.log(e);
+      showFeedbackMessage("error", `Error: ${e.message}`, 2500);
     }
   };
 
@@ -83,6 +93,7 @@ const AccountForm = ({ action }) => {
       }
     } catch (e) {
       console.log(e);
+      showFeedbackMessage("error", `Error: ${e.message}`, 2500);
     }
   };
 
@@ -137,103 +148,143 @@ const AccountForm = ({ action }) => {
   }, [loggedUser]);
 
   return (
-    <form onSubmit={onSubmitHandler}>
-      {(action === "Register" || action === "Edit") && (
-        <div className="mb-3">
-          <label htmlFor="email" className="form-label">
-            Email
-          </label>
-          <input
-            name="email"
-            type="email"
-            className="form-control"
-            id="email"
-            aria-describedby="emailHelpBlock"
-            placeholder="email@email.com"
-            value={user.email}
-            onChange={onChangeHandler}
-            disabled={action === "Edit" ? true : isLoading}
-          />
-          {(action === "Register" || action === "Edit") && (
-            <div id="emailHelpBlock" className="form-text">
-              You must provide a valid email
-            </div>
-          )}
-        </div>
-      )}
-      <div className="mb-3">
-        <label htmlFor="username" className="form-label">
-          Username
-        </label>
-        <input
-          name="username"
-          type="username"
-          className="form-control"
-          id="username"
-          placeholder="username"
-          value={user.username}
-          onChange={onChangeHandler}
-          disabled={action === "Edit" ? true : isLoading}
-          aria-describedby="usernameHelpBlock"
-        />
-        {(action === "Register" || action === "Edit") && (
-          <div id="usernameHelpBlock" className="form-text">
-            Username must be 3-15 characters long and cannot include special
-            characters or spaces."
-          </div>
-        )}
-      </div>
-      <div className="mb-3">
-        <label htmlFor="password" className="form-label">
-          Password
-        </label>
-        <input
-          name="password"
-          type="password"
-          className="form-control"
-          id="password"
-          placeholder="password"
-          onChange={onChangeHandler}
-          value={user.password}
-          aria-describedby="passwordHelpBlock"
-          disabled={isLoading}
-        />
-        {(action === "Register" || action === "Edit") && (
-          <div id="passwordHelpBlock" className="form-text">
-            Your password must be 8-20 characters, include at least one
-            uppercase letter and a number, and contain no spaces or special
-            characters.
-          </div>
-        )}
-      </div>
-      {action === "Edit" && (
-        <div className="mb-3">
-          <label htmlFor="passwordConfirmation" className="form-label">
-            Confirm Password
-          </label>
-          <input
-            name="passwordConfirmation"
-            type="password"
-            className="form-control"
-            id="passwordConfirmation"
-            placeholder="confirm password"
-            onChange={onChangeHandlerPassword}
-            value={confirmPassword}
-            disabled={isLoading}
-          />
-        </div>
-      )}
-
-      <LoadingButton
-        loading={isLoading}
-        loadingIndicator="Loading"
-        variant="contained"
-        type="submit"
-        disabled={action === "Register" ? !inputsValidity : false}
+    <>
+      <main
+        className="d-flex justify-content-center align-items-center"
+        id="user-form-container"
       >
-        {action}
-      </LoadingButton>
-    </form>
+        <form onSubmit={onSubmitHandler}>
+          <Sheet
+            sx={{
+              width: 500,
+              mx: "auto",
+              my: 4,
+              py: 3,
+              px: 2,
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              borderRadius: "sm",
+              boxShadow: "md",
+            }}
+            variant="outlined"
+          >
+            <div>
+              <Typography level="h4" component="h1" className="text-center">
+                {action === "Login"
+                  ? "Welcome Back !"
+                  : action === "Register"
+                  ? "Welcome to Open Kitchen"
+                  : "You are now editing your profile"}
+              </Typography>
+            </div>
+            {(action === "Register" || action === "Edit") && (
+              <FormControl>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  // html input attribute
+                  name="email"
+                  type="email"
+                  placeholder="email@email.com"
+                  value={user.email}
+                  onChange={onChangeHandler}
+                  disabled={action === "Edit" ? true : isLoading}
+                />
+                {action === "Register" && (
+                  <div id="emailHelpBlock" className="form-text">
+                    You must provide a valid email
+                  </div>
+                )}
+              </FormControl>
+            )}
+            <FormControl>
+              <FormLabel>Username</FormLabel>
+              <Input
+                // html input attribute
+                name="username"
+                type="username"
+                placeholder="username"
+                value={user.username}
+                onChange={onChangeHandler}
+                disabled={action === "Edit" ? true : isLoading}
+              />
+              {action === "Register" && (
+                <div id="usernameHelpBlock" className="form-text">
+                  Username must be 3-15 characters long and cannot include
+                  special characters or spaces.
+                </div>
+              )}
+            </FormControl>
+            <FormControl>
+              <FormLabel>Password</FormLabel>
+              <Input
+                // html input attribute
+                name="password"
+                type="password"
+                placeholder="password"
+                onChange={onChangeHandler}
+                value={user.password}
+                aria-describedby="passwordHelpBlock"
+                disabled={isLoading}
+              />
+              {(action === "Register" || action === "Edit") && (
+                <div id="passwordHelpBlock" className="form-text">
+                  Your password must be 8-20 characters, include at least one
+                  uppercase letter and a number, and contain no spaces or
+                  special characters.
+                </div>
+              )}
+            </FormControl>
+            {action === "Edit" && (
+              <FormControl>
+                <FormLabel>Confirm Password</FormLabel>
+                <Input
+                  name="passwordConfirmation"
+                  type="password"
+                  placeholder="confirm password"
+                  onChange={onChangeHandlerPassword}
+                  value={confirmPassword}
+                  disabled={isLoading}
+                />
+              </FormControl>
+            )}
+
+            <LoadingButton
+              sx={{ mt: 1 }}
+              loading={isLoading}
+              loadingIndicator="Loading"
+              variant="contained"
+              type="submit"
+              disabled={action === "Register" ? !inputsValidity : false}
+            >
+              {action}
+            </LoadingButton>
+
+            {action === "Login" ? (
+              <>
+                <Typography
+                  endDecorator={<Link to="/register">Register</Link>}
+                  fontSize="sm"
+                  sx={{ alignSelf: "center" }}
+                >
+                  Don't have an account?
+                </Typography>
+              </>
+            ) : (
+              action === "Register" && (
+                <Typography
+                  endDecorator={<Link to="/login">Login</Link>}
+                  fontSize="sm"
+                  sx={{ alignSelf: "center" }}
+                >
+                  Have an account?
+                </Typography>
+              )
+            )}
+          </Sheet>
+        </form>
+      </main>
+    </>
   );
 };
 

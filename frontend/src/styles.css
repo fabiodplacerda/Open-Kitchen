@@ -73,3 +73,7 @@ body {
 .card-body {
   height: 170px;
 }
+
+#user-form-container {
+  height: 90vh;
+}

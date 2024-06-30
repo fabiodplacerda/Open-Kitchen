@@ -52,8 +52,9 @@ const Recipes = ({ action }) => {
           color="success"
           startIcon={<AddCircleIcon />}
           onClick={() => navigate("/recipes/addRecipe")}
+          className="add-button"
         >
-          Add a new Recipe
+          Add Recipe
         </Button>
       )}
       <div className="container">
