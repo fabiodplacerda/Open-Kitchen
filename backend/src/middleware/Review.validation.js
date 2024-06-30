@@ -20,7 +20,7 @@ export default class ReviewValidator {
           .notEmpty()
           .isString()
           .withMessage('review body is required and must be a string')
-          .isLength({ min: 3, max: 50 })
+          .isLength({ min: 3, max: 100 })
           .withMessage(
             'The review body should be a minimum of 3 characters and a maximum of 30 characters in length.'
           ),
