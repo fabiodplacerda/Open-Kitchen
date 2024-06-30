@@ -1,7 +1,7 @@
 import RecipeForm from "./RecipeForm";
 
 const EditRecipe = () => {
-  return <RecipeForm action={"edit"} />;
+  return <RecipeForm action={"Edit"} />;
 };
 
 export default EditRecipe;

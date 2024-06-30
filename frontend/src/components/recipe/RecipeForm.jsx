@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import showFeedbackMessage from "../../utils/feedbackMessages";
 import { recipeInputValid } from "../../utils/utils";
 import { getSingleUser, updateUserRecipes } from "../../services/user.service";
+import { Button } from "@mui/material";
 
 const RecipeForm = ({ action }) => {
   const navigate = useNavigate();
@@ -25,12 +26,14 @@ const RecipeForm = ({ action }) => {
     author: "",
   });
 
+  const [charCount, setCharCount] = useState(0);
+
   const [validRecipe, setValidRecipe] = useState(false);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
-    if (action === "add") {
+    if (action === "Add") {
       const updatedRecipe = {
         ...recipe,
         author: loggedUser._id,
@@ -98,76 +101,104 @@ const RecipeForm = ({ action }) => {
   };
 
   useEffect(() => {
-    if (action === "edit") {
+    if (action === "Edit") {
       getRecipeData();
     }
   }, []);
 
   return (
-    <form onSubmit={onSubmitHandler}>
-      <div className="mb-3 form-floating">
-        <input
-          name="name"
-          type="recipeName"
-          className="form-control"
-          id="recipeName"
-          placeholder="Recipe Name"
-          value={recipe.name}
-          onChange={onChangeHandler}
-          disabled={isLoading}
-        />
-        <label htmlFor="recipeName" className="form-label">
-          Recipe Name
-        </label>
-      </div>
+    <main
+      id="recipe-form-container"
+      className="d-flex justify-content-center align-items-center"
+    >
+      <form
+        onSubmit={onSubmitHandler}
+        className="recipe-form p-5 d-flex flex-column justify-content-center align-items-center"
+      >
+        <h2>{action} Recipe</h2>
+        <div className="recipe-form-inputs">
+          <div className="mb-3 form-floating">
+            <input
+              name="name"
+              type="recipeName"
+              className="form-control"
+              id="recipeName"
+              placeholder="Recipe Name"
+              value={recipe.name}
+              onChange={(e) => {
+                onChangeHandler(e);
+                setCharCount(e.target.value.length);
+              }}
+              disabled={isLoading}
+              maxLength="30"
+            />
+            <label htmlFor="recipeName" className="form-label">
+              Recipe Name
+            </label>
+            <div id="usernameHelpBlock" className="form-text">
+              Recipe name must be 3-30 characters long. {30 - charCount}{" "}
+              characters left
+            </div>
+          </div>
 
-      <div className="mb-3 form-floating">
-        <input
-          name="imgUrl"
-          type="url"
-          className="form-control"
-          id="imgUrl"
-          placeholder="https://image-url.com"
-          value={recipe.imgUrl}
-          onChange={onChangeHandler}
-          disabled={isLoading}
-        />
-        <label htmlFor="imgUrl" className="form-label">
-          Image url
-        </label>
-      </div>
-      <div className="form-floating">
-        <textarea
-          className="form-control"
-          id="description"
-          placeholder="Recipe Description"
-          rows="10"
-          name="description"
-          value={recipe.description}
-          onChange={onChangeHandler}
-          disabled={isLoading}
-        ></textarea>
-        <label htmlFor="description">Recipe Description</label>
-      </div>
-      <LoadingButton
-        loading={isLoading}
-        loadingIndicator={action === "add" ? "adding" : "saving"}
-        variant="contained"
-        type="submit"
-        disabled={!validRecipe}
-      >
-        {action}
-      </LoadingButton>
-      <LoadingButton
-        loading={isLoading}
-        loadingIndicator={action === "add" ? "adding" : "saving"}
-        variant="contained"
-        color="error"
-        onClick={() => navigate(-1)}
-      >
-        Cancel
-      </LoadingButton>
-    </form>
+          <div className="mb-3 form-floating">
+            <input
+              name="imgUrl"
+              type="url"
+              className="form-control"
+              id="imgUrl"
+              placeholder="https://image-url.com"
+              value={recipe.imgUrl}
+              onChange={onChangeHandler}
+              disabled={isLoading}
+            />
+            <label htmlFor="imgUrl" className="form-label">
+              Image url
+            </label>
+            <div id="usernameHelpBlock" className="form-text">
+              Enter a valid image URL (e.g., https://example.com/image.jpg).
+              Must start with http:// or https:// and end with .png, .jpg,
+              .jpeg, .gif, .bmp, or .svg.
+            </div>
+          </div>
+          <div className="form-floating">
+            <textarea
+              className="form-control"
+              id="description"
+              placeholder="Recipe Description"
+              rows="10"
+              name="description"
+              value={recipe.description}
+              onChange={onChangeHandler}
+              disabled={isLoading}
+            ></textarea>
+            <label htmlFor="description">Recipe Description</label>
+            <div id="usernameHelpBlock" className="form-text">
+              Recipe description must be min 50 characters long.
+            </div>
+          </div>
+        </div>
+        <div className="recipe-form-buttons mt-4">
+          <LoadingButton
+            loading={isLoading}
+            loadingIndicator={action === "Add" ? "adding" : "saving"}
+            variant="contained"
+            type="submit"
+            disabled={!validRecipe}
+            className="recipe-form-button mx-2"
+          >
+            {action}
+          </LoadingButton>
+          <Button
+            color="error"
+            onClick={() => navigate(-1)}
+            className="recipe-form-button mx-2"
+          >
+            Cancel
+          </Button>
+        </div>
+      </form>
+    </main>
   );
 };
 

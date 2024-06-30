@@ -52,7 +52,6 @@ const AddReviewForm = ({
           Submit review
         </Button>
         <Button
-          variant="contained"
           color="error"
           onClick={() => {
             setIsRating(false);

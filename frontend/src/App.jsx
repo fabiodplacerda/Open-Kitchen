@@ -4,6 +4,8 @@ import { useContext, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import { getCurrentUser } from "./services/user.service";
 
+import Footer from "./components/Footer";
+
 import Header from "./components/Header";
 import Login from "./components/account/Login";
 import Register from "./components/account/Register";
@@ -40,6 +42,7 @@ function App() {
         <Route path="/recipes/:recipeId/editRecipe" element={<EditRecipe />} />
         <Route path="/recipes/addRecipe" element={<AddRecipe />} />
       </Routes>
+      <Footer />
       <ToastContainer />
     </>
   );

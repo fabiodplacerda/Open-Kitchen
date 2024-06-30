@@ -11,6 +11,7 @@ import AddReviewForm from "./AddReviewForm";
 import DeleteIcon from "@mui/icons-material/Delete";
 import showFeedbackMessage from "../../utils/feedbackMessages";
 import { calculateAverage } from "../../utils/utils";
+import { Link } from "react-router-dom";
 
 const Reviews = ({ recipeId, setReviewsAverage }) => {
   const { loggedUser } = useContext(UserContext);
@@ -95,11 +96,17 @@ const Reviews = ({ recipeId, setReviewsAverage }) => {
   }, []);
   return (
     <>
-      {!reviews.length && (
-        <p>
-          Currently, there are no reviews for this recipe. Be the first to leave
-          one!
+      {!loggedUser ? (
+        <p className="text-white fs-4 my-2">
+          {<Link to="/login">Login</Link>} to leave a review
         </p>
+      ) : (
+        !reviews.length && (
+          <p className="text-white fs-4 my-2">
+            Currently, there are no reviews for this recipe. Be the first to
+            leave one!
+          </p>
+        )
       )}
 
       {!isRating && loggedUser && (

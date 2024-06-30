@@ -54,7 +54,7 @@ const SingleRecipe = () => {
   }, [reviewsAverage]);
 
   return (
-    <>
+    <main id="single-recipe-main-container">
       <div className="single-recipe-container d-flex justify-content-center align-items-center flex-column">
         <div className="buttons my-4">
           {loggedUser && loggedUser._id === singleRecipe.author && (
@@ -122,7 +122,7 @@ const SingleRecipe = () => {
 
         <Reviews recipeId={recipeId} setReviewsAverage={setReviewsAverage} />
       </div>
-    </>
+    </main>
   );
 };
 

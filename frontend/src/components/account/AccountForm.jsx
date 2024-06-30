@@ -12,6 +12,7 @@ import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import Input from "@mui/joy/Input";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { Button } from "@mui/material";
 
 const AccountForm = ({ action }) => {
   const { loggedUser, setLoggedUser } = useContext(UserContext);
@@ -182,7 +183,6 @@ const AccountForm = ({ action }) => {
               <FormControl>
                 <FormLabel>Email</FormLabel>
                 <Input
-                  // html input attribute
                   name="email"
                   type="email"
                   placeholder="email@email.com"
@@ -200,7 +200,6 @@ const AccountForm = ({ action }) => {
             <FormControl>
               <FormLabel>Username</FormLabel>
               <Input
-                // html input attribute
                 name="username"
                 type="username"
                 placeholder="username"
@@ -259,6 +258,17 @@ const AccountForm = ({ action }) => {
             >
               {action}
             </LoadingButton>
+
+            {action === "Edit" && (
+              <Button
+                color="error"
+                onClick={() => {
+                  navigate(-1);
+                }}
+              >
+                Cancel
+              </Button>
+            )}
 
             {action === "Login" ? (
               <>
