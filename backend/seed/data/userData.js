@@ -32,7 +32,7 @@ const usersData = [
   {
     _id: '667441c68299324f52841988',
     email: 'user4@example.com',
-    username: 'David Wilson',
+    username: 'DavidWilson',
     password: 'David1',
     role: 'user',
     savedRecipes: [],
