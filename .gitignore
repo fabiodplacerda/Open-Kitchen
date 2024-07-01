@@ -150,3 +150,6 @@ ignore.md
 db-helpers/
 
 .vscode
+
+# Local Netlify folder
+.netlify
