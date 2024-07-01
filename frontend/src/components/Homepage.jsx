@@ -21,7 +21,8 @@ const Homepage = () => {
   const getRecipesData = async () => {
     const recipes = await getRecipes();
     if (recipes.message && recipes.message.includes("Request was successful")) {
-      setRecipesShowCase(recipes.recipes || []);
+      const shuffleRecipes = recipes.recipes.sort(() => Math.random() - 0.5);
+      setRecipesShowCase(shuffleRecipes || []);
       setIsLoading(false);
     }
   };
