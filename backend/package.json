@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "prod": "NODE_ENV=prod nodemon src/index.js",
+    "prod": "NODE_ENV=prod node src/index.js",
     "start": "NODE_ENV=dev nodemon src/index.js",
     "seed-prod": "NODE_ENV=prod node seed/seed.js",
     "seed": "NODE_ENV=dev node seed/seed.js",
