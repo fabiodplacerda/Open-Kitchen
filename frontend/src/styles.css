@@ -11,6 +11,29 @@ body {
   min-height: 100vh;
 }
 
+#homepage-main {
+  min-height: 87vh;
+  color: rgb(255, 255, 255);
+}
+
+#homepage-button {
+  border: 2px solid rgb(255, 255, 255);
+  border-radius: 20px;
+  padding: 10px;
+  color: white;
+  background-color: #000;
+  transition: background-color 0.3s ease-in;
+  text-decoration: none;
+}
+#homepage-button:hover {
+  background-color: #5d5d5d;
+}
+
+.slider-container {
+  width: 80%;
+  margin: 0 auto;
+}
+
 #page-logo {
   max-width: 180px;
   margin-right: 25px;
@@ -18,6 +41,14 @@ body {
 
 .recipe-card {
   width: 18rem;
+}
+
+.recipe-card-homepage {
+  width: 20rem;
+}
+
+.recipe-card,
+.recipe-card-homepage {
   text-decoration: none;
   transition: transform 0.2s;
   border: none !important;
@@ -28,23 +59,10 @@ body {
     rgba(14, 63, 126, 0.04) 0px 12px 12px -6px,
     rgba(14, 63, 126, 0.04) 0px 24px 24px -12px;
 }
-
-.recipe-card:hover {
+.recipe-card:hover,
+.recipe-card-homepage:hover {
   transform: scale(1.05);
 }
-/* 
-.recipe-img {
-  width: 800px;
-  height: 500px;
-  object-fit: cover;
-  border-radius: 5px;
-  box-shadow: rgba(14, 63, 126, 0.04) 0px 0px 0px 1px,
-    rgba(42, 51, 69, 0.04) 0px 1px 1px -0.5px,
-    rgba(42, 51, 70, 0.04) 0px 3px 3px -1.5px,
-    rgba(42, 51, 70, 0.04) 0px 6px 6px -3px,
-    rgba(14, 63, 126, 0.04) 0px 12px 12px -6px,
-    rgba(14, 63, 126, 0.04) 0px 24px 24px -12px;
-} */
 
 #description {
   height: 200px;
