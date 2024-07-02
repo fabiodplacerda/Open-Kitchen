@@ -29,6 +29,7 @@ const usersData = {
       savedRecipes: ["667441c68299324f52841991"],
       recipes: [],
       __v: 0,
+      userToken: "token",
     },
     {
       _id: "667441c68299324f52841988",

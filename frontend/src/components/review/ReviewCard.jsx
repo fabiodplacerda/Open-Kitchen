@@ -6,7 +6,11 @@ import { Button, Rating, IconButton } from "@mui/material/";
 const ReviewCard = ({ review, deleteReviewData }) => {
   const { loggedUser } = useContext(UserContext);
   return (
-    <div className="review-card mb-2 position-relative" key={review._id}>
+    <div
+      className="review-card mb-2 position-relative"
+      key={review._id}
+      data-testid="review-card"
+    >
       <div className="review-content">
         {((loggedUser && loggedUser._id === review.author._id) ||
           (loggedUser && loggedUser.role === "admin")) && (

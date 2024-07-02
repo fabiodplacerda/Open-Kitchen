@@ -11,7 +11,10 @@ const AddReviewForm = ({
 }) => {
   const [charCount, setCharCount] = useState(0);
   return (
-    <div className="review-form m-5 p-3 d-flex flex-column">
+    <div
+      className="review-form m-5 p-3 d-flex flex-column"
+      data-testid="review-form"
+    >
       <div className="rating d-flex my-3">
         <Typography sx={{ fontSize: 18 }}>Rating:</Typography>
         <Rating

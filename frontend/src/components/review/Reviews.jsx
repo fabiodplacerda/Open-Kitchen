@@ -134,7 +134,11 @@ const Reviews = ({ recipeId, setReviewsAverage }) => {
       )}
       {reviews.map((review) => {
         return (
-          <ReviewCard review={review} deleteReviewData={deleteReviewData} />
+          <ReviewCard
+            review={review}
+            deleteReviewData={deleteReviewData}
+            key={review._id}
+          />
         );
       })}
     </>

@@ -56,7 +56,7 @@ const Header = () => {
             {loggedUser && loggedUser.savedRecipes.length > 0 && (
               <li className="nav-item">
                 <NavLink className="nav-link" to="/recipes">
-                  My Recipes
+                  My saved Recipes
                 </NavLink>
               </li>
             )}

@@ -1,12 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import SingleRecipe from "../src/components/recipe/SingleRecipe";
 import TestWrapper from "./TestWrapper";
-import { getSingleRecipe } from "../src/services/recipe.service";
+import { deleteRecipe, getSingleRecipe } from "../src/services/recipe.service";
 import recipesData from "./data/recipesData";
 import { getReviews } from "../src/services/review.service";
 import { act } from "react";
 import usersData from "./data/userData";
 import reviewsData from "./data/reviewsData";
+import userEvent from "@testing-library/user-event";
 
 const { recipes } = recipesData;
 const { users } = usersData;

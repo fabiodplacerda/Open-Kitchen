@@ -7,7 +7,6 @@ import { act } from "react";
 import usersData from "./data/userData";
 
 const { recipes } = recipesData;
-const { users } = usersData;
 
 vi.mock("../src/services/recipe.service");
 
