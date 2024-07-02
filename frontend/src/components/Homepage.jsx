@@ -4,18 +4,16 @@ import Slider from "react-slick";
 import { getRecipes } from "../services/recipe.service";
 import RecipeCard from "./recipe/RecipeCard";
 import Loader from "./Loader";
+import useScreenSize from "../utils/useScreenSize";
 
 const Homepage = () => {
   const [recipesShowCase, setRecipesShowCase] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [windowSize, setWindowSize] = useState([
-    window.innerHeight,
-    window.innerWidth,
-  ]);
+  const screenSize = useScreenSize();
   const settings = {
     dots: false,
     infinite: true,
-    slidesToShow: windowSize[0] > 990 ? 3 : windowSize[0] > 670 ? 2 : 1,
+    slidesToShow: screenSize.width > 990 ? 3 : screenSize.width > 670 ? 2 : 1,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 2000,
@@ -35,14 +33,6 @@ const Homepage = () => {
 
   useEffect(() => {
     getRecipesData();
-    const windowSizeHandler = () => {
-      setWindowSize([window.innerWidth, window.innerHeight]);
-    };
-    window.addEventListener("resize", windowSizeHandler);
-    console.log(windowSize);
-    return () => {
-      window.removeEventListener("resize", windowSizeHandler);
-    };
   }, []);
 
   return (
