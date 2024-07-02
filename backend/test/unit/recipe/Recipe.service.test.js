@@ -68,7 +68,9 @@ describe('RecipeService Tests', () => {
     });
     it('should call find and return all recipes', async () => {
       // Arrange
-      findStub.returns(recipes);
+      findStub.returns({
+        populate: sinon.stub().resolves(recipes),
+      });
       // Act
       const result = await recipeService.getAllRecipes(recipes);
       // Assert
@@ -226,7 +228,9 @@ describe('RecipeService Tests', () => {
   });
   describe('getRecipesByAuthorId', () => {
     it('should call find and return all the recipes create by the author', async () => {
-      const findStub = sinon.stub(Recipe, 'find').resolves(recipesByAuthorId);
+      const findStub = sinon.stub(Recipe, 'find').returns({
+        populate: sinon.stub().resolves(recipesByAuthorId),
+      });
 
       const result = await recipeService.getRecipesByAuthorId(
         '667441c68299324f52841985'

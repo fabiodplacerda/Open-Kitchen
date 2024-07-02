@@ -39,7 +39,13 @@ describe('Integration Tests', () => {
 
   const { users, newUser, expectedResults, expectedSingleUserResult } =
     usersData;
-  const { recipes, newRecipe, updatedRecipe, recipesByAuthorId } = recipesData;
+  const {
+    recipes,
+    newRecipe,
+    updatedRecipe,
+    recipesByAuthorId,
+    allRecipesResult,
+  } = recipesData;
   const { reviews, newReview, expectedReviews, expectedNewReview } =
     reviewsData;
 
@@ -574,7 +580,7 @@ describe('Integration Tests', () => {
       it('should respond with an array of recipes', async () => {
         const response = await request.get('/recipe/getAllRecipes');
 
-        expect(response.body.recipes).to.deep.equal(recipes);
+        expect(response.body.recipes).to.deep.equal(allRecipesResult);
       });
       it('should respond with a 500 status if a error occurs when getting all the recipes', async () => {
         const error = new Error('test error');

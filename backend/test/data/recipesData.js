@@ -37,6 +37,63 @@ const recipesData = {
       __v: 0,
     },
   ],
+  allRecipesResult: [
+    {
+      _id: '667441c68299324f52841990',
+      author: '667441c68299324f52841985', // ObjectId of user1
+      name: 'Delicious Pancakes',
+      imgUrl: 'https://example.com/pancakes.jpg',
+      description: 'A simple recipe for fluffy pancakes.',
+      reviews: [
+        {
+          _id: '667441c68299324f52841998',
+          rating: 4,
+        },
+        {
+          _id: '667441c68299324f5284199c',
+          rating: 4,
+        },
+      ],
+      __v: 0,
+    },
+    {
+      _id: '667441c68299324f52841991',
+      author: '667441c68299324f52841985', // ObjectId of user1
+      name: 'Homemade Pizza',
+      imgUrl: 'https://example.com/pizza.jpg',
+      description: 'Make pizza at home with this easy recipe.',
+      reviews: [
+        {
+          _id: '667441c68299324f52841999',
+          rating: 5,
+        },
+      ],
+      __v: 0,
+    },
+    {
+      _id: '667441c68299324f52841992',
+      author: '667441c68299324f52841986', // ObjectId of user2
+      name: 'Chocolate Cake',
+      imgUrl: 'https://example.com/chocolate-cake.jpg',
+      description: 'Decadent chocolate cake recipe.',
+      reviews: [
+        {
+          _id: '667441c68299324f5284199a',
+          rating: 5,
+        },
+      ],
+      __v: 0,
+    },
+    {
+      _id: '667441c68299324f52841993',
+      author: '667441c68299324f52841986', // ObjectId of user2
+      name: 'Spaghetti Carbonara',
+      imgUrl: 'https://example.com/spaghetti-carbonara.jpg',
+      description: 'Classic Italian pasta dish.',
+      reviews: [],
+      __v: 0,
+    },
+  ],
   newRecipe: {
     _id: '667441c68299324f52841994',
     author: '667441c68299324f52841988',
@@ -64,7 +121,16 @@ const recipesData = {
       name: 'Delicious Pancakes',
       imgUrl: 'https://example.com/pancakes.jpg',
       description: 'A simple recipe for fluffy pancakes.',
-      reviews: ['667441c68299324f52841998', '667441c68299324f5284199c'],
+      reviews: [
+        {
+          _id: '667441c68299324f52841998',
+          rating: 4,
+        },
+        {
+          _id: '667441c68299324f5284199c',
+          rating: 4,
+        },
+      ],
       __v: 0,
     },
     {
@@ -73,7 +139,12 @@ const recipesData = {
       name: 'Homemade Pizza',
       imgUrl: 'https://example.com/pizza.jpg',
       description: 'Make pizza at home with this easy recipe.',
-      reviews: ['667441c68299324f52841999'],
+      reviews: [
+        {
+          _id: '667441c68299324f52841999',
+          rating: 5,
+        },
+      ],
       __v: 0,
     },
   ],
