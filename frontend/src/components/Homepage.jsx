@@ -11,7 +11,7 @@ const Homepage = () => {
   const settings = {
     dots: false,
     infinite: true,
-    slidesToShow: 3,
+    slidesToShow: 4,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 2000,
@@ -21,7 +21,9 @@ const Homepage = () => {
   const getRecipesData = async () => {
     const recipes = await getRecipes();
     if (recipes.message && recipes.message.includes("Request was successful")) {
-      const shuffleRecipes = recipes.recipes.sort(() => Math.random() - 0.5);
+      const shuffleRecipes = recipes.recipes
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 8);
       setRecipesShowCase(shuffleRecipes || []);
       setIsLoading(false);
     }

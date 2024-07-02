@@ -6,7 +6,7 @@ import Reviews from "../review/Reviews";
 import ModalBox from "../ModalBox";
 
 // UI components
-import { Button, Rating, Typography } from "@mui/material";
+import { Button, Rating } from "@mui/material";
 import showFeedbackMessage from "../../utils/feedbackMessages";
 import { updateUserRecipes } from "../../services/user.service";
 

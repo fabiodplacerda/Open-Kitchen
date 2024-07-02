@@ -40,7 +40,7 @@ body {
 }
 
 .recipe-card {
-  width: 18rem;
+  width: 19rem;
 }
 
 .recipe-card-homepage {
@@ -100,7 +100,7 @@ body {
 }
 
 .card-body {
-  height: 170px;
+  height: 220px;
 }
 
 #user-form-container,
