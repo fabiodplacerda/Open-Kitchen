@@ -157,7 +157,10 @@ const AccountForm = ({ action }) => {
         <form onSubmit={onSubmitHandler}>
           <Sheet
             sx={{
-              width: 500,
+              width: {
+                xs: 300, // 0px to 600px
+                sm: 500,
+              },
               mx: "auto",
               my: 4,
               py: 3,

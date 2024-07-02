@@ -92,7 +92,7 @@ const SingleRecipe = () => {
               handleOpen={handleOpen}
               deleteFunction={deleteHandler}
             />
-            <div className="col-md-4">
+            <div className="col-lg-4">
               <img
                 src={singleRecipe.imgUrl}
                 alt={singleRecipe.name}
@@ -101,7 +101,7 @@ const SingleRecipe = () => {
               />
             </div>
 
-            <div className="col-md-8 d-flex flex-column justify-content-center align-items-center">
+            <div className="col-lg-8 d-flex flex-column justify-content-center align-items-center">
               <h2 className="text-center">{singleRecipe.name}</h2>
               <Rating
                 value={reviewsAverage}

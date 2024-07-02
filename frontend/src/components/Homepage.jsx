@@ -8,10 +8,14 @@ import Loader from "./Loader";
 const Homepage = () => {
   const [recipesShowCase, setRecipesShowCase] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [windowSize, setWindowSize] = useState([
+    window.innerHeight,
+    window.innerWidth,
+  ]);
   const settings = {
     dots: false,
     infinite: true,
-    slidesToShow: 4,
+    slidesToShow: windowSize[0] > 990 ? 3 : windowSize[0] > 670 ? 2 : 1,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 2000,
@@ -31,6 +35,14 @@ const Homepage = () => {
 
   useEffect(() => {
     getRecipesData();
+    const windowSizeHandler = () => {
+      setWindowSize([window.innerWidth, window.innerHeight]);
+    };
+    window.addEventListener("resize", windowSizeHandler);
+    console.log(windowSize);
+    return () => {
+      window.removeEventListener("resize", windowSizeHandler);
+    };
   }, []);
 
   return (

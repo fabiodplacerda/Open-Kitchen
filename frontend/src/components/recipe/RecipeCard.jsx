@@ -12,7 +12,7 @@ const RecipeCard = ({ recipe }) => {
 
   return (
     <>
-      <img src={recipe.imgUrl} className="card-img-top" alt="..." />
+      <img src={recipe.imgUrl} className="card-img-top" alt={recipe.name} />
       <div className="card-body">
         <h5 className="card-title text-center">{recipe.name}</h5>
         <div className="text-center">

@@ -72,13 +72,13 @@ const Recipes = ({ action }) => {
               Add Recipe
             </Button>
           )}
-          <div className="container">
+          <div className=".container-lg">
             <div className="row">
               {recipes.map((recipe) => (
-                <div className="col-3 mt-5" key={recipe._id}>
+                <div className="col-12 col-md-4 col-lg-3 mt-5" key={recipe._id}>
                   <Link
                     data-testid="recipe-card"
-                    className="card recipe-card"
+                    className="card recipe-card mx-auto"
                     to={`/recipes/${recipe._id}`}
                   >
                     <RecipeCard recipe={recipe} />
