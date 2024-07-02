@@ -41,6 +41,7 @@ const AddReviewForm = ({
             setCharCount(e.target.value.length);
           }}
           maxLength="100"
+          data-testid="review-comment-body"
         ></textarea>
         <p className="text-muted">{100 - charCount} characters left</p>
       </div>

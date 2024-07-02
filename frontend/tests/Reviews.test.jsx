@@ -1,14 +1,18 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import Reviews from "../src/components/review/Reviews";
 import TestWrapper from "./TestWrapper";
-import { getReviews, deleteReview } from "../src/services/review.service";
+import {
+  getReviews,
+  deleteReview,
+  createReview,
+} from "../src/services/review.service";
 import reviewsData from "./data/reviewsData";
 import userData from "./data/userData";
 import React, { act } from "react";
 import recipesData from "./data/recipesData";
 import userEvent from "@testing-library/user-event";
 
-const { expectedReviews } = reviewsData;
+const { expectedReviews, newReview } = reviewsData;
 const { recipes } = recipesData;
 const { users } = userData;
 
@@ -69,7 +73,7 @@ describe("Reviews Tests", () => {
 
     expect(reviewForm).toBeInTheDocument();
   });
-  it("should delete a review", async () => {
+  it("should delete a review when user clicks the delete button", async () => {
     const data = {
       reviews: expectedReviews,
     };
@@ -97,5 +101,36 @@ describe("Reviews Tests", () => {
       users[2].userToken
     );
     expect(deletedReview).not.toBeInTheDocument();
+  });
+  it("should call add review when user adds a new review", async () => {
+    const data = {
+      reviews: expectedReviews,
+    };
+
+    await act(async () => {
+      getReviews.mockResolvedValueOnce(data);
+      // createReview.mockResolvedValueOnce(newReview);
+
+      render(
+        <TestWrapper loggedUser={users[2]}>
+          <Reviews recipeId={recipes[0]._id} setReviewsAverage={vi.fn()} />
+        </TestWrapper>
+      );
+    });
+
+    const addButton = screen.getByRole("button", { name: "Add a review" });
+    await userEvent.click(addButton);
+    const reviewBodyInput = screen.getByTestId("review-comment-body");
+    const submitButton = screen.getByRole("button", { name: "Submit review" });
+    await userEvent.type(reviewBodyInput, "Testing review");
+    await userEvent.click(submitButton);
+
+    expect(createReview).toHaveBeenCalledWith(
+      recipes[0]._id,
+      newReview,
+      users[2].userToken
+    );
+
+    // expect(deletedReview).not.toBeInTheDocument();
   });
 });

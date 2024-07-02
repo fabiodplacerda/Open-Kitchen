@@ -35,12 +35,10 @@ const reviewsData = {
   ],
 
   newReview: {
-    _id: "667441c68299324f5284199d",
-    author: "667441c68299324f52841989", // ObjectId of user5
-    body: "Delicious carbonara like my mom used to do",
-    rating: 5,
-    recipeId: "667441c68299324f52841993",
-    __v: 0,
+    author: "667441c68299324f52841987",
+    body: "Testing review",
+    rating: 1,
+    recipeId: "667441c68299324f52841990",
   },
   expectedNewReview: {
     author: {
