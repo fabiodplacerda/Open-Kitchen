@@ -1,4 +1,4 @@
-body {
+#root {
   background: linear-gradient(
       0deg,
       rgba(80, 80, 80, 0.5),
@@ -9,18 +9,16 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 #homepage-main {
-  min-height: 89vh;
   color: rgb(255, 255, 255);
 }
 
-#recipe-form-container,
-#homepage,
-#single-recipe-main-container,
-#user-form-container {
-  min-height: 89vh;
+main {
+  margin-top: auto;
 }
 
 #homepage-button {
@@ -49,7 +47,10 @@ body {
 .recipe-card {
   width: 90%;
 }
-
+.row {
+  max-width: 100% !important;
+  margin: 0 auto !important;
+}
 .recipe-card-homepage {
   width: 20rem;
 }
@@ -165,7 +166,7 @@ body {
 }
 
 #footer {
-  height: 40px;
+  height: 38px;
   background-color: rgb(248, 249, 250);
   margin-top: auto;
 }
