@@ -6,7 +6,7 @@ import Reviews from "../review/Reviews";
 import ModalBox from "../ModalBox";
 
 // UI components
-import { Button, Rating } from "@mui/material";
+import { Button, Rating, Skeleton } from "@mui/material";
 import showFeedbackMessage from "../../utils/feedbackMessages";
 import { updateUserRecipes } from "../../services/user.service";
 
@@ -19,6 +19,7 @@ const SingleRecipe = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [reviewsAverage, setReviewsAverage] = useState(0);
+  const [pageLoading, setPageLoading] = useState(true);
 
   const handleOpen = () => setOpen(!open);
 
@@ -45,7 +46,10 @@ const SingleRecipe = () => {
   const getSingleRecipeData = async () => {
     try {
       const recipeData = await getSingleRecipe(recipeId);
-      setSingleRecipe(recipeData.recipe);
+      if (recipeData.recipe) {
+        setPageLoading(false);
+        setSingleRecipe(recipeData.recipe);
+      }
     } catch (e) {}
   };
 
@@ -92,31 +96,96 @@ const SingleRecipe = () => {
               handleOpen={handleOpen}
               deleteFunction={deleteHandler}
             />
+
             <div className="col-lg-4">
-              <img
-                src={singleRecipe.imgUrl}
-                alt={singleRecipe.name}
-                className="single-recipe-img"
-                data-testid="recipe-img"
-              />
+              {pageLoading ? (
+                <Skeleton
+                  variant="rectangular"
+                  sx={{
+                    width: "100%",
+                    height: {
+                      xs: 400,
+
+                      lg: 500,
+                    },
+                  }}
+                  animation="wave"
+                />
+              ) : (
+                <img
+                  src={singleRecipe.imgUrl}
+                  alt={singleRecipe.name}
+                  className="single-recipe-img"
+                  data-testid="recipe-img"
+                />
+              )}
             </div>
 
-            <div className="col-lg-8 d-flex flex-column justify-content-center align-items-center">
-              <h2 className="text-center">{singleRecipe.name}</h2>
-              <Rating
-                value={reviewsAverage}
-                readOnly
-                precision={0.5}
-                className="mb-4"
-              />
+            {pageLoading ? (
+              <div className="col-lg-8 d-flex flex-column justify-content-center align-items-center">
+                <Skeleton
+                  variant="rectangular"
+                  sx={{
+                    width: "50%",
+                    height: 35,
+                    mt: {
+                      xs: 3,
+                      lg: 0,
+                    },
+                  }}
+                  animation="wave"
+                />
+                <Skeleton
+                  variant="rectangular"
+                  sx={{ width: 200, height: 30, mt: 1 }}
+                  animation="wave"
+                />
+                <Skeleton
+                  variant="rectangular"
+                  sx={{ width: "80%", mt: 10 }}
+                  animation="wave"
+                />
+                <Skeleton
+                  variant="rectangular"
+                  sx={{ width: "80%", mt: 1 }}
+                  animation="wave"
+                />
+                <Skeleton
+                  variant="rectangular"
+                  sx={{ width: "80%", mt: 1 }}
+                  animation="wave"
+                />
+                <Skeleton
+                  variant="rectangular"
+                  sx={{
+                    width: "80%",
+                    mt: 1,
+                    mb: {
+                      xs: 2,
+                      lg: 0,
+                    },
+                  }}
+                  animation="wave"
+                />
+              </div>
+            ) : (
+              <div className="col-lg-8 d-flex flex-column justify-content-center align-items-center">
+                <h2 className="text-center">{singleRecipe.name}</h2>
+                <Rating
+                  value={reviewsAverage}
+                  readOnly
+                  precision={0.5}
+                  className="mb-4"
+                />
 
-              <p
-                data-testid="recipe-description"
-                className="single-recipe-text"
-              >
-                {singleRecipe.description}
-              </p>
-            </div>
+                <p
+                  data-testid="recipe-description"
+                  className="single-recipe-text"
+                >
+                  {singleRecipe.description}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 

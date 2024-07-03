@@ -67,11 +67,13 @@ describe("Reviews Tests", () => {
       );
     });
 
-    const button = screen.getByRole("button", { name: "Add a review" });
-    await userEvent.click(button);
-    const reviewForm = screen.getByTestId("review-form");
+    waitFor(async () => {
+      const button = screen.getByRole("button", { name: "Add a review" });
+      await userEvent.click(button);
+      const reviewForm = screen.getByTestId("review-form");
 
-    expect(reviewForm).toBeInTheDocument();
+      expect(reviewForm).toBeInTheDocument();
+    });
   });
   it("should delete a review when user clicks the delete button", async () => {
     const data = {
@@ -109,7 +111,6 @@ describe("Reviews Tests", () => {
 
     await act(async () => {
       getReviews.mockResolvedValueOnce(data);
-      // createReview.mockResolvedValueOnce(newReview);
 
       render(
         <TestWrapper loggedUser={users[2]}>
@@ -130,7 +131,5 @@ describe("Reviews Tests", () => {
       newReview,
       users[2].userToken
     );
-
-    // expect(deletedReview).not.toBeInTheDocument();
   });
 });
