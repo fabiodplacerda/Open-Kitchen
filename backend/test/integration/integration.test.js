@@ -308,6 +308,23 @@ describe('Integration Tests', () => {
 
         expect(response.status).to.equal(204);
       });
+      it('should delete the user, recipes associated and reviews from the database', async () => {
+        await request
+          .delete(`/user/${userToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`);
+
+        const deleteUser = await User.findById(userToDelete._id);
+        const userRecipesAssociated = await Recipe.find({
+          author: userToDelete._id,
+        });
+        const userReviewsAssociated = await Review.find({
+          author: userToDelete._id,
+        });
+
+        expect(deleteUser).to.equal(null);
+        expect(userRecipesAssociated).to.deep.equal([]);
+        expect(userReviewsAssociated).to.deep.equal([]);
+      });
       it('should respond with a 404 if user not found', async () => {
         const response = await request
           .delete(`/user/667441c68299324f52841920`)

@@ -1,7 +1,9 @@
 import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-
+import Review from '../models/review.model.js';
+import Recipe from '../models/recipe.model.js';
+import mongoose from 'mongoose';
 export default class UserServices {
   createAccount = async newUser => {
     try {
@@ -68,10 +70,21 @@ export default class UserServices {
     }
   };
   deleteAccount = async userId => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
     try {
+      await Review.deleteMany({ author: userId });
+      await Recipe.deleteMany({ author: userId });
       const deleteUser = await User.findByIdAndDelete(userId);
+
+      await session.commitTransaction();
+      session.endSession();
+
       return deleteUser;
     } catch (e) {
+      await session.abortTransaction();
+      session.endSession();
+
       throw new Error(`Failed to delete the user: ${e.message}`);
     }
   };
