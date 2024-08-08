@@ -4,7 +4,7 @@
       rgba(80, 80, 80, 0.5),
       rgba(80, 80, 80, 0.5)
     ),
-    url("../public/assets/background/pexels-dana-tentis-118658-691114.jpg");
+    url("/assets/background/pexels-dana-tentis-118658-691114.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;

@@ -20,6 +20,7 @@ const Reviews = ({ recipeId, setReviewsAverage }) => {
   const [rating, setRating] = useState(1);
   const [body, setBody] = useState("");
   const [isRating, setIsRating] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
 
   const updateAverageRating = (reviewsArr) => {
     const rating = calculateAverage(reviewsArr);
@@ -87,8 +88,11 @@ const Reviews = ({ recipeId, setReviewsAverage }) => {
   const getReviewsData = async () => {
     try {
       const reviewsData = await getReviews(recipeId);
-      setReviews(reviewsData.reviews.reverse());
-      updateAverageRating(reviewsData.reviews);
+      if (reviewsData) {
+        setReviews(reviewsData.reviews.reverse());
+        updateAverageRating(reviewsData.reviews);
+        setPageLoading(false);
+      }
     } catch (e) {}
   };
 
@@ -101,6 +105,8 @@ const Reviews = ({ recipeId, setReviewsAverage }) => {
         <p className="text-white fs-4 my-2">
           {<Link to="/login">Login</Link>} to leave a review
         </p>
+      ) : pageLoading ? (
+        <p className="text-white fs-4 my-2">Loading reviews...</p>
       ) : (
         !reviews.length && (
           <p className="text-white fs-4 my-2">
@@ -110,7 +116,7 @@ const Reviews = ({ recipeId, setReviewsAverage }) => {
         )
       )}
 
-      {!isRating && loggedUser && (
+      {!isRating && loggedUser && !pageLoading && (
         <Button
           variant="contained"
           color="success"

@@ -6,7 +6,11 @@ const usersData = [
     password: 'HellsKitchen2024',
     role: 'admin',
     savedRecipes: [],
-    recipes: ['667441c68299324f52841990', '667441c68299324f52841991'],
+    recipes: [
+      '668307aad12124c85491ad1f',
+      '66830869d12124c85491ad31',
+      '66830a38d12124c85491ad5a',
+    ],
     __v: 0,
   },
   {
@@ -36,7 +40,11 @@ const usersData = [
     password: 'David1',
     role: 'user',
     savedRecipes: [],
-    recipes: [],
+    recipes: [
+      '66830cecd12124c85491ad7c',
+      '66830eb1d12124c85491ad93',
+      '6683102bd12124c85491adb0',
+    ],
     __v: 0,
   },
   {
