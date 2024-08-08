@@ -5,6 +5,9 @@ import { expect } from 'chai';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import usersData from '../../data/userData.js';
+import Review from '../../../src/models/review.model.js';
+import Recipe from '../../../src/models/recipe.model.js';
+import mongoose from 'mongoose';
 
 const { expectedResults, users, expectedSingleUserResult } = usersData;
 
@@ -148,19 +151,41 @@ describe('UserService', () => {
     });
   });
   describe('deleteAccount Tests', () => {
-    const deletedUser = {
-      _id: '667441c68299324f52841987',
-      email: 'user3@example.com',
-      username: 'user3',
-      password: 'Password3',
-      role: 'user',
-      savedRecipes: [],
-      recipes: [],
-      __v: 0,
-    };
+    let session;
+    let deletedUser;
+    let sessionStub;
+
+    beforeEach(() => {
+      session = {
+        startTransaction: sinon.stub().resolves(),
+        commitTransaction: sinon.stub().resolves(),
+        abortTransaction: sinon.stub().resolves(),
+        endSession: sinon.stub().resolves(),
+      };
+
+      sessionStub = sinon.stub(mongoose, 'startSession').resolves(session);
+
+      deletedUser = {
+        _id: '667441c68299324f52841987',
+        email: 'user3@example.com',
+        username: 'user3',
+        password: 'Password3',
+        role: 'user',
+        savedRecipes: [],
+        recipes: [],
+        __v: 0,
+      };
+    });
+
+    afterEach(() => {
+      sessionStub.restore();
+    });
     it('should call findByIdAndDelete and return the deleted user', async () => {
-      const findByIdAndDelete = sinon.stub(User, 'findByIdAndDelete');
-      findByIdAndDelete.resolves(deletedUser);
+      const findByIdAndDelete = sinon
+        .stub(User, 'findByIdAndDelete')
+        .resolves(deletedUser);
+      const deleteManyReviewsStub = sinon.stub(Review, 'deleteMany').resolves();
+      const deleteManyRecipesStub = sinon.stub(Recipe, 'deleteMany').resolves();
 
       const result = await userServices.deleteAccount(deletedUser._id);
 
@@ -168,11 +193,15 @@ describe('UserService', () => {
       expect(findByIdAndDelete.calledOnce).to.be.true;
 
       findByIdAndDelete.restore();
+      deleteManyRecipesStub.restore();
+      deleteManyReviewsStub.restore();
     });
     it('should throw an error if a error occurs', async () => {
       const error = new Error('test error');
       const findByIdAndDelete = sinon.stub(User, 'findByIdAndDelete');
       findByIdAndDelete.throws(error);
+      const deleteManyReviewsStub = sinon.stub(Review, 'deleteMany').resolves();
+      const deleteManyRecipesStub = sinon.stub(Recipe, 'deleteMany').resolves();
 
       try {
         await userServices.deleteAccount(deletedUser._id);
@@ -184,6 +213,8 @@ describe('UserService', () => {
       }
 
       findByIdAndDelete.restore();
+      deleteManyRecipesStub.restore();
+      deleteManyReviewsStub.restore();
     });
   });
   describe('getAllAccounts Tests', () => {

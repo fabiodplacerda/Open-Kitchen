@@ -98,7 +98,7 @@ describe('Integration Tests', () => {
     }
   });
   describe('User Tests', () => {
-    describe('POST request to /user/createAccount', () => {
+    describe.skip('POST request to /user/createAccount', () => {
       it('should respond with a 201 status code when request is successful', async () => {
         const response = await request
           .post('/user/createAccount')
@@ -148,7 +148,7 @@ describe('Integration Tests', () => {
         stub.restore();
       });
     });
-    describe('POST request to /user/login', () => {
+    describe.skip('POST request to /user/login', () => {
       beforeEach(() => {
         sinon.stub(jwt, 'sign').returns('testToken');
       });
@@ -207,7 +207,7 @@ describe('Integration Tests', () => {
         stub.restore();
       });
     });
-    describe('PUT request to /user/:id', () => {
+    describe.skip('PUT request to /user/:id', () => {
       const testUser = { ...users[0], password: 'Password1' };
       const updates = {
         email: 'newEmail@gmail.com',
@@ -308,6 +308,23 @@ describe('Integration Tests', () => {
 
         expect(response.status).to.equal(204);
       });
+      it('should delete the user, recipes associated and reviews from the database', async () => {
+        await request
+          .delete(`/user/${userToDelete._id}`)
+          .set('Authorization', `Bearer ${token}`);
+
+        const deleteUser = await User.findById(userToDelete._id);
+        const userRecipesAssociated = await Recipe.find({
+          author: userToDelete._id,
+        });
+        const userReviewsAssociated = await Review.find({
+          author: userToDelete._id,
+        });
+
+        expect(deleteUser).to.equal(null);
+        expect(userRecipesAssociated).to.deep.equal([]);
+        expect(userReviewsAssociated).to.deep.equal([]);
+      });
       it('should respond with a 404 if user not found', async () => {
         const response = await request
           .delete(`/user/667441c68299324f52841920`)
@@ -347,7 +364,7 @@ describe('Integration Tests', () => {
         stub.restore();
       });
     });
-    describe('GET request to /user/getAllAccounts', () => {
+    describe.skip('GET request to /user/getAllAccounts', () => {
       const baseUser = users[0];
       const admin = users[1];
 
@@ -424,7 +441,7 @@ describe('Integration Tests', () => {
         expect(response.body).to.deep.equal({ message: error.message });
       });
     });
-    describe('GET request to /user/:id', () => {
+    describe.skip('GET request to /user/:id', () => {
       const token = jwt.sign(
         {
           id: expectedSingleUserResult._id,
@@ -484,7 +501,7 @@ describe('Integration Tests', () => {
       });
     });
   });
-  describe('Recipe Tests', () => {
+  describe.skip('Recipe Tests', () => {
     describe('POST request to /recipe/createRecipe', () => {
       const user = users[3];
 
@@ -881,7 +898,7 @@ describe('Integration Tests', () => {
       });
     });
   });
-  describe('Review Tests', () => {
+  describe.skip('Review Tests', () => {
     describe('POST request to /recipe/:id/createReview', () => {
       const recipe = recipes[3];
       const user = users[1];

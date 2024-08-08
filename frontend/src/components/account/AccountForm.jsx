@@ -1,8 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import ModalBox from "../ModalBox";
 import { UserContext } from "../../context/UserContext";
-import { login, register, updateUser } from "../../services/user.service";
+import {
+  deleteUser,
+  login,
+  logout,
+  register,
+  updateUser,
+} from "../../services/user.service";
 import showFeedbackMessage from "../../utils/feedbackMessages";
 import { allValidFields, passwordMatchConfirmation } from "../../utils/utils";
 
@@ -22,6 +29,27 @@ const AccountForm = ({ action }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [inputsValidity, setInputsValidity] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => setOpen(!open);
+
+  const deleteHandler = async () => {
+    try {
+      const response = await deleteUser(loggedUser._id, loggedUser.userToken);
+      console.log(response);
+      if (response === 204) {
+        setIsLoading(true);
+        setTimeout(() => {
+          logout();
+          showFeedbackMessage("success", "Account deleted with success");
+          setLoggedUser(null);
+          navigate("/login");
+        }, 1500);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const loginUser = async () => {
     try {
@@ -154,6 +182,17 @@ const AccountForm = ({ action }) => {
         className="d-flex justify-content-center align-items-center"
         id="user-form-container"
       >
+        <ModalBox
+          title={"Delete Account?"}
+          text={
+            " Are you sure you want to delete your account? Please note that this action cannot be reversed!"
+          }
+          open={open}
+          isLoading={isLoading}
+          handleOpen={handleOpen}
+          deleteFunction={deleteHandler}
+        />
+
         <form onSubmit={onSubmitHandler}>
           <Sheet
             sx={{
@@ -263,14 +302,19 @@ const AccountForm = ({ action }) => {
             </LoadingButton>
 
             {action === "Edit" && (
-              <Button
-                color="error"
-                onClick={() => {
-                  navigate(-1);
-                }}
-              >
-                Cancel
-              </Button>
+              <>
+                <Button color="error" onClick={handleOpen} variant="contained">
+                  Delete Account
+                </Button>
+                <Button
+                  color="error"
+                  onClick={() => {
+                    navigate(-1);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </>
             )}
 
             {action === "Login" ? (

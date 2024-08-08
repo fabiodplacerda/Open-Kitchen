@@ -123,3 +123,19 @@ export const updateUserRecipes = async (user, setLoggedUser) => {
   );
   setLoggedUser({ ...userData, userToken: user.userToken });
 };
+
+export const deleteUser = async (userId, token) => {
+  const dataToSend = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await axios.delete(`${userUrl}/${userId}`, dataToSend);
+
+    return response.status;
+  } catch (e) {
+    console.log(e);
+  }
+};
