@@ -29,6 +29,7 @@ export default class ReviewValidator {
           .notEmpty()
           .isInt({ min: 1, max: 5 })
           .withMessage('rating must be a number and must be between 1 and 5'),
+        expressValidator.body('date').optional().isISO8601(),
         ReviewValidator.handleValidationErrors,
       ];
     } catch (e) {

@@ -932,6 +932,7 @@ describe('Integration Tests', () => {
             recipeId: review.recipeId.toString(),
             body: review.body,
             rating: review.rating,
+            date: review.date.toISOString(),
             __v: 0,
           };
         });

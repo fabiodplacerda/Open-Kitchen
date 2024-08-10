@@ -1,3 +1,5 @@
+const date = new Date();
+
 const reviewsData = {
   reviews: [
     {
@@ -7,6 +9,7 @@ const reviewsData = {
       rating: 4,
       recipeId: '667441c68299324f52841990',
       __v: 0,
+      date: date.toISOString(),
     },
     {
       _id: '667441c68299324f52841999',
@@ -15,6 +18,7 @@ const reviewsData = {
       rating: 5,
       recipeId: '667441c68299324f52841991',
       __v: 0,
+      date: date.toISOString(),
     },
     {
       _id: '667441c68299324f5284199a',
@@ -23,6 +27,7 @@ const reviewsData = {
       rating: 5,
       recipeId: '667441c68299324f52841992',
       __v: 0,
+      date: date.toISOString(),
     },
     {
       _id: '667441c68299324f5284199c',
@@ -31,6 +36,7 @@ const reviewsData = {
       rating: 4,
       recipeId: '667441c68299324f52841990',
       __v: 0,
+      date: date.toISOString(),
     },
   ],
 
@@ -41,6 +47,7 @@ const reviewsData = {
     rating: 5,
     recipeId: '667441c68299324f52841993',
     __v: 0,
+    date: date.toISOString(),
   },
   expectedNewReview: {
     author: {
@@ -53,6 +60,7 @@ const reviewsData = {
     rating: 5,
     recipeId: '667441c68299324f52841993',
     __v: 0,
+    date: date.toISOString(),
   },
   expectedReviews: [
     {
@@ -65,6 +73,7 @@ const reviewsData = {
       body: 'These pancakes were awesome!',
       rating: 4,
       recipeId: '667441c68299324f52841990',
+      date: date.toISOString(),
     },
     {
       __v: 0,
@@ -76,6 +85,7 @@ const reviewsData = {
       body: 'Great pancakes, will make again!',
       rating: 4,
       recipeId: '667441c68299324f52841990',
+      date: date.toISOString(),
     },
   ],
 };
