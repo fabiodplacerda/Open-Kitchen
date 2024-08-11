@@ -94,12 +94,11 @@ describe("Review Services Tests", () => {
         "667441c68299324f52841990",
         "667441c68299324f52841991",
         "667441c68299324f52841992",
-        "user",
         "token"
       );
       expect(axios.delete).toHaveBeenCalledWith(
         `http://localhost:4000/recipe/667441c68299324f52841990/reviews/667441c68299324f52841991`,
-        { data: { userId: "667441c68299324f52841992", role: "user" }, headers }
+        { data: { userId: "667441c68299324f52841992" }, headers }
       );
     });
     it("should return the correct data", async () => {
@@ -108,7 +107,6 @@ describe("Review Services Tests", () => {
         "667441c68299324f52841990",
         "667441c68299324f52841991",
         "667441c68299324f52841992",
-        "user",
         "token"
       );
       expect(result).toEqual(204);
@@ -120,7 +118,6 @@ describe("Review Services Tests", () => {
         "667441c68299324f52841990",
         "667441c68299324f52841991",
         "667441c68299324f52841992",
-        "user",
         "token"
       );
       expect(result).toBe("test error");

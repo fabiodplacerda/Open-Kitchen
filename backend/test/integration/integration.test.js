@@ -743,6 +743,7 @@ describe('Integration Tests', () => {
     describe('DELETE request to /recipe/:id', () => {
       const user = users[1];
       const recipeToDelete = recipes[2];
+      const user2 = users[2];
 
       const token = jwt.sign(
         { id: user._id, username: user.username },
@@ -814,7 +815,7 @@ describe('Integration Tests', () => {
         const response = await request
           .delete(`/recipe/${recipeToDelete._id}`)
           .set('Authorization', `Bearer ${token}`)
-          .send({ userId: 'notMatchingId', role: 'user' });
+          .send({ userId: user2._id });
 
         expect(response.status).to.equal(403);
         expect(response.body).to.deep.equal({
@@ -826,7 +827,7 @@ describe('Integration Tests', () => {
         const response = await request
           .delete(`/recipe/${recipeToDelete._id}`)
           .set('Authorization', `Bearer ${token}`)
-          .send({ userId: 'notMatchingId', role: 'admin' });
+          .send({ userId: user._id });
 
         expect(response.status).to.equal(204);
       });

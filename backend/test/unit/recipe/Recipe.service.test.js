@@ -178,7 +178,8 @@ describe('RecipeService Tests', () => {
       recipeToDelete,
       authorId,
       findByIdAndUpdateStub,
-      deleteManyStub;
+      deleteManyStub,
+      userFindByIdStub;
 
     beforeEach(() => {
       findByIdStub = sinon.stub(Recipe, 'findOne');
@@ -187,6 +188,7 @@ describe('RecipeService Tests', () => {
       deleteManyStub = sinon.stub(Review, 'deleteMany');
       recipeToDelete = recipes[2];
       authorId = '667441c68299324f52841986';
+      userFindByIdStub = sinon.stub(User, 'findById').resolves();
     });
 
     afterEach(() => {
@@ -194,6 +196,7 @@ describe('RecipeService Tests', () => {
       findByIdAndDeleteStub.restore();
       findByIdAndUpdateStub.restore();
       deleteManyStub.restore();
+      userFindByIdStub.restore();
     });
     it('should call findById and findOneAndUpdate and return a the updated recipe', async () => {
       // Arrange

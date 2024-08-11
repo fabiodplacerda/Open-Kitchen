@@ -99,7 +99,6 @@ describe("Reviews Tests", () => {
       recipes[0]._id,
       expectedReviews[1]._id,
       users[2]._id,
-      users[2].role,
       users[2].userToken
     );
     expect(deletedReview).not.toBeInTheDocument();
