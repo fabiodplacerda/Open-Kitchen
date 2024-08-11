@@ -60,7 +60,7 @@ const recipesData = [
   {
     _id: '66830a38d12124c85491ad5a',
     author: '667441c68299324f52841985',
-    name: 'Roasted Root Vegetable Spiral',
+    name: 'Roasted Root Vegetable',
     imgUrl:
       'https://i0.wp.com/southerncastiron.com/wp-content/uploads/2018/11/spiral-square-crop.jpg?w=1080&ssl=1.jpg',
     description:
