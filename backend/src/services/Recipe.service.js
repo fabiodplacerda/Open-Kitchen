@@ -98,4 +98,16 @@ export default class RecipeService {
       throw new Error(`Failed to retrieve recipes by userId: ${e.message}`);
     }
   };
+
+  getRecipesByName = async searchTerm => {
+    try {
+      const recipes = await Recipe.find({
+        name: { $regex: searchTerm, $options: 'i' },
+      }).populate('reviews', 'rating');
+
+      return recipes;
+    } catch (e) {
+      throw new Error(`Failed to retrieve recipes by name: ${e.message}`);
+    }
+  };
 }

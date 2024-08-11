@@ -3,7 +3,8 @@ import RecipeController from '../../../src/controller/Recipe.controller.js';
 import recipesData from '../../data/recipesData.js';
 
 import sinon from 'sinon';
-const { recipes, newRecipe, updatedRecipe, recipesByAuthorId } = recipesData;
+const { recipes, newRecipe, updatedRecipe, recipesByAuthorId, recipeByTerm } =
+  recipesData;
 
 describe('RecipeController', () => {
   let recipeController, recipeService, req, res, testError;
@@ -16,11 +17,13 @@ describe('RecipeController', () => {
       updateRecipe: sinon.stub(),
       deleteRecipe: sinon.stub(),
       getRecipesByAuthorId: sinon.stub(),
+      getRecipesByName: sinon.stub(),
     };
     recipeController = new RecipeController(recipeService);
     req = {
       body: {},
       params: {},
+      query: {},
     };
     res = {
       json: sinon.stub(),
@@ -218,6 +221,26 @@ describe('RecipeController', () => {
       recipeService.getRecipesByAuthorId.throws(testError);
 
       await recipeController.getRecipesByAuthorId(req, res);
+
+      expect(res.status.calledWith(500)).to.be.true;
+      expect(res.json.calledWith({ message: 'test error' })).to.be.true;
+    });
+  });
+  describe('getRecipesByName Tests', () => {
+    it('should return an array of recipes matching the search term', async () => {
+      req.query.searchTerm = 'pancake';
+      recipeService.getRecipesByName.resolves(recipeByTerm);
+
+      await recipeController.getRecipesByName(req, res);
+
+      expect(res.status.calledWith(200)).to.be.true;
+      expect(res.json.calledWith(recipeByTerm)).to.be.true;
+    });
+    it('should return 500 if a error occurs in the service', async () => {
+      req.query.searchTerm = 'pancake';
+      recipeService.getRecipesByName.throws(testError);
+
+      await recipeController.getRecipesByName(req, res);
 
       expect(res.status.calledWith(500)).to.be.true;
       expect(res.json.calledWith({ message: 'test error' })).to.be.true;

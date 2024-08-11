@@ -148,6 +148,17 @@ const recipesData = {
       __v: 0,
     },
   ],
+  recipeByTerm: [
+    {
+      _id: '667441c68299324f52841990',
+      author: '667441c68299324f52841985', // ObjectId of user1
+      name: 'Delicious Pancakes',
+      imgUrl: 'https://example.com/pancakes.jpg',
+      description: 'A simple recipe for fluffy pancakes.',
+      reviews: ['667441c68299324f52841998', '667441c68299324f5284199c'],
+      __v: 0,
+    },
+  ],
 };
 
 export default recipesData;
