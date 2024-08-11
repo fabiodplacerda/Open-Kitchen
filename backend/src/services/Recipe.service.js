@@ -61,13 +61,15 @@ export default class RecipeService {
     }
   };
 
-  deleteRecipe = async (recipeId, userId, role) => {
+  deleteRecipe = async (recipeId, userId) => {
     try {
       const recipe = await Recipe.findById(recipeId);
 
+      const user = await User.findById(userId);
+
       if (!recipe) return null;
 
-      if (recipe.author.toString() !== userId && role !== 'admin')
+      if (recipe.author.toString() !== userId && user.role !== 'admin')
         throw new Error('User has no permission to delete this recipe');
 
       const deletedRecipe = await Recipe.findByIdAndDelete(recipeId);
