@@ -32,7 +32,7 @@ export const createReview = async (recipeId, newReview, token) => {
   }
 };
 
-export const deleteReview = async (recipeId, reviewId, userId, role, token) => {
+export const deleteReview = async (recipeId, reviewId, userId, token) => {
   const headers = {
     Authorization: `Bearer ${token}`,
   };
@@ -40,7 +40,6 @@ export const deleteReview = async (recipeId, reviewId, userId, role, token) => {
   const dataToSend = {
     data: {
       userId,
-      role,
     },
     headers,
   };

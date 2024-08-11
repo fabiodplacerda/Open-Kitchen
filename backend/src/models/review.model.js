@@ -5,6 +5,7 @@ const reviewSchema = new Schema({
   body: { type: String, required: true },
   rating: { type: Number, required: true },
   recipeId: { type: Schema.Types.ObjectId, ref: 'Recipe', required: true },
+  date: { type: Date, default: Date.now },
 });
 
 const Review = model('Review', reviewSchema);

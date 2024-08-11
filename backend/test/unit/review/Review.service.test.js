@@ -4,6 +4,7 @@ import Review from '../../../src/models/review.model.js';
 import ReviewService from '../../../src/services/Review.service.js';
 import reviewsData from '../../data/reviewsData.js';
 import Recipe from '../../../src/models/recipe.model.js';
+import User from '../../../src/models/user.model.js';
 
 const { reviews, newReview } = reviewsData;
 
@@ -108,6 +109,7 @@ describe('ReviewService Tests', () => {
       const findByIdStub = sinon.stub(Review, 'findById');
       const findByIAndDeletedStub = sinon.stub(Review, 'findByIdAndDelete');
       const findByIdAndUpdateStub = sinon.stub(Recipe, 'findByIdAndUpdate');
+      const findUserByIdStub = sinon.stub(User, 'findById').resolves();
 
       findByIdStub.returns(reviewToDelete);
       findByIAndDeletedStub.returns(reviewToDelete);
@@ -125,6 +127,7 @@ describe('ReviewService Tests', () => {
       // Restore
       findByIdStub.restore();
       findByIAndDeletedStub.restore();
+      findUserByIdStub.restore();
     });
     it('should error when find fails', async () => {
       // Arrange
@@ -132,6 +135,7 @@ describe('ReviewService Tests', () => {
       const error = new Error('test error');
       const findByIdStub = sinon.stub(Review, 'findById');
       const findByIAndDeletedStub = sinon.stub(Review, 'findByIdAndDelete');
+      const findUserByIdStub = sinon.stub(User, 'findById').resolves();
 
       findByIdStub.returns(reviewToDelete);
       findByIAndDeletedStub.throws(error);
@@ -153,6 +157,7 @@ describe('ReviewService Tests', () => {
       // Restore
       findByIdStub.restore();
       findByIAndDeletedStub.restore();
+      findUserByIdStub.restore();
     });
   });
 });

@@ -1,10 +1,15 @@
 import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Button, Rating, IconButton } from "@mui/material/";
+import { Rating, IconButton } from "@mui/material/";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 const ReviewCard = ({ review, deleteReviewData }) => {
   const { loggedUser } = useContext(UserContext);
+
+  dayjs.extend(relativeTime);
+
   return (
     <div
       className="review-card mb-2 position-relative"
@@ -21,7 +26,12 @@ const ReviewCard = ({ review, deleteReviewData }) => {
             <DeleteIcon color="error" aria-label="delete" />
           </IconButton>
         )}
-        <p className="text-muted">Author: {review.author.username}</p>
+        <p>
+          <b>@{review.author.username} </b>
+          <span className="text-muted review-date">
+            {dayjs(review.date).fromNow()}
+          </span>
+        </p>
         <Rating value={review.rating} readOnly />
         <p className="mt-2">{review.body}</p>
       </div>

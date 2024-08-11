@@ -1,5 +1,6 @@
 import Review from '../models/review.model.js';
 import Recipe from '../models/recipe.model.js';
+import User from '../models/user.model.js';
 
 export default class ReviewService {
   createReview = async newReview => {
@@ -37,12 +38,17 @@ export default class ReviewService {
     }
   };
 
-  deleteReview = async (reviewId, recipeId, userId, role) => {
+  deleteReview = async (reviewId, recipeId, userId) => {
     try {
       const review = await Review.findById(reviewId);
       if (!review) return null;
 
-      if (review.author.toString() !== userId.toString() && role !== 'admin')
+      const user = await User.findById(userId);
+
+      if (
+        review.author.toString() !== userId.toString() &&
+        user.role !== 'admin'
+      )
         throw new Error('User has no permissions to delete this review');
 
       const deletedReview = await Review.findByIdAndDelete(reviewId);

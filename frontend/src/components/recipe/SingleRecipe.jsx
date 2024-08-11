@@ -28,18 +28,24 @@ const SingleRecipe = () => {
       const response = await deleteRecipe(
         singleRecipe._id,
         loggedUser._id,
-        loggedUser.role,
         loggedUser.userToken
       );
-      setIsLoading(true);
-      setTimeout(async () => {
-        await updateUserRecipes(loggedUser, setLoggedUser);
-        navigate("/recipes");
-        showFeedbackMessage("success", "Recipe was successfully deleted");
-        setIsLoading(false);
-      }, 1500);
+
+      if (response === 204) {
+        setIsLoading(true);
+        setTimeout(async () => {
+          await updateUserRecipes(loggedUser, setLoggedUser);
+          navigate("/recipes");
+          showFeedbackMessage("success", "Recipe was successfully deleted");
+          setIsLoading(false);
+        }, 1500);
+      } else {
+        throw new Error("Action failed");
+      }
     } catch (e) {
       console.log(e);
+      showFeedbackMessage("error", e.message);
+      handleOpen();
     }
   };
 

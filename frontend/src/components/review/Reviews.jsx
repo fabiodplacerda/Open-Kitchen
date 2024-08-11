@@ -33,7 +33,6 @@ const Reviews = ({ recipeId, setReviewsAverage }) => {
         recipeId,
         reviewId,
         loggedUser._id,
-        loggedUser.role,
         loggedUser.userToken
       );
       if (response === 204) {
@@ -45,8 +44,12 @@ const Reviews = ({ recipeId, setReviewsAverage }) => {
           return updatedReviews;
         });
         showFeedbackMessage("success", "Review successfully removed.");
+      } else {
+        throw new Error("Action failed!");
       }
-    } catch (e) {}
+    } catch (e) {
+      showFeedbackMessage("error", e.message);
+    }
   };
 
   const postNewReview = async () => {

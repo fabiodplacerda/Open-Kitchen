@@ -171,16 +171,11 @@ describe("Recipe Services Tests", () => {
     it("should make the right data call", async () => {
       axios.delete.mockResolvedValueOnce(mockedResolvedUserData);
 
-      await deleteRecipe(
-        singleRecipe._id,
-        singleRecipe.author,
-        "user",
-        "token"
-      );
+      await deleteRecipe(singleRecipe._id, singleRecipe.author, "token");
 
       expect(axios.delete).toHaveBeenCalledWith(
         `http://localhost:4000/recipe/${singleRecipe._id}`,
-        { data: { userId: singleRecipe.author, role: "user" }, headers }
+        { data: { userId: singleRecipe.author }, headers }
       );
     });
     it("should return the correct data", async () => {

@@ -60,7 +60,7 @@ export const updateRecipe = async (recipeId, userId, updates, token) => {
   }
 };
 
-export const deleteRecipe = async (recipeId, userId, role, token) => {
+export const deleteRecipe = async (recipeId, userId, token) => {
   const headers = {
     Authorization: `Bearer ${token}`,
   };
@@ -68,7 +68,6 @@ export const deleteRecipe = async (recipeId, userId, role, token) => {
   const dataToSend = {
     data: {
       userId,
-      role,
     },
     headers,
   };

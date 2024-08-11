@@ -151,6 +151,10 @@ main {
   padding: 7px;
 }
 
+.review-date {
+  font-size: 12px;
+}
+
 #review-description-label {
   font-size: 18px;
 }
