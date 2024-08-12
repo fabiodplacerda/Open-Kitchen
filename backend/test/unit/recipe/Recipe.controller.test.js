@@ -228,7 +228,7 @@ describe('RecipeController', () => {
   });
   describe('getRecipesByName Tests', () => {
     it('should return an array of recipes matching the search term', async () => {
-      req.query.searchTerm = 'pancake';
+      req.query.recipeName = 'pancake';
       recipeService.getRecipesByName.resolves(recipeByTerm);
 
       await recipeController.getRecipesByName(req, res);
@@ -237,7 +237,7 @@ describe('RecipeController', () => {
       expect(res.json.calledWith(recipeByTerm)).to.be.true;
     });
     it('should return 500 if a error occurs in the service', async () => {
-      req.query.searchTerm = 'pancake';
+      req.query.recipeName = 'pancake';
       recipeService.getRecipesByName.throws(testError);
 
       await recipeController.getRecipesByName(req, res);

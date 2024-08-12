@@ -155,7 +155,50 @@ const recipesData = {
       name: 'Delicious Pancakes',
       imgUrl: 'https://example.com/pancakes.jpg',
       description: 'A simple recipe for fluffy pancakes.',
-      reviews: ['667441c68299324f52841998', '667441c68299324f5284199c'],
+      reviews: [
+        {
+          _id: '667441c68299324f52841998',
+          rating: 4,
+        },
+        {
+          _id: '667441c68299324f5284199c',
+          rating: 4,
+        },
+      ],
+      __v: 0,
+    },
+  ],
+  cakeSearchTerm: [
+    {
+      _id: '667441c68299324f52841990',
+      author: '667441c68299324f52841985', // ObjectId of user1
+      name: 'Delicious Pancakes',
+      imgUrl: 'https://example.com/pancakes.jpg',
+      description: 'A simple recipe for fluffy pancakes.',
+      reviews: [
+        {
+          _id: '667441c68299324f52841998',
+          rating: 4,
+        },
+        {
+          _id: '667441c68299324f5284199c',
+          rating: 4,
+        },
+      ],
+      __v: 0,
+    },
+    {
+      _id: '667441c68299324f52841992',
+      author: '667441c68299324f52841986', // ObjectId of user2
+      name: 'Chocolate Cake',
+      imgUrl: 'https://example.com/chocolate-cake.jpg',
+      description: 'Decadent chocolate cake recipe.',
+      reviews: [
+        {
+          _id: '667441c68299324f5284199a',
+          rating: 5,
+        },
+      ],
       __v: 0,
     },
   ],

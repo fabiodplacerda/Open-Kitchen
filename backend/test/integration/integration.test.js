@@ -45,6 +45,7 @@ describe('Integration Tests', () => {
     updatedRecipe,
     recipesByAuthorId,
     allRecipesResult,
+    cakeSearchTerm,
   } = recipesData;
   const { reviews, newReview, expectedReviews, expectedNewReview } =
     reviewsData;
@@ -896,6 +897,33 @@ describe('Integration Tests', () => {
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });
         stub.restore();
+      });
+    });
+    describe('GET request to /recipe/search', () => {
+      it('should respond with a 200 code when request was successful', async () => {
+        const response = await request.get('/recipe/search?recipeName=pancake');
+
+        expect(response.status).to.equal(200);
+      });
+
+      it('should respond with an array with recipes matching the name of the search term', async () => {
+        const response = await request.get('/recipe/search?recipeName=cake');
+
+        expect(response.body).to.deep.equal(cakeSearchTerm);
+      });
+      it('should respond with an empty array if no recipes match the search term', async () => {
+        const response = await request.get('/recipe/search?recipeName=sushi');
+
+        expect(response.body).to.deep.equal([]);
+      });
+      it('should respond with 500 if an error occurs while getting the the recipes by search term', async () => {
+        const error = new Error('test error');
+        const stub = sinon.stub(recipeService, 'getRecipesByName');
+        stub.throws(error);
+        const response = await request.get('/recipe/search?recipeName=cake');
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: 'test error' });
       });
     });
   });

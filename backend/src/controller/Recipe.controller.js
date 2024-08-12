@@ -110,9 +110,9 @@ export default class RecipeController {
   };
 
   getRecipesByName = async (req, res) => {
-    const { searchTerm } = req.query;
+    const { recipeName } = req.query;
     try {
-      const recipes = await this.#service.getRecipesByName(searchTerm);
+      const recipes = await this.#service.getRecipesByName(recipeName);
 
       return res.status(200).json(recipes);
     } catch (e) {

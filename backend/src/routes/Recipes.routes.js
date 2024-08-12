@@ -26,6 +26,7 @@ export default class RecipeRoutes {
       this.#controller.createRecipe
     );
     this.#router.get('/getAllRecipes', this.#controller.getAllRecipes);
+    this.#router.get('/search', this.#controller.getRecipesByName);
     this.#router.get('/:id', this.#controller.getSingleRecipe);
     this.#router.put(
       '/:id',
