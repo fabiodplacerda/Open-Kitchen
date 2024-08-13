@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const userUrl = import.meta.env.VITE_APP_RECIPE;
+const recipeUrl = import.meta.env.VITE_APP_RECIPE;
 
 export const getRecipes = async () => {
   try {
-    const response = await axios.get(`${userUrl}/getAllRecipes`);
+    const response = await axios.get(`${recipeUrl}/getAllRecipes`);
 
     return response.data;
   } catch (e) {
@@ -15,7 +15,7 @@ export const getRecipes = async () => {
 
 export const getSingleRecipe = async (recipeId) => {
   try {
-    const response = await axios.get(`${userUrl}/${recipeId}`);
+    const response = await axios.get(`${recipeUrl}/${recipeId}`);
 
     return response.data;
   } catch (e) {
@@ -29,7 +29,7 @@ export const addRecipe = async (newRecipe, token) => {
     Authorization: `Bearer ${token}`,
   };
   try {
-    const response = await axios.post(`${userUrl}/createRecipe`, newRecipe, {
+    const response = await axios.post(`${recipeUrl}/createRecipe`, newRecipe, {
       headers,
     });
 
@@ -50,7 +50,7 @@ export const updateRecipe = async (recipeId, userId, updates, token) => {
   };
 
   try {
-    const response = await axios.put(`${userUrl}/${recipeId}`, dataToSend, {
+    const response = await axios.put(`${recipeUrl}/${recipeId}`, dataToSend, {
       headers,
     });
 
@@ -73,7 +73,7 @@ export const deleteRecipe = async (recipeId, userId, token) => {
   };
 
   try {
-    const response = await axios.delete(`${userUrl}/${recipeId}`, dataToSend);
+    const response = await axios.delete(`${recipeUrl}/${recipeId}`, dataToSend);
 
     return response.status;
   } catch (e) {
@@ -88,9 +88,22 @@ export const getRecipesByAuthorId = async (authorId, token) => {
   };
 
   try {
-    const response = await axios.get(`${userUrl}/author/${authorId}`, {
+    const response = await axios.get(`${recipeUrl}/author/${authorId}`, {
       headers,
     });
+
+    return response.data;
+  } catch (e) {
+    console.log(e);
+    return e.message;
+  }
+};
+
+export const getRecipesByName = async (searchTerm) => {
+  try {
+    const response = await axios.get(
+      `${recipeUrl}/search?recipeName=${searchTerm}`
+    );
 
     return response.data;
   } catch (e) {
