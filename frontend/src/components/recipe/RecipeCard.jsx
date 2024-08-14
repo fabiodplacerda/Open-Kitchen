@@ -23,11 +23,6 @@ const RecipeCard = ({ recipe }) => {
             className="my-3"
           />
         </div>
-        <p className="card-text recipe-card-description">
-          {recipe.description.length <= 60
-            ? recipe.description
-            : `${recipe.description.slice(0, 60)}...`}
-        </p>
         <p className="card-text text-center">
           Reviews: {recipe.reviews.length}
         </p>

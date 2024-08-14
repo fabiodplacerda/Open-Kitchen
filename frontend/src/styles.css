@@ -107,8 +107,14 @@ main {
   hyphens: auto;
 }
 
+.card-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .card-body {
-  height: 220px;
+  height: 150px;
 }
 
 #recipes-container {
