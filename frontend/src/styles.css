@@ -196,6 +196,21 @@ main {
   mask-composite: subtract;
   animation: l3 1s infinite linear;
 }
+
+.search-form {
+  margin: 20px auto 10px auto;
+}
+
+.search-input {
+  border-radius: 10px;
+  border: none;
+  padding: 5px;
+}
+
+.search-button {
+  border: none;
+  background: none;
+}
 @keyframes l3 {
   to {
     transform: rotate(1turn);

@@ -7,6 +7,7 @@ import {
   getSingleRecipe,
   updateRecipe,
   getRecipesByAuthorId,
+  getRecipesByName,
 } from "../../src/services/recipe.service";
 
 const { recipes, singleRecipe, recipesByAuthorId } = recipesData;
@@ -244,6 +245,44 @@ describe("Recipe Services Tests", () => {
       );
 
       expect(result).toBe("test error");
+    });
+  });
+  describe("getRecipesByName tests", () => {
+    const mockedResolvedData = {
+      data: recipes[0],
+    };
+    it("should make the right call", async () => {
+      axios.get.mockResolvedValueOnce(mockedResolvedData);
+
+      await getRecipesByName("pancake");
+
+      expect(axios.get).toHaveBeenCalledWith(
+        `http://localhost:4000/recipe/search?recipeName=pancake`
+      );
+    });
+    it("should return the right data", async () => {
+      axios.get.mockResolvedValueOnce(mockedResolvedData);
+
+      const response = await getRecipesByName("pancake");
+
+      expect(response).toEqual(recipes[0]);
+    });
+    it("should return the right data", async () => {
+      axios.get.mockResolvedValueOnce(mockedResolvedData);
+
+      const response = await getRecipesByName("pancake");
+
+      expect(response).toEqual(recipes[0]);
+    });
+    it("should return a error message if request fails", async () => {
+      const errorMessage = "test error";
+      const error = new Error(errorMessage);
+
+      axios.get.mockRejectedValueOnce(error);
+
+      const result = await getRecipesByName(recipes[0]);
+
+      expect(result).toBe(errorMessage);
     });
   });
 });

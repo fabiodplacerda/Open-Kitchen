@@ -7,7 +7,8 @@ import User from '../../../src/models/user.model.js';
 import Review from '../../../src/models/review.model.js';
 import usersData from '../../data/userData.js';
 
-const { recipes, newRecipe, updatedRecipe, recipesByAuthorId } = recipesData;
+const { recipes, newRecipe, updatedRecipe, recipesByAuthorId, recipeByTerm } =
+  recipesData;
 const { users } = usersData;
 
 describe('RecipeService Tests', () => {
@@ -254,6 +255,35 @@ describe('RecipeService Tests', () => {
       } catch (e) {
         expect(e.message).to.deep.equal(
           `Failed to retrieve recipes by userId: ${error.message}`
+        );
+      }
+
+      findStub.restore();
+    });
+  });
+  describe('getRecipesByName', () => {
+    it('should call find and return all the recipes matching the search term', async () => {
+      const findStub = sinon.stub(Recipe, 'find').returns({
+        populate: sinon.stub().resolves(recipeByTerm),
+      });
+
+      const result = await recipeService.getRecipesByName('pancake');
+
+      expect(findStub.calledOnce).to.be.true;
+      expect(result).to.deep.equal(recipeByTerm);
+
+      findStub.restore();
+    });
+    it('should error throw if a error occurs', async () => {
+      const error = new Error('test error');
+      const findStub = sinon.stub(Recipe, 'find').throws(error);
+
+      try {
+        await recipeService.getRecipesByName('pancake');
+        assert.fail('expected error was not thrown');
+      } catch (e) {
+        expect(e.message).to.deep.equal(
+          `Failed to retrieve recipes by name: ${error.message}`
         );
       }
 
