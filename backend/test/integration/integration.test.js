@@ -18,6 +18,7 @@ import reviewsData from '../data/reviewsData.js';
 import User from '../../src/models/user.model.js';
 import Recipe from '../../src/models/recipe.model.js';
 import Review from '../../src/models/review.model.js';
+import Category from '../../src/models/category.model.js';
 
 // Services
 import UserServices from '../../src/services/User.service.js';
@@ -33,6 +34,7 @@ import ReviewController from '../../src/controller/Review.controller.js';
 import UserRoutes from '../../src/routes/User.routes.js';
 import RecipeRoutes from '../../src/routes/Recipes.routes.js';
 import ReviewRoutes from '../../src/routes/Review.routes.js';
+import categoriesData from '../data/categoriesData.js';
 
 describe('Integration Tests', () => {
   let server, database, userService, recipeService, reviewService, request;
@@ -85,6 +87,7 @@ describe('Integration Tests', () => {
       await Recipe.deleteMany();
       await User.deleteMany();
       await Review.deleteMany();
+      await Category.deleteMany();
       const hashedPassword = await bcrypt.hash('Password1', 10);
       const modifiedUsers = users.map(user => ({
         ...user,
@@ -93,6 +96,7 @@ describe('Integration Tests', () => {
       await User.insertMany(modifiedUsers);
       await Recipe.insertMany(recipes);
       await Review.insertMany(reviews);
+      await Category.insertMany(categoriesData);
     } catch (e) {
       console.log(e);
       throw new Error();
@@ -535,6 +539,7 @@ describe('Integration Tests', () => {
             description: recipe.description,
             reviews: recipe.reviews.map(id => id.toString()),
             __v: recipe.__v,
+            categories: recipe.categories.map(id => id.toString()),
           };
         });
 
@@ -685,6 +690,9 @@ describe('Integration Tests', () => {
           imgUrl: updatedRecipeInDb.imgUrl,
           name: updatedRecipeInDb.name,
           reviews: updatedRecipeInDb.reviews.map(review => review.toString()),
+          categories: updatedRecipeInDb.categories.map(category =>
+            category.toString()
+          ),
           __v: 0,
         };
 

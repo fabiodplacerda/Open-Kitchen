@@ -7,6 +7,8 @@ import reviewsData from './data/reviewsData.js';
 import recipesData from './data/recipesData.js';
 import userData from './data/userData.js';
 import UserServices from '../src/services/User.service.js';
+import Category from '../src/models/category.model.js';
+import categoriesData from './data/categoriesData.js';
 
 Config.loadConfig();
 const userService = new UserServices();
@@ -20,10 +22,12 @@ const run = async () => {
     await User.deleteMany();
     await Recipe.deleteMany();
     await Review.deleteMany();
+    await Category.deleteMany();
 
     await Promise.all(userData.map(user => userService.createAccount(user)));
     await Recipe.insertMany(recipesData);
     await Review.insertMany(reviewsData);
+    await Category.insertMany(categoriesData);
     console.log('Database was seeded');
   } catch (e) {
     console.log(`Error seeding the database: ${e.message}`);

@@ -6,6 +6,7 @@ import recipesData from '../../data/recipesData.js';
 import User from '../../../src/models/user.model.js';
 import Review from '../../../src/models/review.model.js';
 import usersData from '../../data/userData.js';
+import { populate } from 'dotenv';
 
 const { recipes, newRecipe, updatedRecipe, recipesByAuthorId, recipeByTerm } =
   recipesData;
@@ -58,10 +59,13 @@ describe('RecipeService Tests', () => {
     });
   });
   describe('getAllRecipes Tests', () => {
-    let findStub;
+    let findStub, populateStub;
 
     beforeEach(() => {
-      findStub = sinon.stub(Recipe, 'find');
+      populateStub = sinon.stub();
+      findStub = sinon.stub(Recipe, 'find').returns({
+        populate: populateStub,
+      });
     });
 
     afterEach(() => {
@@ -69,9 +73,8 @@ describe('RecipeService Tests', () => {
     });
     it('should call find and return all recipes', async () => {
       // Arrange
-      findStub.returns({
-        populate: sinon.stub().resolves(recipes),
-      });
+      populateStub.onFirstCall().returns({ populate: populateStub });
+      populateStub.onSecondCall().resolves(recipes);
       // Act
       const result = await recipeService.getAllRecipes(recipes);
       // Assert
@@ -232,9 +235,13 @@ describe('RecipeService Tests', () => {
   });
   describe('getRecipesByAuthorId', () => {
     it('should call find and return all the recipes create by the author', async () => {
+      const populateStub = sinon.stub();
       const findStub = sinon.stub(Recipe, 'find').returns({
-        populate: sinon.stub().resolves(recipesByAuthorId),
+        populate: populateStub,
       });
+
+      populateStub.onFirstCall().returns({ populate: populateStub });
+      populateStub.onSecondCall().returns(recipesByAuthorId);
 
       const result = await recipeService.getRecipesByAuthorId(
         '667441c68299324f52841985'
@@ -263,9 +270,13 @@ describe('RecipeService Tests', () => {
   });
   describe('getRecipesByName', () => {
     it('should call find and return all the recipes matching the search term', async () => {
+      const populateStub = sinon.stub();
       const findStub = sinon.stub(Recipe, 'find').returns({
-        populate: sinon.stub().resolves(recipeByTerm),
+        populate: populateStub,
       });
+
+      populateStub.onFirstCall().returns({ populate: populateStub });
+      populateStub.onSecondCall().returns(recipeByTerm);
 
       const result = await recipeService.getRecipesByName('pancake');
 

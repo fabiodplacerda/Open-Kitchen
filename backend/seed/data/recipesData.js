@@ -12,6 +12,7 @@ const recipesData = [
       '66831ef0eb5e8dda1999d30a',
       '66831f0aeb5e8dda1999d310',
     ],
+    categories: ['66d59a70d7c402c78ca2cecc'],
     __v: 0,
   },
   {
@@ -23,6 +24,7 @@ const recipesData = [
     description:
       'Classic Italian pasta dish. This Spaghetti Carbonara is a traditional Roman recipe that combines simplicity and indulgence. Made with al dente spaghetti, creamy egg yolks, grated Pecorino Romano cheese, and crispy pancetta, this dish offers a perfect balance of flavors. The secret to its creamy texture lies in the technique of tossing the hot pasta with the egg mixture off the heat, ensuring a silky, smooth sauce without any cream. Finished with a generous sprinkle of freshly ground black pepper, this Carbonara is a comforting and satisfying meal that highlights the elegance of authentic Italian cooking. Perfect for a quick weeknight dinner or a special gathering with friends and family.',
     reviews: ['66831f57eb5e8dda1999d319'],
+    categories: ['66d59a70d7c402c78ca2cecc'],
     __v: 0,
   },
   {
@@ -39,6 +41,7 @@ const recipesData = [
       '66831dcfeb5e8dda1999d2c7',
       '66831df5eb5e8dda1999d2cd',
     ],
+    categories: ['66d59a70d7c402c78ca2ced0'],
     __v: 0,
   },
   {
@@ -55,6 +58,7 @@ const recipesData = [
       '66831e47eb5e8dda1999d2e2',
       '66831e58eb5e8dda1999d2e8',
     ],
+    categories: ['66d59a70d7c402c78ca2cec8'],
     __v: 0,
   },
   {
@@ -70,6 +74,7 @@ const recipesData = [
       '66831e8feb5e8dda1999d2f7',
       '66831e9aeb5e8dda1999d2fc',
     ],
+    categories: ['66d59a70d7c402c78ca2ceca'],
     __v: 0,
   },
   {
@@ -81,6 +86,7 @@ const recipesData = [
     description:
       'Make the burger patties: Combine all the burger patty ingredients and mix well. To test the seasoning, cook a small piece of the mixture in a hot pan, taste and adjust as necessary. Form the mixture into burger patties with moist hands then place on a sheet-an lined with parchment paper.\n\nCook: These burger patties can be cooked on a grill (charcoal grill/ gas grill will both work well) or in a cast iron skillet set over medium-high heat. Cook the patties for 4-5 minutes per side until they are just cooked with a good char on the outside. Add sliced cheese for the last minute of cooking to allow the cheese to melt. Remove from the heat and allow to rest for 5 minutes.\n\nAssemble: Toast the buns then add a spoonful of mayonnaise or any sauce/condiment of your choice. Add lettuce, the burger patties, cheese, crispy bacon and sliced tomatoes then serve.',
     reviews: [],
+    categories: ['66d59a70d7c402c78ca2cec8'],
     __v: 0,
   },
   {
@@ -92,6 +98,7 @@ const recipesData = [
     description:
       "Add the water and 2 tablespoons of olive oil then knead the ingredients well using the dough hook until the dough forms into a ball. If the dough is too sticky, add 1 or 2 teaspoons of flour, and if it's too dry add a little bit of water.\n\nDrizzle the inside of a big bowl with 2 teaspoons of olive oil and put the dough inside the bowl. Cover with plastic wrap and let rest in a warm place for about an hour until doubled in volume.\n\nFlatten the dough ball on a floured surface into a large circle using a rolling pin.\n\nTransfer the dough on the baking sheet and leave to rest for 10 minutes.\n\nTo prepare the topping: heat the oil in a pan then add the onions and the garlic. Cook for 2 or minutes or until onions are soft.",
     reviews: [],
+    categories: ['66d59a70d7c402c78ca2cec8'],
     __v: 0,
   },
   {
@@ -103,6 +110,7 @@ const recipesData = [
     description:
       'In a small bowl, whisk together olive oil, parsley and garlic; season with salt and pepper, to taste.\n\nSpread bread cubes in a single layer on a baking sheet. Stir in olive oil mixture and gently toss to combine. Place into oven and bake until crisp and golden, about 13-15 minutes; set aside.\n\nFOR THE CHICKEN\nIn a small bowl, combine olive oil, lemon juice, lemon zest, garlic, 1 teaspoon salt and 1/2 teaspoon pepper.\n\nIn a gallon size Ziploc bag or large bowl, combine chicken and olive oil mixture; marinate for at least 2 hours, turning the bag occasionally. Drain the chicken from the marinade.\n\nPreheat grill to medium high heat.\n\nAdd chicken to grill, and cook, turning occasionally, until chicken is completely cooked through, reaching an internal temperature of 165 degrees F, about 4-5 minutes per side. Let cool before dicing into bite-size pieces.',
     reviews: [],
+    categories: ['66d59a70d7c402c78ca2cec9'],
     __v: 0,
   },
 ];
