@@ -13,6 +13,7 @@ import Database from '../../src/database/Database.js';
 import usersData from '../data/userData.js';
 import recipesData from '../data/recipesData.js';
 import reviewsData from '../data/reviewsData.js';
+import categoriesData from '../data/categoriesData.js';
 
 // Models
 import User from '../../src/models/user.model.js';
@@ -24,20 +25,28 @@ import Category from '../../src/models/category.model.js';
 import UserServices from '../../src/services/User.service.js';
 import RecipeService from '../../src/services/Recipe.service.js';
 import ReviewService from '../../src/services/Review.service.js';
+import CategoryService from '../../src/services/Category.service.js';
 
 // Controller
 import UserController from '../../src/controller/User.controller.js';
 import RecipeController from '../../src/controller/Recipe.controller.js';
 import ReviewController from '../../src/controller/Review.controller.js';
+import CategoryController from '../../src/controller/Category.controller.js';
 
 // Routes
 import UserRoutes from '../../src/routes/User.routes.js';
 import RecipeRoutes from '../../src/routes/Recipes.routes.js';
 import ReviewRoutes from '../../src/routes/Review.routes.js';
-import categoriesData from '../data/categoriesData.js';
+import CategoryRoutes from '../../src/routes/Category.routes.js';
 
 describe('Integration Tests', () => {
-  let server, database, userService, recipeService, reviewService, request;
+  let server,
+    database,
+    userService,
+    recipeService,
+    reviewService,
+    categoryService,
+    request;
 
   const { users, newUser, expectedResults, expectedSingleUserResult } =
     usersData;
@@ -68,7 +77,16 @@ describe('Integration Tests', () => {
     const reviewController = new ReviewController(reviewService);
     const reviewRoutes = new ReviewRoutes(reviewController);
 
-    server = new Server(PORT, HOST, [userRoutes, recipeRoutes, reviewRoutes]);
+    categoryService = new CategoryService();
+    const categoryController = new CategoryController(categoryService);
+    const categoryRoutes = new CategoryRoutes(categoryController);
+
+    server = new Server(PORT, HOST, [
+      userRoutes,
+      recipeRoutes,
+      reviewRoutes,
+      categoryRoutes,
+    ]);
     database = new Database(DB_URI);
 
     await database.connect();
@@ -1177,6 +1195,31 @@ describe('Integration Tests', () => {
         expect(response.status).to.equal(500);
         expect(response.body).to.deep.equal({ message: error.message });
         stub.restore();
+      });
+    });
+  });
+  describe('Category Tests', () => {
+    describe('GET request to /categories/getAllCategories', () => {
+      it('should respond with a 200 if request was successful', async () => {
+        const response = await request.get('/category/getAllCategories');
+
+        expect(response.status).to.equal(200);
+      });
+      it('should respond with an array of categories', async () => {
+        const response = await request.get('/category/getAllCategories');
+
+        expect(Array.isArray(response.body)).to.be.true;
+        expect(response.body).to.deep.equal(categoriesData);
+      });
+      it('should respond with a 500 status code if a error was thrown during the request', async () => {
+        const error = new Error('Test error');
+        const stub = sinon.stub(categoryService, 'getAllCategories');
+        stub.throws(error);
+
+        const response = await request.get('/category/getAllCategories');
+
+        expect(response.status).to.equal(500);
+        expect(response.body).to.deep.equal({ message: 'Test error' });
       });
     });
   });
