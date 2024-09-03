@@ -6,7 +6,7 @@ const recipeSchema = new Schema({
   imgUrl: { type: String, required: true },
   description: { type: String, required: true },
   reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
-  categories: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
+  category: { type: Schema.Types.ObjectId, ref: 'Category' },
 });
 
 const Recipe = model('Recipe', recipeSchema);

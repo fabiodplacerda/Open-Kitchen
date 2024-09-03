@@ -73,7 +73,7 @@ const usersData = {
         imgUrl: 'https://example.com/chocolate-cake.jpg',
         description: 'Decadent chocolate cake recipe.',
         reviews: ['667441c68299324f5284199a'],
-        categories: ['66d59a70d7c402c78ca2cecd'],
+        category: '66d59a70d7c402c78ca2cecd',
       },
     ],
     recipes: [
@@ -85,7 +85,7 @@ const usersData = {
         imgUrl: 'https://example.com/pancakes.jpg',
         description: 'A simple recipe for fluffy pancakes.',
         reviews: ['667441c68299324f52841998', '667441c68299324f5284199c'],
-        categories: ['66d59a70d7c402c78ca2cece'],
+        category: '66d59a70d7c402c78ca2cece',
       },
       {
         __v: 0,
@@ -95,7 +95,7 @@ const usersData = {
         imgUrl: 'https://example.com/pizza.jpg',
         description: 'Make pizza at home with this easy recipe.',
         reviews: ['667441c68299324f52841999'],
-        categories: ['66d59a70d7c402c78ca2cecc'],
+        category: '66d59a70d7c402c78ca2cecc',
       },
     ],
 

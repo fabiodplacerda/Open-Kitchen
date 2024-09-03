@@ -1,7 +1,6 @@
 import Recipe from '../models/recipe.model.js';
 import Review from '../models/review.model.js';
 import User from '../models/user.model.js';
-import Category from '../models/category.model.js';
 
 export default class RecipeService {
   createRecipe = async newRecipe => {
@@ -23,7 +22,7 @@ export default class RecipeService {
     try {
       const recipes = await Recipe.find()
         .populate('reviews', 'rating')
-        .populate('categories');
+        .populate('category');
 
       return recipes;
     } catch (e) {
@@ -94,7 +93,7 @@ export default class RecipeService {
     try {
       const recipes = await Recipe.find({ author: authorId })
         .populate('reviews', 'rating')
-        .populate('categories');
+        .populate('category');
 
       return recipes;
     } catch (e) {
@@ -108,7 +107,7 @@ export default class RecipeService {
         name: { $regex: searchTerm, $options: 'i' },
       })
         .populate('reviews', 'rating')
-        .populate('categories');
+        .populate('category');
 
       return recipes;
     } catch (e) {

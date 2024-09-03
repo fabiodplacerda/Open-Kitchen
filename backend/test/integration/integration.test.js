@@ -557,7 +557,7 @@ describe('Integration Tests', () => {
             description: recipe.description,
             reviews: recipe.reviews.map(id => id.toString()),
             __v: recipe.__v,
-            categories: recipe.categories.map(id => id.toString()),
+            category: recipe.category.toString(),
           };
         });
 
@@ -708,9 +708,7 @@ describe('Integration Tests', () => {
           imgUrl: updatedRecipeInDb.imgUrl,
           name: updatedRecipeInDb.name,
           reviews: updatedRecipeInDb.reviews.map(review => review.toString()),
-          categories: updatedRecipeInDb.categories.map(category =>
-            category.toString()
-          ),
+          category: updatedRecipeInDb.category.toString(),
           __v: 0,
         };
 
