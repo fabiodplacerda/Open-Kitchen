@@ -1,6 +1,7 @@
 import Recipe from '../models/recipe.model.js';
 import Review from '../models/review.model.js';
 import User from '../models/user.model.js';
+import Category from '../models/category.model.js';
 
 export default class RecipeService {
   createRecipe = async newRecipe => {
@@ -23,6 +24,7 @@ export default class RecipeService {
       const recipes = await Recipe.find()
         .populate('reviews', 'rating')
         .populate('categories');
+
       return recipes;
     } catch (e) {
       throw new Error(`Failed to retrieve all recipes: ${e.message}`);
