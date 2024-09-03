@@ -6,7 +6,6 @@ import recipesData from '../../data/recipesData.js';
 import User from '../../../src/models/user.model.js';
 import Review from '../../../src/models/review.model.js';
 import usersData from '../../data/userData.js';
-import { populate } from 'dotenv';
 
 const { recipes, newRecipe, updatedRecipe, recipesByAuthorId, recipeByTerm } =
   recipesData;
