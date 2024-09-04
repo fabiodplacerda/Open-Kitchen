@@ -8,6 +8,11 @@ const recipesData = {
       description: "A simple recipe for fluffy pancakes.",
       reviews: ["667441c68299324f52841998", "667441c68299324f5284199c"],
       __v: 0,
+      category: {
+        _id: "66d59a70d7c402c78ca2cec8",
+        categoryName: "Quick & Easy",
+        __v: 0,
+      },
     },
     {
       _id: "667441c68299324f52841991",
@@ -17,6 +22,11 @@ const recipesData = {
       description: "Make pizza at home with this easy recipe.",
       reviews: ["667441c68299324f52841999"],
       __v: 0,
+      category: {
+        _id: "66d59a70d7c402c78ca2cec8",
+        categoryName: "Quick & Easy",
+        __v: 0,
+      },
     },
     {
       _id: "667441c68299324f52841992",
@@ -26,6 +36,11 @@ const recipesData = {
       description: "Decadent chocolate cake recipe.",
       reviews: ["667441c68299324f5284199a"],
       __v: 0,
+      category: {
+        _id: "66d59a70d7c402c78ca2cec8",
+        categoryName: "Quick & Easy",
+        __v: 0,
+      },
     },
     {
       _id: "667441c68299324f52841993",
@@ -35,6 +50,11 @@ const recipesData = {
       description: "Classic Italian pasta dish.",
       reviews: [],
       __v: 0,
+      category: {
+        _id: "66d59a70d7c402c78ca2cec8",
+        categoryName: "Quick & Easy",
+        __v: 0,
+      },
     },
   ],
   newRecipe: {
@@ -46,6 +66,11 @@ const recipesData = {
       "Make pizza at home with this easy recipe. Enjoy a delicious homemade pizza with a crispy crust, tangy tomato sauce, melted cheese, and your favorite toppings. Perfect for family dinners or a fun cooking activity.",
     reviews: [],
     __v: 0,
+    category: {
+      _id: "66d59a70d7c402c78ca2cec8",
+      categoryName: "Quick & Easy",
+      __v: 0,
+    },
   },
   updatedRecipe: {
     _id: "667441c68299324f52841990",
@@ -56,6 +81,11 @@ const recipesData = {
       "A simple and delicious recipe for fluffy pancakes with bacon that are perfect for breakfast.",
     reviews: ["667441c68299324f52841998", "667441c68299324f5284199c"],
     __v: 0,
+    category: {
+      _id: "66d59a70d7c402c78ca2cec8",
+      categoryName: "Quick & Easy",
+      __v: 0,
+    },
   },
   recipesByAuthorId: [
     {
@@ -66,6 +96,11 @@ const recipesData = {
       description: "A simple recipe for fluffy pancakes.",
       reviews: ["667441c68299324f52841998", "667441c68299324f5284199c"],
       __v: 0,
+      category: {
+        _id: "66d59a70d7c402c78ca2cecc",
+        categoryName: "Budget-Friendly",
+        __v: 0,
+      },
     },
     {
       _id: "667441c68299324f52841991",
@@ -75,11 +110,21 @@ const recipesData = {
       description: "Make pizza at home with this easy recipe.",
       reviews: ["667441c68299324f52841999"],
       __v: 0,
+      category: {
+        _id: "66d59a70d7c402c78ca2cec8",
+        categoryName: "Quick & Easy",
+        __v: 0,
+      },
     },
   ],
 
   singleRecipe: {
     __v: 0,
+    category: {
+      _id: "66d59a70d7c402c78ca2cec8",
+      categoryName: "Quick & Easy",
+      __v: 0,
+    },
     _id: "667441c68299324f52841990",
     author: "667441c68299324f52841985",
     description: "A simple recipe for fluffy pancakes.",

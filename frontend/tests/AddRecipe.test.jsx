@@ -5,12 +5,17 @@ import usersData from "./data/userData";
 
 import userEvent from "@testing-library/user-event";
 
+import { getAllCategories } from "../src/services/category.service";
+import categoriesData from "./data/categoriesData";
+
 const { users } = usersData;
 
 vi.mock("../src/services/recipe.service");
+vi.mock("../src/services/category.service");
 
 describe("AddRecipe Tests", () => {
   it("should disabled the button when all fields are valid", async () => {
+    getAllCategories.mockResolvedValueOnce(categoriesData);
     render(
       <TestWrapper loggedUser={users[0]}>
         <AddRecipe />

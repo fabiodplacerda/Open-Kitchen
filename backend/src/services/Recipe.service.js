@@ -20,7 +20,10 @@ export default class RecipeService {
 
   getAllRecipes = async () => {
     try {
-      const recipes = await Recipe.find().populate('reviews', 'rating');
+      const recipes = await Recipe.find()
+        .populate('reviews', 'rating')
+        .populate('category');
+
       return recipes;
     } catch (e) {
       throw new Error(`Failed to retrieve all recipes: ${e.message}`);
@@ -88,10 +91,9 @@ export default class RecipeService {
 
   getRecipesByAuthorId = async authorId => {
     try {
-      const recipes = await Recipe.find({ author: authorId }).populate(
-        'reviews',
-        'rating'
-      );
+      const recipes = await Recipe.find({ author: authorId })
+        .populate('reviews', 'rating')
+        .populate('category');
 
       return recipes;
     } catch (e) {
@@ -103,7 +105,9 @@ export default class RecipeService {
     try {
       const recipes = await Recipe.find({
         name: { $regex: searchTerm, $options: 'i' },
-      }).populate('reviews', 'rating');
+      })
+        .populate('reviews', 'rating')
+        .populate('category');
 
       return recipes;
     } catch (e) {

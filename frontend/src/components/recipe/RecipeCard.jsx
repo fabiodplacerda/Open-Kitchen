@@ -15,12 +15,15 @@ const RecipeCard = ({ recipe }) => {
       <img src={recipe.imgUrl} className="card-img-top" alt={recipe.name} />
       <div className="card-body">
         <h5 className="card-title text-center">{recipe.name}</h5>
+        <p className={`${recipe.category.categoryName} category-tag`}>
+          {recipe.category.categoryName}
+        </p>
         <div className="text-center">
           <Rating
             value={ratingAverage}
             readOnly
             precision={0.5}
-            className="my-3"
+            className="my-2"
           />
         </div>
         <p className="card-text text-center">

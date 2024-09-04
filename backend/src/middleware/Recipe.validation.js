@@ -20,6 +20,11 @@ export default class RecipeValidator {
             'The recipe name should be a minimum of 3 characters and a maximum of 30 characters in length.'
           ),
         expressValidator
+          .body('category')
+          .notEmpty()
+          .isMongoId()
+          .withMessage('category is required'),
+        expressValidator
           .body('imgUrl')
           .notEmpty()
           .isURL()

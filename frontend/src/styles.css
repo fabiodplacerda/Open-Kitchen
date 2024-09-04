@@ -189,6 +189,47 @@ main {
   width: 150px;
 }
 
+.category-tag {
+  width: 100px;
+  text-align: center;
+  border-radius: 5px;
+  color: #fff;
+  margin: 0 auto;
+}
+
+.Beef {
+  background-color: #d84315;
+}
+.Quick {
+  background-color: #ff6f61;
+}
+.Vegetarian {
+  background-color: #8bc34a;
+}
+.Vegan {
+  background-color: #4caf50;
+}
+.Gluten-Free {
+  background-color: #ffc107;
+}
+.Budget-Friendly {
+  background-color: #ff9800;
+  width: 150px;
+}
+.Desert {
+  background-color: #d32f2f;
+}
+.Chicken {
+  background-color: #d84315;
+}
+.Fish {
+  background-color: #03a9f4;
+}
+.minutes {
+  background-color: #9c27b0;
+  width: 150px;
+}
+
 .loader {
   width: 50px;
   padding: 8px;
