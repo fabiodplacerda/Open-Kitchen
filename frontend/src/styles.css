@@ -227,6 +227,7 @@ main {
 }
 .minutes {
   background-color: #9c27b0;
+  width: 150px;
 }
 
 .loader {

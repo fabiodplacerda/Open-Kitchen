@@ -11,19 +11,22 @@ import { useNavigate, useParams } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import showFeedbackMessage from "../../utils/feedbackMessages";
 import { recipeInputValid } from "../../utils/utils";
-import { getSingleUser, updateUserRecipes } from "../../services/user.service";
+import { updateUserRecipes } from "../../services/user.service";
 import { Button } from "@mui/material";
+import { getAllCategories } from "../../services/category.service";
 
 const RecipeForm = ({ action }) => {
   const navigate = useNavigate();
   const { recipeId } = useParams();
   const { loggedUser, setLoggedUser } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
   const [recipe, setRecipe] = useState({
     name: "",
     imgUrl: "",
     description: "",
     author: "",
+    category: "",
   });
 
   const [charCount, setCharCount] = useState(0);
@@ -38,8 +41,9 @@ const RecipeForm = ({ action }) => {
         ...recipe,
         author: loggedUser._id,
       };
+
       const recipeData = await addRecipe(updatedRecipe, loggedUser.userToken);
-      if (recipeData.message.includes("successfully")) {
+      if (recipeData.message && recipeData.message.includes("successfully")) {
         await updateUserRecipes(loggedUser, setLoggedUser);
         setIsLoading(true);
         showFeedbackMessage("success", "Recipe was successfully created");
@@ -93,18 +97,30 @@ const RecipeForm = ({ action }) => {
     setRecipe(recipeData);
   };
 
-  const getRecipeData = async () => {
-    try {
+  const fetchData = async () => {
+    const categoriesData = await getAllCategories();
+    setCategories(categoriesData);
+
+    if (action === "Edit") {
       const recipeData = await getSingleRecipe(recipeId);
-      setRecipe(recipeData.recipe);
-    } catch (e) {}
+      const selectedCategory = categoriesData.find(
+        (category) => category._id === recipeData.recipe.category
+      );
+      setRecipe({
+        ...recipeData.recipe,
+        category: selectedCategory ? selectedCategory._id : "",
+      });
+    } else {
+      setRecipe((prevRecipe) => ({
+        ...prevRecipe,
+        category: categoriesData[0]?._id || "",
+      }));
+    }
   };
 
   useEffect(() => {
-    if (action === "Edit") {
-      getRecipeData();
-    }
-  }, []);
+    fetchData();
+  }, [action]);
 
   return (
     <main
@@ -140,7 +156,18 @@ const RecipeForm = ({ action }) => {
               characters left
             </div>
           </div>
-
+          <select
+            className="form-select mb-3"
+            name="category"
+            onChange={onChangeHandler}
+            value={recipe.category}
+          >
+            {categories.map((category) => (
+              <option value={category._id} key={category._id}>
+                {category.categoryName}
+              </option>
+            ))}
+          </select>
           <div className="mb-3 form-floating">
             <input
               name="imgUrl"

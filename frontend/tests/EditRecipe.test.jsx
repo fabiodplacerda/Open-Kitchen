@@ -3,15 +3,18 @@ import EditRecipe from "../src/components/recipe/EditRecipe";
 import TestWrapper from "./TestWrapper";
 import usersData from "./data/userData";
 import { getSingleRecipe } from "../src/services/recipe.service";
+import { getAllCategories } from "../src/services/category.service";
+
 import { act } from "react";
 
-import userEvent from "@testing-library/user-event";
 import recipesData from "./data/recipesData";
+import categoriesData from "./data/categoriesData";
 
 const { users } = usersData;
 const { recipes } = recipesData;
 
 vi.mock("../src/services/recipe.service");
+vi.mock("../src/services/category.service");
 
 describe("EditRecipe Tests", () => {
   it("should pre populate the inputs when editing a recipe", async () => {
@@ -20,6 +23,7 @@ describe("EditRecipe Tests", () => {
     };
     await act(async () => {
       getSingleRecipe.mockResolvedValueOnce(data);
+      getAllCategories.mockResolvedValueOnce(categoriesData);
       render(
         <TestWrapper loggedUser={users[0]}>
           <EditRecipe />

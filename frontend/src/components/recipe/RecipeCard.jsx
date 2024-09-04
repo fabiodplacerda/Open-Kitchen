@@ -15,8 +15,8 @@ const RecipeCard = ({ recipe }) => {
       <img src={recipe.imgUrl} className="card-img-top" alt={recipe.name} />
       <div className="card-body">
         <h5 className="card-title text-center">{recipe.name}</h5>
-        <p className={`${recipe.categories[0].categoryName} category-tag`}>
-          {recipe.categories[0].categoryName}
+        <p className={`${recipe.category.categoryName} category-tag`}>
+          {recipe.category.categoryName}
         </p>
         <div className="text-center">
           <Rating

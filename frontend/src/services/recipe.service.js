@@ -35,6 +35,7 @@ export const addRecipe = async (newRecipe, token) => {
 
     return response.data;
   } catch (e) {
+    console.log(e);
     return e.message;
   }
 };
